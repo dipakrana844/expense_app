@@ -7,6 +7,7 @@ import 'package:smart_expense_tracker/features/budget/presentation/screens/budge
 import 'package:smart_expense_tracker/features/expenses/presentation/screens/expense_list_screen.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/screens/add_edit_expense_screen.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/screens/settings_screen.dart';
+import 'package:smart_expense_tracker/features/grocery/presentation/screens/grocery_session_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -105,6 +106,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+      // Grocery Session Route
+      GoRoute(
+        path: '/grocery/add',
+        name: 'add-grocery',
+        builder: (context, state) => const GrocerySessionScreen(),
       ),
     ],
   );

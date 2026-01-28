@@ -5,7 +5,7 @@ A production-grade, offline-first Flutter application for tracking personal fina
 ## Architecture
 
 - **Clean Architecture** (Feature-based)
-- **State Management**: Riverpod 2.x
+- **State Management**: Riverpod 3.x
 - **Navigation**: GoRouter (ShellRoute)
 - **Database**: Hive (Offline-first)
 - **Background Tasks**: Workmanager (Daily recurring expenses)

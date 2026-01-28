@@ -19,7 +19,7 @@ dependencies:
   json_annotation: ^4.9.0
 
   # Local Storage - Hive for fast, offline-first persistence
-  hive: ^2.2.3
+  # hive: ^2.2.3
   hive_flutter: ^1.1.0
 
   # Connectivity - Monitor network status

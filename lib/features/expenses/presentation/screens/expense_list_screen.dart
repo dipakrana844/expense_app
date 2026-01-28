@@ -144,9 +144,42 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.goNamed('add-expense'),
-        tooltip: 'Add Expense',
+        onPressed: () => _showAddOptions(context),
+        tooltip: 'Add Entry',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAddOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.receipt_long),
+              title: const Text('Single Expense'),
+              subtitle: const Text('Add a standard one-time expense'),
+              onTap: () {
+                context.pop();
+                context.goNamed('add-expense');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('Grocery Session'),
+              subtitle: const Text('Record multiple items as one entry'),
+              onTap: () {
+                context.pop();
+                context.goNamed('add-grocery');
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
