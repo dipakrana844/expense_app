@@ -7,9 +7,17 @@ part of 'ocr_provider.dart';
 // **************************************************************************
 
 String _$groceryOCRNotifierHash() =>
-    r'6f355965995135e404a9b6b257e8435e88a69a98';
+    r'158f661698dac3e166161550661512a06262f7ff';
 
-/// See also [GroceryOCRNotifier].
+/// OCR Provider with robust error handling and fallback strategies
+///
+/// Flow:
+/// UI → Pick Image → Validate Image → Start OCR → Await processImage()
+/// → Parse text → Update provider state → Navigate to review screen
+///
+/// NEVER blocks the user - always provides a recovery path
+///
+/// Copied from [GroceryOCRNotifier].
 @ProviderFor(GroceryOCRNotifier)
 final groceryOCRNotifierProvider =
     AutoDisposeNotifierProvider<GroceryOCRNotifier, GroceryOCRState>.internal(

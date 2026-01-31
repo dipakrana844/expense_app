@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/widgets/expense_widgets.dart';
+import 'package:smart_expense_tracker/features/quick_expense/presentation/widgets/quick_expense_sheet.dart';
 
 class ExpenseListScreen extends ConsumerStatefulWidget {
   const ExpenseListScreen({super.key});
@@ -144,10 +145,11 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddOptions(context),
-        tooltip: 'Add Entry',
-        child: const Icon(Icons.add),
+        tooltip: 'Add Expense',
+        icon: const Icon(Icons.add),
+        label: const Text('Add'),
       ),
     );
   }
@@ -160,10 +162,49 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Quick Expense - Primary option for daily use
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.flash_on,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              title: const Text(
+                'Quick Expense',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text('Add expense in seconds'),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'FAST',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                QuickExpenseSheet.show(context);
+              },
+            ),
+            const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.receipt_long),
               title: const Text('Single Expense'),
-              subtitle: const Text('Add a standard one-time expense'),
+              subtitle: const Text('Add with full details'),
               onTap: () {
                 context.pop();
                 context.pushNamed('add-expense');

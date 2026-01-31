@@ -16,9 +16,21 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$GroceryOCRState {
+  /// Whether OCR is currently processing
   bool get isScanning => throw _privateConstructorUsedError;
+
+  /// Raw text extracted from OCR (kept for fallback/manual editing)
+  String? get extractedRawText => throw _privateConstructorUsedError;
+
+  /// Parsed grocery items from OCR
   List<GroceryItem> get scannedItems => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
+
+  /// Error message to display to user (recoverable errors)
+  String? get errorMessage => throw _privateConstructorUsedError;
+
+  /// Whether the OCR completed but found no items
+  /// This is different from an error - the scan worked but parsing failed
+  bool get noItemsDetected => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $GroceryOCRStateCopyWith<GroceryOCRState> get copyWith =>
@@ -31,7 +43,12 @@ abstract class $GroceryOCRStateCopyWith<$Res> {
           GroceryOCRState value, $Res Function(GroceryOCRState) then) =
       _$GroceryOCRStateCopyWithImpl<$Res, GroceryOCRState>;
   @useResult
-  $Res call({bool isScanning, List<GroceryItem> scannedItems, String? error});
+  $Res call(
+      {bool isScanning,
+      String? extractedRawText,
+      List<GroceryItem> scannedItems,
+      String? errorMessage,
+      bool noItemsDetected});
 }
 
 /// @nodoc
@@ -48,22 +65,32 @@ class _$GroceryOCRStateCopyWithImpl<$Res, $Val extends GroceryOCRState>
   @override
   $Res call({
     Object? isScanning = null,
+    Object? extractedRawText = freezed,
     Object? scannedItems = null,
-    Object? error = freezed,
+    Object? errorMessage = freezed,
+    Object? noItemsDetected = null,
   }) {
     return _then(_value.copyWith(
       isScanning: null == isScanning
           ? _value.isScanning
           : isScanning // ignore: cast_nullable_to_non_nullable
               as bool,
+      extractedRawText: freezed == extractedRawText
+          ? _value.extractedRawText
+          : extractedRawText // ignore: cast_nullable_to_non_nullable
+              as String?,
       scannedItems: null == scannedItems
           ? _value.scannedItems
           : scannedItems // ignore: cast_nullable_to_non_nullable
               as List<GroceryItem>,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
               as String?,
+      noItemsDetected: null == noItemsDetected
+          ? _value.noItemsDetected
+          : noItemsDetected // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -76,7 +103,12 @@ abstract class _$$GroceryOCRStateImplCopyWith<$Res>
       __$$GroceryOCRStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isScanning, List<GroceryItem> scannedItems, String? error});
+  $Res call(
+      {bool isScanning,
+      String? extractedRawText,
+      List<GroceryItem> scannedItems,
+      String? errorMessage,
+      bool noItemsDetected});
 }
 
 /// @nodoc
@@ -91,22 +123,32 @@ class __$$GroceryOCRStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isScanning = null,
+    Object? extractedRawText = freezed,
     Object? scannedItems = null,
-    Object? error = freezed,
+    Object? errorMessage = freezed,
+    Object? noItemsDetected = null,
   }) {
     return _then(_$GroceryOCRStateImpl(
       isScanning: null == isScanning
           ? _value.isScanning
           : isScanning // ignore: cast_nullable_to_non_nullable
               as bool,
+      extractedRawText: freezed == extractedRawText
+          ? _value.extractedRawText
+          : extractedRawText // ignore: cast_nullable_to_non_nullable
+              as String?,
       scannedItems: null == scannedItems
           ? _value._scannedItems
           : scannedItems // ignore: cast_nullable_to_non_nullable
               as List<GroceryItem>,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
               as String?,
+      noItemsDetected: null == noItemsDetected
+          ? _value.noItemsDetected
+          : noItemsDetected // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -116,14 +158,25 @@ class __$$GroceryOCRStateImplCopyWithImpl<$Res>
 class _$GroceryOCRStateImpl implements _GroceryOCRState {
   const _$GroceryOCRStateImpl(
       {this.isScanning = false,
+      this.extractedRawText,
       final List<GroceryItem> scannedItems = const [],
-      this.error})
+      this.errorMessage,
+      this.noItemsDetected = false})
       : _scannedItems = scannedItems;
 
+  /// Whether OCR is currently processing
   @override
   @JsonKey()
   final bool isScanning;
+
+  /// Raw text extracted from OCR (kept for fallback/manual editing)
+  @override
+  final String? extractedRawText;
+
+  /// Parsed grocery items from OCR
   final List<GroceryItem> _scannedItems;
+
+  /// Parsed grocery items from OCR
   @override
   @JsonKey()
   List<GroceryItem> get scannedItems {
@@ -132,12 +185,19 @@ class _$GroceryOCRStateImpl implements _GroceryOCRState {
     return EqualUnmodifiableListView(_scannedItems);
   }
 
+  /// Error message to display to user (recoverable errors)
   @override
-  final String? error;
+  final String? errorMessage;
+
+  /// Whether the OCR completed but found no items
+  /// This is different from an error - the scan worked but parsing failed
+  @override
+  @JsonKey()
+  final bool noItemsDetected;
 
   @override
   String toString() {
-    return 'GroceryOCRState(isScanning: $isScanning, scannedItems: $scannedItems, error: $error)';
+    return 'GroceryOCRState(isScanning: $isScanning, extractedRawText: $extractedRawText, scannedItems: $scannedItems, errorMessage: $errorMessage, noItemsDetected: $noItemsDetected)';
   }
 
   @override
@@ -147,14 +207,24 @@ class _$GroceryOCRStateImpl implements _GroceryOCRState {
             other is _$GroceryOCRStateImpl &&
             (identical(other.isScanning, isScanning) ||
                 other.isScanning == isScanning) &&
+            (identical(other.extractedRawText, extractedRawText) ||
+                other.extractedRawText == extractedRawText) &&
             const DeepCollectionEquality()
                 .equals(other._scannedItems, _scannedItems) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.noItemsDetected, noItemsDetected) ||
+                other.noItemsDetected == noItemsDetected));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isScanning,
-      const DeepCollectionEquality().hash(_scannedItems), error);
+  int get hashCode => Object.hash(
+      runtimeType,
+      isScanning,
+      extractedRawText,
+      const DeepCollectionEquality().hash(_scannedItems),
+      errorMessage,
+      noItemsDetected);
 
   @JsonKey(ignore: true)
   @override
@@ -167,15 +237,32 @@ class _$GroceryOCRStateImpl implements _GroceryOCRState {
 abstract class _GroceryOCRState implements GroceryOCRState {
   const factory _GroceryOCRState(
       {final bool isScanning,
+      final String? extractedRawText,
       final List<GroceryItem> scannedItems,
-      final String? error}) = _$GroceryOCRStateImpl;
+      final String? errorMessage,
+      final bool noItemsDetected}) = _$GroceryOCRStateImpl;
 
   @override
+
+  /// Whether OCR is currently processing
   bool get isScanning;
   @override
+
+  /// Raw text extracted from OCR (kept for fallback/manual editing)
+  String? get extractedRawText;
+  @override
+
+  /// Parsed grocery items from OCR
   List<GroceryItem> get scannedItems;
   @override
-  String? get error;
+
+  /// Error message to display to user (recoverable errors)
+  String? get errorMessage;
+  @override
+
+  /// Whether the OCR completed but found no items
+  /// This is different from an error - the scan worked but parsing failed
+  bool get noItemsDetected;
   @override
   @JsonKey(ignore: true)
   _$$GroceryOCRStateImplCopyWith<_$GroceryOCRStateImpl> get copyWith =>
