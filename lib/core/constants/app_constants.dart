@@ -4,6 +4,7 @@ class AppConstants {
   static const String settingsBoxName = 'settings_box';
   static const String budgetBoxName = 'budget_box';
   static const String scheduledExpensesBoxName = 'scheduled_expenses_box';
+  static const String insightsBoxName = 'insights_box';
 
   // Date Formats
   static const String displayDateFormat = 'MMM d, y';

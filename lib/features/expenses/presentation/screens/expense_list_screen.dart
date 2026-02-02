@@ -5,6 +5,7 @@ import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/widgets/expense_widgets.dart';
 import 'package:smart_expense_tracker/features/quick_expense/presentation/widgets/quick_expense_sheet.dart';
+import 'package:smart_expense_tracker/features/spending_intelligence/presentation/widgets/smart_insights_section.dart';
 
 class ExpenseListScreen extends ConsumerStatefulWidget {
   const ExpenseListScreen({super.key});
@@ -75,76 +76,88 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
             ),
         ],
       ),
-      body: groupedExpenses.isEmpty
-          ? const Center(child: Text('No matching expenses found'))
-          : ListView.builder(
+      body: CustomScrollView(
+        slivers: [
+          const SliverToBoxAdapter(child: SmartInsightsSection()),
+          if (groupedExpenses.isEmpty)
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: Text('No matching expenses found')),
+            )
+          else
+            SliverPadding(
               padding: const EdgeInsets.only(bottom: 80),
-              itemCount: groupedExpenses.length,
-              itemBuilder: (context, index) {
-                final dateKey = groupedExpenses.keys.elementAt(index);
-                final expenses = groupedExpenses[dateKey]!;
-                final dateTotal = expenses.fold(
-                  0.0,
-                  (sum, e) => sum + e.amount,
-                );
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final dateKey = groupedExpenses.keys.elementAt(index);
+                  final expenses = groupedExpenses[dateKey]!;
+                  final dateTotal = expenses.fold(
+                    0.0,
+                    (sum, e) => sum + e.amount,
+                  );
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            dateKey,
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
-                          ),
-                          Text(
-                            CurrencyUtils.formatAmount(dateTotal),
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ...expenses.map(
-                      (e) => ExpenseCard(
-                        id: e.id,
-                        amount: e.amount,
-                        category: e.category,
-                        date: e.date,
-                        note: e.note,
-                        onEdit: () => context.pushNamed(
-                          'edit-expense',
-                          pathParameters: {'id': e.id},
-                          extra: {
-                            'amount': e.amount,
-                            'category': e.category,
-                            'date': e.date.millisecondsSinceEpoch,
-                            'note': e.note,
-                            'metadata': e.metadata,
-                          },
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              dateKey,
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                            ),
+                            Text(
+                              CurrencyUtils.formatAmount(dateTotal),
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
                         ),
-                        onDelete: () => ref
-                            .read(expensesProvider.notifier)
-                            .deleteExpense(e.id),
                       ),
-                    ),
-                  ],
-                );
-              },
+                      ...expenses.map(
+                        (e) => ExpenseCard(
+                          id: e.id,
+                          amount: e.amount,
+                          category: e.category,
+                          date: e.date,
+                          note: e.note,
+                          onEdit: () => context.pushNamed(
+                            'edit-expense',
+                            pathParameters: {'id': e.id},
+                            extra: {
+                              'amount': e.amount,
+                              'category': e.category,
+                              'date': e.date.millisecondsSinceEpoch,
+                              'note': e.note,
+                              'metadata': e.metadata,
+                            },
+                          ),
+                          onDelete: () => ref
+                              .read(expensesProvider.notifier)
+                              .deleteExpense(e.id),
+                        ),
+                      ),
+                    ],
+                  );
+                }, childCount: groupedExpenses.length),
+              ),
             ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddOptions(context),
         tooltip: 'Add Expense',
