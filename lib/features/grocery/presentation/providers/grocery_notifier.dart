@@ -2,19 +2,37 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../domain/entities/grocery_item.dart';
+import '../../data/local/grocery_preferences_local_data_source.dart';
 import 'grocery_state.dart';
 
 part 'grocery_notifier.g.dart';
+
+/// Provider for Grocery Preferences Data Source
+final groceryPreferencesDataSourceProvider = Provider((ref) {
+  final dataSource = GroceryPreferencesLocalDataSource();
+  dataSource.init();
+  return dataSource;
+});
 
 @riverpod
 class GroceryNotifier extends _$GroceryNotifier {
   @override
   GrocerySessionState build() {
-    return const GrocerySessionState();
+    // Initialize with last store name if preference is enabled
+    final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
+    final preferences = prefsDataSource.getPreferences();
+    
+    return GrocerySessionState(
+      storeName: preferences.saveLastStore ? preferences.lastStoreName : '',
+    );
   }
 
   void updateStoreName(String name) {
     state = state.copyWith(storeName: name);
+    
+    // Save to preferences if enabled
+    final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
+    prefsDataSource.updateLastStoreName(name);
   }
 
   void addItem(String name, double price) {
@@ -31,6 +49,10 @@ class GroceryNotifier extends _$GroceryNotifier {
       items: updatedList,
       totalAmount: _calculateTotal(updatedList),
     );
+    
+    // Track frequent items
+    final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
+    prefsDataSource.addItemToFrequent(name);
   }
 
   void addItems(List<GroceryItem> newItems) {
@@ -114,5 +136,16 @@ class GroceryNotifier extends _$GroceryNotifier {
 
   double _calculateTotal(List<GroceryItem> items) {
     return items.fold(0.0, (sum, item) => sum + item.price);
+  }
+
+  /// Get suggested items based on user preferences
+  List<String> getSuggestedItems() {
+    final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
+    return prefsDataSource.getSuggestedItems();
+  }
+
+  /// Reset grocery session state
+  void resetSession() {
+    state = const GrocerySessionState();
   }
 }
