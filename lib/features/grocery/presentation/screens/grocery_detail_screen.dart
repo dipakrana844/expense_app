@@ -1,111 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:smart_expense_tracker/core/utils/utils.dart';
 import '../../../expenses/domain/entities/expense_entity.dart';
-import '../../core/grocery_theme.dart';
 
-/// Grocery Expense Detail Screen
-///
-/// Displays detailed breakdown of grocery expenses including:
-/// - Store name
-/// - Itemized list with prices
-/// - Total amount and item count
-/// - Gracefully handles legacy expenses without metadata
 class GroceryDetailScreen extends ConsumerWidget {
   final ExpenseEntity expense;
 
-  const GroceryDetailScreen({
-    super.key,
-    required this.expense,
-  });
+  const GroceryDetailScreen({super.key, required this.expense});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currencyFormat = NumberFormat.simpleCurrency(
-      locale: 'en_IN',
-      decimalDigits: 2,
-    );
-
     // Extract grocery metadata
     final metadata = expense.metadata;
     final storeName = metadata?['storeName'] as String?;
-    final items = (metadata?['items'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
-    
+    final items =
+        (metadata?['items'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ??
+        [];
+
     // Calculate derived values
     final itemCount = items.length;
     final hasMetadata = storeName != null || items.isNotEmpty;
 
     return Scaffold(
-      appBar: GroceryTheme.getAppBar(context, 'Grocery Details'),
+      appBar: AppBar(title: const Text('Grocery Details')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header Card with Summary
-            _buildSummaryCard(storeName, itemCount, currencyFormat),
-            
+            _buildSummaryCard(context, storeName, itemCount),
+
             const SizedBox(height: 24),
-            
+
             // Items Section
             if (hasMetadata) ...[
-              _buildItemsSection(items, currencyFormat),
+              _buildItemsSection(context, items),
               const SizedBox(height: 24),
             ] else ...[
-              _buildLegacyFallback(currencyFormat),
+              _buildLegacyFallback(context),
               const SizedBox(height: 24),
             ],
-            
+
             // Expense Metadata
-            _buildExpenseMetadata(currencyFormat),
+            _buildExpenseMetadata(context),
           ],
         ),
       ),
     );
   }
 
-  /// Build summary card showing store, items count, and total
-  Widget _buildSummaryCard(String? storeName, int itemCount, NumberFormat currencyFormat) {
+  Widget _buildSummaryCard(
+    BuildContext context,
+    String? storeName,
+    int itemCount,
+  ) {
     return Card(
-      color: GroceryTheme.cardBackgroundColor,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      elevation: 0,
+      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (storeName != null) ...[
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.store,
-                    color: GroceryTheme.primaryColor,
-                    size: 20,
+                    Icons.store_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 24,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     storeName,
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: GroceryTheme.textColor,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
             ],
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem('Items', '$itemCount', Icons.shopping_basket),
                 _buildStatItem(
-                  'Total', 
-                  currencyFormat.format(expense.amount), 
-                  Icons.attach_money
+                  context,
+                  'Items',
+                  '$itemCount',
+                  Icons.shopping_basket_outlined,
+                ),
+                _buildStatItem(
+                  context,
+                  'Total',
+                  CurrencyUtils.formatAmount(expense.amount),
+                  Icons.receipt_long_outlined,
                 ),
               ],
             ),
@@ -115,251 +109,221 @@ class GroceryDetailScreen extends ConsumerWidget {
     );
   }
 
-  /// Build individual stat item
-  Widget _buildStatItem(String label, String value, IconData icon) {
+  Widget _buildStatItem(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: GroceryTheme.primaryColor,
-          size: 28,
-        ),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
         const SizedBox(height: 8),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: GroceryTheme.primaryColor,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: GroceryTheme.hintColor,
-            fontWeight: FontWeight.w500,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
       ],
     );
   }
 
-  /// Build items section with list
-  Widget _buildItemsSection(List<Map<String, dynamic>> items, NumberFormat currencyFormat) {
+  Widget _buildItemsSection(
+    BuildContext context,
+    List<Map<String, dynamic>> items,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Purchased Items',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: GroceryTheme.textColor,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Text(
+            'PURCHASED ITEMS',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
-        const SizedBox(height: 12),
-        Card(
-          color: Colors.white,
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            children: [
-              for (int i = 0; i < items.length; i++) ...[
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  leading: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: GroceryTheme.primaryColor.withOpacity(0.1),
-                    child: Icon(
-                      Icons.local_grocery_store,
-                      color: GroceryTheme.primaryColor,
-                      size: 18,
-                    ),
-                  ),
-                  title: Text(
-                    items[i]['name'] as String? ?? 'Unknown Item',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                  ),
-                  trailing: Text(
-                    currencyFormat.format(
-                      (items[i]['price'] as num?)?.toDouble() ?? 0.0,
-                    ),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: GroceryTheme.primaryColor,
-                    ),
+        const SizedBox(height: 8),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
+          itemBuilder: (context, i) {
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outlineVariant.withOpacity(0.5),
+                ),
+              ),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withOpacity(0.1),
+                  child: Icon(
+                    Icons.shopping_bag_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
                   ),
                 ),
-                if (i < items.length - 1)
-                  const Divider(height: 1, indent: 72),
-              ],
-            ],
-          ),
+                title: Text(
+                  items[i]['name'] as String? ?? 'Unknown Item',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                trailing: Text(
+                  CurrencyUtils.formatAmount(
+                    (items[i]['price'] as num?)?.toDouble() ?? 0.0,
+                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
   }
 
-  /// Build fallback for legacy expenses without grocery metadata
-  Widget _buildLegacyFallback(NumberFormat currencyFormat) {
+  Widget _buildLegacyFallback(BuildContext context) {
     return Card(
-      color: GroceryTheme.lightBackgroundColor,
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             Icon(
               Icons.info_outline,
               size: 48,
-              color: GroceryTheme.hintColor,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
             Text(
-              'Detailed item information not available',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: GroceryTheme.textColor,
-              ),
+              'Detailed info not available',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'This expense was recorded before detailed grocery tracking was enabled.',
-              style: TextStyle(
-                fontSize: 14,
-                color: GroceryTheme.hintColor,
+              'This expense was recorded without itemized tracking.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: GroceryTheme.primaryColor.withOpacity(0.2),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.money,
-                    color: GroceryTheme.primaryColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Amount: ${currencyFormat.format(expense.amount)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: GroceryTheme.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  /// Build expense metadata section
-  Widget _buildExpenseMetadata(NumberFormat currencyFormat) {
-    final dateFormat = DateFormat('MMM d, yyyy \'at\' h:mm a');
-    
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Expense Details',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: GroceryTheme.textColor,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildMetadataRow('Category', expense.category, Icons.category),
-            _buildMetadataRow(
-              'Date', 
-              dateFormat.format(expense.date), 
-              Icons.calendar_today
-            ),
-            if (expense.note != null)
-              _buildMetadataRow('Note', expense.note!, Icons.note),
-            _buildMetadataRow(
-              'Recorded', 
-              dateFormat.format(expense.createdAt), 
-              Icons.access_time
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget _buildExpenseMetadata(BuildContext context) {
+    final dateFormat = DateFormat('MMM d, yyyy');
+    final timeFormat = DateFormat('h:mm a');
 
-  /// Build individual metadata row
-  Widget _buildMetadataRow(String label, String value, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: GroceryTheme.hintColor,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Text(
+            'EXPENSE DETAILS',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: GroceryTheme.hintColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+        ),
+        const SizedBox(height: 8),
+        Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.5),
+            ),
+          ),
+          child: Column(
+            children: [
+              _buildMetadataTile(
+                context,
+                'Category',
+                expense.category,
+                Icons.category_outlined,
+              ),
+              const Divider(height: 1, indent: 56),
+              _buildMetadataTile(
+                context,
+                'Date',
+                '${dateFormat.format(expense.date)} at ${timeFormat.format(expense.date)}',
+                Icons.calendar_today_outlined,
+              ),
+              if (expense.note != null && expense.note!.isNotEmpty) ...[
+                const Divider(height: 1, indent: 56),
+                _buildMetadataTile(
+                  context,
+                  'Note',
+                  expense.note!,
+                  Icons.note_outlined,
                 ),
               ],
-            ),
+            ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetadataTile(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+      ),
+      title: Text(
+        label,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        ),
+      ),
+      subtitle: Text(
+        value,
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
       ),
     );
   }

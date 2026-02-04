@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:smart_expense_tracker/core/utils/utils.dart';
+import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
 import '../providers/grocery_notifier.dart';
 import '../providers/grocery_state.dart';
 import '../../domain/entities/grocery_item.dart';
-import '../../core/grocery_theme.dart';
 
 class GrocerySessionScreen extends ConsumerStatefulWidget {
   const GrocerySessionScreen({super.key});
@@ -22,6 +22,18 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
   final _itemNameFocus = FocusNode();
   final _itemPriceFocus = FocusNode();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize store name if not already set
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = ref.read(groceryNotifierProvider);
+      if (state.storeName != null) {
+        _storeNameController.text = state.storeName!;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -51,37 +63,31 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(groceryNotifierProvider);
-    final currencyFormat = NumberFormat.simpleCurrency(
-      locale: 'en_IN',
-      decimalDigits: 2,
-    );
+    final settings = ref.watch(appSettingsNotifierProvider);
 
     return Scaffold(
-      appBar: GroceryTheme.getAppBar(context, 'New Grocery Session'),
+      appBar: AppBar(title: const Text('New Grocery Session')),
       body: Column(
         children: [
           // Sticky Header - Store Info
           _buildStickyHeader(state),
-          
+
           // Item List (Expanded)
-          Expanded(
-            child: _buildItemList(state, currencyFormat),
-          ),
-          
+          Expanded(child: _buildItemList(state)),
+
           // Sticky Footer - Total and Actions
-          _buildStickyFooter(state, currencyFormat),
+          _buildStickyFooter(state, settings.confirmBeforeGrocerySubmit),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Navigate to OCR Scan
-          context.pushNamed('grocery-ocr');
-        },
-        icon: const Icon(Icons.document_scanner_outlined),
-        label: const Text('Scan Receipt'),
-        backgroundColor: GroceryTheme.primaryColor,
-        foregroundColor: Colors.white,
-      ),
+      floatingActionButton: settings.enableGroceryOCR
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                context.pushNamed('grocery-ocr');
+              },
+              icon: const Icon(Icons.document_scanner_outlined),
+              label: const Text('Scan Receipt'),
+            )
+          : null,
     );
   }
 
@@ -149,15 +155,16 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
     );
   }
 
-  /// Build sticky header with store info and add item form
   Widget _buildStickyHeader(GrocerySessionState state) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: GroceryTheme.cardBackgroundColor,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: GroceryTheme.primaryColor.withOpacity(0.2),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withOpacity(0.5),
             width: 1,
           ),
         ),
@@ -169,12 +176,10 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
             controller: _storeNameController,
             decoration: const InputDecoration(
               labelText: 'Store Name (Optional)',
-              prefixIcon: Icon(Icons.store),
+              prefixIcon: Icon(Icons.store_outlined),
             ),
             onChanged: (value) {
-              ref
-                  .read(groceryNotifierProvider.notifier)
-                  .updateStoreName(value);
+              ref.read(groceryNotifierProvider.notifier).updateStoreName(value);
             },
           ),
           const SizedBox(height: 16),
@@ -183,14 +188,14 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
             child: Row(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: TextFormField(
                     controller: _itemNameController,
                     focusNode: _itemNameFocus,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Item Name',
-                      hintText: 'e.g., Milk, Bread...',
+                      hintText: 'Milk, Bread...',
                     ),
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_itemPriceFocus);
@@ -205,14 +210,14 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: TextFormField(
                     controller: _itemPriceController,
                     focusNode: _itemPriceFocus,
                     textInputAction: TextInputAction.done,
                     decoration: const InputDecoration(
                       labelText: 'Price',
-                      prefixText: '₹',
+                      prefixText: '₹ ',
                     ),
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
@@ -231,10 +236,7 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
                 const SizedBox(width: 12),
                 IconButton.filled(
                   onPressed: _addItem,
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  style: IconButton.styleFrom(
-                    backgroundColor: GroceryTheme.primaryColor,
-                  ),
+                  icon: const Icon(Icons.add),
                 ),
               ],
             ),
@@ -244,158 +246,157 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
     );
   }
 
-  /// Build item list with empty state
-  Widget _buildItemList(GrocerySessionState state, NumberFormat currencyFormat) {
+  Widget _buildItemList(GrocerySessionState state) {
     if (state.items.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.shopping_cart_outlined,
-              size: 64,
-              color: GroceryTheme.hintColor,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Your cart is empty',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: GroceryTheme.textColor,
-                fontWeight: FontWeight.w500,
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Your list is empty',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Add items using the form above or scan a receipt',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: GroceryTheme.hintColor,
+              const SizedBox(height: 12),
+              Text(
+                'Add items using the form above or scan a receipt to get started.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.4),
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: state.items.length,
-      separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final item = state.items[index];
-        return _buildGroceryItemTile(item, currencyFormat);
+        return _buildGroceryItemCard(item);
       },
     );
   }
 
-  /// Build individual grocery item tile with swipe actions
-  Widget _buildGroceryItemTile(GroceryItem item, NumberFormat currencyFormat) {
+  Widget _buildGroceryItemCard(GroceryItem item) {
     return Dismissible(
       key: ValueKey(item.id),
+      direction: DismissDirection.endToStart,
       background: Container(
-        color: GroceryTheme.errorColor,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 16),
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-      secondaryBackground: Container(
-        color: GroceryTheme.warningColor,
+        color: Theme.of(context).colorScheme.error,
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        child: const Icon(Icons.edit, color: Colors.white),
+        padding: const EdgeInsets.only(right: 24),
+        child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
-      direction: DismissDirection.horizontal,
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          // Left to right - Edit
-          _showEditItemDialog(context, item);
-          return false; // Don't dismiss
-        } else {
-          // Right to left - Delete
-          return await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Delete Item'),
-                  content: Text('Remove ${item.name} from your list?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
+      onDismissed: (direction) {
+        final removedItem = item;
+        ref.read(groceryNotifierProvider.notifier).removeItem(item.id);
+
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${removedItem.name} removed'),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                ref
+                    .read(groceryNotifierProvider.notifier)
+                    .addItem(removedItem.name, removedItem.price);
+              },
+            ),
+          ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: InkWell(
+          onTap: () => _showEditItemDialog(context, item),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Grocery Icon
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.shopping_bag_outlined,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // Item Name
+                Expanded(
+                  child: Text(
+                    item.name,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Delete'),
+                  ),
+                ),
+
+                // Price
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      CurrencyUtils.formatAmount(item.price),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      onPressed: () => _showEditItemDialog(context, item),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.4),
                     ),
                   ],
                 ),
-              ) ??
-              false;
-        }
-      },
-      onDismissed: (direction) {
-        if (direction == DismissDirection.endToStart) {
-          // Delete action
-          ref.read(groceryNotifierProvider.notifier).removeItem(item.id);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${item.name} removed'),
-              action: SnackBarAction(
-                label: 'Undo',
-                onPressed: () {
-                  ref.read(groceryNotifierProvider.notifier).addItem(item.name, item.price);
-                },
-              ),
-            ),
-          );
-        }
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        elevation: 1,
-        color: GroceryTheme.cardBackgroundColor,
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          leading: CircleAvatar(
-            backgroundColor: GroceryTheme.primaryColor.withOpacity(0.1),
-            child: Icon(
-              Icons.local_grocery_store,
-              color: GroceryTheme.primaryColor,
+              ],
             ),
           ),
-          title: Text(
-            item.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
-          ),
-          trailing: Text(
-            currencyFormat.format(item.price),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: GroceryTheme.primaryColor,
-            ),
-          ),
-          onTap: () => _showEditItemDialog(context, item),
         ),
       ),
     );
   }
 
-  /// Build sticky footer with totals and submit button
-  Widget _buildStickyFooter(GrocerySessionState state, NumberFormat currencyFormat) {
+  Widget _buildStickyFooter(GrocerySessionState state, bool confirmRequired) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withOpacity(0.5),
+            width: 1,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         child: Column(
@@ -404,68 +405,71 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Items: ${state.items.length}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: GroceryTheme.textColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Items',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    Text(
+                      '${state.items.length}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Total: ${currencyFormat.format(state.totalAmount)}',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: GroceryTheme.primaryColor,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Total Amount',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    Text(
+                      CurrencyUtils.formatAmount(state.totalAmount),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 56,
               child: FilledButton(
                 onPressed: (state.items.isEmpty || state.isSubmitting)
                     ? null
-                    : () async {
-                        try {
-                          await ref
-                              .read(groceryNotifierProvider.notifier)
-                              .submitSession();
-                          if (context.mounted) {
-                            context.pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Grocery session saved!'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: $e'),
-                                backgroundColor: GroceryTheme.errorColor,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                style: FilledButton.styleFrom(
-                  backgroundColor: GroceryTheme.primaryColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    : () => _handleCompletePurchase(confirmRequired),
                 child: state.isSubmitting
-                    ? const CircularProgressIndicator.adaptive(
-                        backgroundColor: Colors.white,
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Text(
                         'Complete Purchase',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ),
@@ -473,5 +477,49 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleCompletePurchase(bool confirmRequired) async {
+    if (confirmRequired) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Complete Purchase'),
+          content: const Text(
+            'Are you sure you want to save this grocery session?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+    }
+
+    try {
+      await ref.read(groceryNotifierProvider.notifier).submitSession();
+      if (mounted) {
+        context.pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Grocery session saved successfully!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
   }
 }

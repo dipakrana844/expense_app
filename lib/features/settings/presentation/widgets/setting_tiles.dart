@@ -28,10 +28,7 @@ class SettingSwitchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: icon != null
-          ? Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-            )
+          ? Icon(icon, color: Theme.of(context).colorScheme.primary)
           : null,
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
@@ -41,10 +38,7 @@ class SettingSwitchTile extends StatelessWidget {
               height: 24,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Switch(
-              value: value,
-              onChanged: onChanged,
-            ),
+          : Switch(value: value, onChanged: onChanged),
       onTap: isLoading || onChanged == null ? null : () => onChanged!(!value),
     );
   }
@@ -75,10 +69,7 @@ class SettingDropdownTile<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: icon != null
-          ? Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-            )
+          ? Icon(icon, color: Theme.of(context).colorScheme.primary)
           : null,
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
@@ -132,7 +123,8 @@ class SettingActionTile extends StatelessWidget {
           : null,
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
-      trailing: trailing ??
+      trailing:
+          trailing ??
           (isLoading
               ? const SizedBox(
                   width: 24,
@@ -168,7 +160,8 @@ class SettingInfoTile extends StatelessWidget {
       leading: icon != null
           ? Icon(
               icon,
-              color: iconColor ?? Theme.of(context).colorScheme.onSurfaceVariant,
+              color:
+                  iconColor ?? Theme.of(context).colorScheme.onSurfaceVariant,
             )
           : null,
       title: Text(title),
@@ -191,11 +184,7 @@ class SettingSectionHeader extends StatelessWidget {
   final String title;
   final EdgeInsetsGeometry? padding;
 
-  const SettingSectionHeader({
-    super.key,
-    required this.title,
-    this.padding,
-  });
+  const SettingSectionHeader({super.key, required this.title, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -203,10 +192,10 @@ class SettingSectionHeader extends StatelessWidget {
       padding: padding ?? const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Text(
         title.toUpperCase(),
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
           color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
+          letterSpacing: 1.1,
         ),
       ),
     );
@@ -228,30 +217,21 @@ class SettingGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          for (int i = 0; i < children.length; i++) ...[
-            children[i],
-            if (showDivider && i < children.length - 1)
-              Divider(
-                height: 1,
-                indent: 16,
-                endIndent: 16,
-                color: Theme.of(context).colorScheme.outlineVariant,
-              ),
-          ],
+    return Column(
+      children: [
+        for (int i = 0; i < children.length; i++) ...[
+          children[i],
+          if (showDivider && i < children.length - 1)
+            Divider(
+              height: 1,
+              indent: 56,
+              endIndent: 16,
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.5),
+            ),
         ],
-      ),
+      ],
     );
   }
 }

@@ -19,13 +19,11 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        // backgroundColor: Theme.of(context).colorScheme.primary,
-        // foregroundColor: Colors.white,
       ),
       body: ListView(
         children: [
           // Expense & Grocery Section
-          SettingSectionHeader(title: 'Expense & Grocery'),
+          const SettingSectionHeader(title: 'Expense & Grocery'),
           SettingGroup(
             children: [
               SettingDropdownTile<String>(
@@ -49,14 +47,22 @@ class SettingsScreen extends ConsumerWidget {
                 value: settings.defaultExpenseCategory,
                 items: const [
                   DropdownMenuItem(value: 'Grocery', child: Text('Grocery')),
-                  DropdownMenuItem(value: 'Food & Dining', child: Text('Food & Dining')),
-                  DropdownMenuItem(value: 'Transportation', child: Text('Transportation')),
+                  DropdownMenuItem(
+                    value: 'Food & Dining',
+                    child: Text('Food & Dining'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Transportation',
+                    child: Text('Transportation'),
+                  ),
                   DropdownMenuItem(value: 'Shopping', child: Text('Shopping')),
                   DropdownMenuItem(value: 'Others', child: Text('Others')),
                 ],
                 onChanged: (value) {
                   if (value != null) {
-                    settingsNotifier.updateSettings(defaultExpenseCategory: value);
+                    settingsNotifier.updateSettings(
+                      defaultExpenseCategory: value,
+                    );
                   }
                 },
               ),
@@ -82,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // Grocery Settings Section
-          SettingSectionHeader(title: 'Grocery Settings'),
+          const SettingSectionHeader(title: 'Grocery Settings'),
           SettingGroup(
             children: [
               SettingSwitchTile(
@@ -100,7 +106,9 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.lightbulb,
                 value: settings.showFrequentItemSuggestions,
                 onChanged: (value) {
-                  settingsNotifier.updateSettings(showFrequentItemSuggestions: value);
+                  settingsNotifier.updateSettings(
+                    showFrequentItemSuggestions: value,
+                  );
                 },
               ),
               SettingSwitchTile(
@@ -109,7 +117,9 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.clear,
                 value: settings.clearGrocerySessionOnExit,
                 onChanged: (value) {
-                  settingsNotifier.updateSettings(clearGrocerySessionOnExit: value);
+                  settingsNotifier.updateSettings(
+                    clearGrocerySessionOnExit: value,
+                  );
                 },
               ),
               SettingSwitchTile(
@@ -118,14 +128,16 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.check_circle,
                 value: settings.confirmBeforeGrocerySubmit,
                 onChanged: (value) {
-                  settingsNotifier.updateSettings(confirmBeforeGrocerySubmit: value);
+                  settingsNotifier.updateSettings(
+                    confirmBeforeGrocerySubmit: value,
+                  );
                 },
               ),
             ],
           ),
 
           // Smart Insights Section
-          SettingSectionHeader(title: 'Smart Insights'),
+          const SettingSectionHeader(title: 'Smart Insights'),
           SettingGroup(
             children: [
               SettingSwitchTile(
@@ -134,7 +146,9 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.auto_graph,
                 value: settings.enableSpendingIntelligence,
                 onChanged: (value) {
-                  settingsNotifier.updateSettings(enableSpendingIntelligence: value);
+                  settingsNotifier.updateSettings(
+                    enableSpendingIntelligence: value,
+                  );
                 },
               ),
               SettingDropdownTile<InsightFrequency>(
@@ -143,9 +157,18 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.update,
                 value: settings.insightFrequency,
                 items: const [
-                  DropdownMenuItem(value: InsightFrequency.daily, child: Text('Daily')),
-                  DropdownMenuItem(value: InsightFrequency.weekly, child: Text('Weekly')),
-                  DropdownMenuItem(value: InsightFrequency.monthly, child: Text('Monthly')),
+                  DropdownMenuItem(
+                    value: InsightFrequency.daily,
+                    child: Text('Daily'),
+                  ),
+                  DropdownMenuItem(
+                    value: InsightFrequency.weekly,
+                    child: Text('Weekly'),
+                  ),
+                  DropdownMenuItem(
+                    value: InsightFrequency.monthly,
+                    child: Text('Monthly'),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -158,13 +181,14 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: 'Clear all collected insight data',
                 icon: Icons.restart_alt,
                 iconColor: Colors.red,
-                onPressed: () => _showResetInsightsDialog(context, settingsNotifier),
+                onPressed: () =>
+                    _showResetInsightsDialog(context, settingsNotifier),
               ),
             ],
           ),
 
           // Security Section
-          SettingSectionHeader(title: 'Security'),
+          const SettingSectionHeader(title: 'Security'),
           SettingGroup(
             children: [
               SettingSwitchTile(
@@ -174,7 +198,6 @@ class SettingsScreen extends ConsumerWidget {
                 value: settings.enableAppLock,
                 onChanged: (value) {
                   if (value) {
-                    // Handle biometric authentication asynchronously
                     _handleAppLockToggle(context, settingsNotifier, value);
                   } else {
                     settingsNotifier.updateSettings(enableAppLock: value);
@@ -187,16 +210,27 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.timer,
                 value: settings.autoLockTimer,
                 items: const [
-                  DropdownMenuItem(value: AutoLockTimer.immediate, child: Text('Immediate')),
-                  DropdownMenuItem(value: AutoLockTimer.thirtySeconds, child: Text('30 Seconds')),
-                  DropdownMenuItem(value: AutoLockTimer.oneMinute, child: Text('1 Minute')),
-                  DropdownMenuItem(value: AutoLockTimer.fiveMinutes, child: Text('5 Minutes')),
+                  DropdownMenuItem(
+                    value: AutoLockTimer.immediate,
+                    child: Text('Immediate'),
+                  ),
+                  DropdownMenuItem(
+                    value: AutoLockTimer.thirtySeconds,
+                    child: Text('30 Seconds'),
+                  ),
+                  DropdownMenuItem(
+                    value: AutoLockTimer.oneMinute,
+                    child: Text('1 Minute'),
+                  ),
+                  DropdownMenuItem(
+                    value: AutoLockTimer.fiveMinutes,
+                    child: Text('5 Minutes'),
+                  ),
                 ],
                 onChanged: settings.enableAppLock
                     ? (value) {
                         if (value != null) {
-                          // Update settings asynchronously
-                          Future.microtask(() => settingsNotifier.updateSettings(autoLockTimer: value));
+                          settingsNotifier.updateSettings(autoLockTimer: value);
                         }
                       }
                     : null,
@@ -208,8 +242,7 @@ class SettingsScreen extends ConsumerWidget {
                 value: settings.requireAuthOnLaunch,
                 onChanged: settings.enableAppLock
                     ? (value) {
-                        // Update settings asynchronously
-                        Future.microtask(() => settingsNotifier.updateSettings(requireAuthOnLaunch: value));
+                        settingsNotifier.updateSettings(requireAuthOnLaunch: value);
                       }
                     : null,
               ),
@@ -217,7 +250,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // Data & Storage Section
-          SettingSectionHeader(title: 'Data & Storage'),
+          const SettingSectionHeader(title: 'Data & Storage'),
           SettingGroup(
             children: [
               SettingActionTile(
@@ -251,7 +284,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // About Section
-          SettingSectionHeader(title: 'About'),
+          const SettingSectionHeader(title: 'About'),
           SettingGroup(
             children: [
               const SettingInfoTile(
@@ -264,14 +297,15 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: 'Restore all settings to default values',
                 icon: Icons.settings_backup_restore,
                 iconColor: Colors.orange,
-                onPressed: () => _showResetSettingsDialog(context, settingsNotifier),
+                onPressed: () =>
+                    _showResetSettingsDialog(context, settingsNotifier),
               ),
             ],
           ),
 
           // Debug Section (only in debug mode)
           if (kDebugMode) ...[
-            SettingSectionHeader(title: 'Debug'),
+            const SettingSectionHeader(title: 'Debug'),
             SettingGroup(
               children: [
                 SettingActionTile(
@@ -293,17 +327,18 @@ class SettingsScreen extends ConsumerWidget {
 
   // Helper Methods
 
-  void _handleAppLockToggle(BuildContext context, AppSettingsNotifier settingsNotifier, bool value) {
-    // Handle biometric authentication asynchronously
+  void _handleAppLockToggle(
+    BuildContext context,
+    AppSettingsNotifier settingsNotifier,
+    bool value,
+  ) {
     Future.microtask(() async {
       final success = await SecurityService().authenticate();
       if (success && context.mounted) {
         settingsNotifier.updateSettings(enableAppLock: value);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Biometric authentication enabled')),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Biometric authentication enabled')),
+        );
       } else if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Authentication failed')),
@@ -317,11 +352,9 @@ class SettingsScreen extends ConsumerWidget {
     if (expensesAsync.hasValue && expensesAsync.value!.isNotEmpty) {
       try {
         await ExportService.exportExpensesToCSV(expensesAsync.value!);
-        
-        // Update last export date
         final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
         await settingsNotifier.updateLastExportDate(DateTime.now());
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -373,7 +406,10 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showResetSettingsDialog(BuildContext context, AppSettingsNotifier settingsNotifier) {
+  void _showResetSettingsDialog(
+    BuildContext context,
+    AppSettingsNotifier settingsNotifier,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -422,9 +458,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               Navigator.pop(context);
               // TODO: Implement data clearing logic
@@ -444,7 +478,10 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showResetInsightsDialog(BuildContext context, AppSettingsNotifier settingsNotifier) {
+  void _showResetInsightsDialog(
+    BuildContext context,
+    AppSettingsNotifier settingsNotifier,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -459,9 +496,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               Navigator.pop(context);
               // TODO: Implement insights data reset
@@ -489,18 +524,5 @@ class SettingsScreen extends ConsumerWidget {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-  }
-
-  Widget _buildSectionHeader(BuildContext context, String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
-import '../../../expenses/presentation/providers/expense_providers.dart';
-import '../../domain/entities/grocery_item.dart';
-import '../../data/local/grocery_preferences_local_data_source.dart';
+import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
+import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
+import 'package:smart_expense_tracker/features/grocery/domain/entities/grocery_item.dart';
+import 'package:smart_expense_tracker/features/grocery/data/local/grocery_preferences_local_data_source.dart';
 import 'grocery_state.dart';
 
 part 'grocery_notifier.g.dart';
@@ -18,21 +19,25 @@ final groceryPreferencesDataSourceProvider = Provider((ref) {
 class GroceryNotifier extends _$GroceryNotifier {
   @override
   GrocerySessionState build() {
-    // Initialize with last store name if preference is enabled
+    // Read global settings
+    final settings = ref.watch(appSettingsNotifierProvider);
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
     final preferences = prefsDataSource.getPreferences();
-    
+
     return GrocerySessionState(
-      storeName: preferences.saveLastStore ? preferences.lastStoreName : '',
+      storeName: settings.saveLastStoreName ? preferences.lastStoreName : '',
     );
   }
 
   void updateStoreName(String name) {
     state = state.copyWith(storeName: name);
-    
-    // Save to preferences if enabled
-    final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
-    prefsDataSource.updateLastStoreName(name);
+
+    // Save to preferences if enabled in global settings
+    final settings = ref.read(appSettingsNotifierProvider);
+    if (settings.saveLastStoreName) {
+      final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
+      prefsDataSource.updateLastStoreName(name);
+    }
   }
 
   void addItem(String name, double price) {
@@ -49,17 +54,17 @@ class GroceryNotifier extends _$GroceryNotifier {
       items: updatedList,
       totalAmount: _calculateTotal(updatedList),
     );
-    
-    // Track frequent items
-    final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
-    prefsDataSource.addItemToFrequent(name);
+
+    // Track frequent items if enabled in global settings
+    final settings = ref.read(appSettingsNotifierProvider);
+    if (settings.showFrequentItemSuggestions) {
+      final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
+      prefsDataSource.addItemToFrequent(name);
+    }
   }
 
   void addItems(List<GroceryItem> newItems) {
     if (newItems.isEmpty) return;
-
-    // Assign new IDs if necessary or trust incoming (OCR generates IDs)
-    // Here we assume OCR IDs are temporary but valid UUIDs.
 
     final updatedList = [...state.items, ...newItems];
     state = state.copyWith(
@@ -108,6 +113,7 @@ class GroceryNotifier extends _$GroceryNotifier {
 
       // Create metadata logic
       final metadata = {
+        'storeName': storeName, // Added storeName to metadata for detail screen
         'numberOfItems': state.items.length,
         'items': state.items
             .map((e) => {'name': e.name, 'price': e.price})
@@ -124,11 +130,7 @@ class GroceryNotifier extends _$GroceryNotifier {
 
       // On success, clear state
       state = const GrocerySessionState();
-
-      // Navigation should be handled by the UI listener, or we can trigger a side effect.
-      // But typically state reset is enough here.
     } catch (e) {
-      // Handle error (maybe set an error state if I had one)
       state = state.copyWith(isSubmitting: false);
       rethrow;
     }
@@ -138,13 +140,15 @@ class GroceryNotifier extends _$GroceryNotifier {
     return items.fold(0.0, (sum, item) => sum + item.price);
   }
 
-  /// Get suggested items based on user preferences
+  /// Get suggested items based on global settings
   List<String> getSuggestedItems() {
+    final settings = ref.read(appSettingsNotifierProvider);
+    if (!settings.showFrequentItemSuggestions) return [];
+
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
     return prefsDataSource.getSuggestedItems();
   }
 
-  /// Reset grocery session state
   void resetSession() {
     state = const GrocerySessionState();
   }
