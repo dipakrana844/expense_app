@@ -8,6 +8,7 @@ import 'package:workmanager/workmanager.dart';
 import 'package:smart_expense_tracker/features/expenses/data/local/expense_local_data_source.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/data/datasources/spending_intelligence_local_data_source.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/data/repositories/spending_intelligence_repository_impl.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/data/local/daily_spend_local_data_source.dart';
 
 // Top-level function for background execution
 @pragma('vm:entry-point')
@@ -95,6 +96,17 @@ Future<void> _handleDailyCheck() async {
   } catch (e) {
     debugPrint('Failed to generate insights: $e');
   }
+
+  // 5. Reset Daily Spend Guard
+  try {
+    final dailySpendDataSource = DailySpendLocalDataSource();
+    await dailySpendDataSource.init();
+    await dailySpendDataSource.resetDailyState();
+    await dailySpendDataSource.close();
+    debugPrint('Daily Spend Guard reset completed');
+  } catch (e) {
+    debugPrint('Failed to reset Daily Spend Guard: $e');
+  }
 }
 
 bool isSameDay(DateTime a, DateTime b) {
@@ -103,6 +115,7 @@ bool isSameDay(DateTime a, DateTime b) {
 
 class BackgroundService {
   static const String taskDailyCheck = 'daily_expense_check';
+  static const String taskDailyReset = 'daily_spend_reset';
 
   static Future<void> initialize() async {
     await Workmanager().initialize(
@@ -121,6 +134,23 @@ class BackgroundService {
         requiresBatteryNotLow: true,
       ),
       existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+    );
+  }
+
+  static Future<void> scheduleMidnightReset() async {
+    // Schedule task to run at midnight
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final delay = tomorrow.difference(now);
+
+    await Workmanager().registerOneOffTask(
+      "midnight_reset",
+      taskDailyReset,
+      initialDelay: delay,
+      constraints: Constraints(
+        networkType: NetworkType.notRequired,
+      ),
+      existingWorkPolicy: ExistingWorkPolicy.replace,
     );
   }
 }

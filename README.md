@@ -6,6 +6,12 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 
 ## ✨ Key Features
 
+### 🛡️ Daily Spend Guard (NEW)
+- **Real-time Protection**: Know exactly how much you can spend TODAY with instant updates
+- **Smart Daily Limits**: Automatically calculated from monthly budget or 30-day average
+- **Emotional Clarity**: Color-coded status (🟢 Safe / 🟡 Caution / 🔴 Exceeded) for instant understanding
+- **Zero Setup**: Works automatically with your existing budget and expenses
+
 ### 🧠 AI Spending Intelligence
 
 - **Anomaly Detection**: Automatically identifies unusual spending patterns using statistical Z-Score analysis.
@@ -34,7 +40,7 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 
 - **Core**: [Flutter](https://flutter.dev) (Latest Stable)
 - **Architecture**: Clean Architecture (Feature-driven)
-- **State Management**: [Riverpod 2.x](https://riverpod.dev) with Code Generation
+- **State Management**: [Riverpod 3.x](https://riverpod.dev) with Code Generation
 - **Local Storage**: [Hive](https://pub.dev/packages/hive) (Fast NoSQL)
 - **Navigation**: [GoRouter](https://pub.dev/packages/go_router) (Declarative Routing)
 - **AI/ML**: Google ML Kit (Text Recognition)
@@ -79,6 +85,7 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 lib/
 ├── core/               # Shared utilities, routing, and global services
 ├── features/
+│   ├── daily_spend_guard/ # NEW: Real-time daily spending protection
 │   ├── expenses/       # Core CRUD and recurring logic
 │   ├── spending_intelligence/ # AI engine and insight logic
 │   ├── ocr/            # Receipt scanning functionality

@@ -7,6 +7,7 @@ import 'package:smart_expense_tracker/features/expenses/presentation/widgets/exp
 import 'package:smart_expense_tracker/features/quick_expense/presentation/widgets/quick_expense_sheet.dart';
 import 'package:smart_expense_tracker/features/grocery/presentation/providers/grocery_notifier.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/presentation/widgets/smart_insights_section.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/presentation/widgets/daily_spend_card.dart';
 
 class ExpenseListScreen extends ConsumerStatefulWidget {
   const ExpenseListScreen({super.key});
@@ -79,6 +80,10 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
       ),
       body: CustomScrollView(
         slivers: [
+          // Daily Spend Guard Card - Always visible at top
+          const SliverToBoxAdapter(
+            child: DailySpendCard(showFullDetails: true),
+          ),
           const SliverToBoxAdapter(child: SmartInsightsSection()),
           if (groupedExpenses.isEmpty)
             const SliverFillRemaining(

@@ -9,6 +9,8 @@ import 'features/grocery/data/local/grocery_preferences_local_data_source.dart';
 import 'features/grocery/presentation/providers/grocery_notifier.dart';
 import 'features/settings/data/local/settings_local_data_source.dart';
 import 'features/settings/presentation/providers/settings_providers.dart';
+import 'features/daily_spend_guard/data/local/daily_spend_local_data_source.dart';
+import 'features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 
@@ -18,6 +20,7 @@ void main() async {
   // Initialize Background Service
   await BackgroundService.initialize();
   await BackgroundService.scheduleDailyJob();
+  await BackgroundService.scheduleMidnightReset();
 
   // Initialize Data Sources (Handles Hive initialization and adapters internally)
   final localDataSource = ExpenseLocalDataSource();
@@ -31,6 +34,10 @@ void main() async {
   final settingsDataSource = SettingsLocalDataSource();
   await settingsDataSource.init();
 
+  // Initialize Daily Spend Guard Data Source
+  final dailySpendDataSource = DailySpendLocalDataSource();
+  await dailySpendDataSource.init();
+
   // Open Budget Box
   await Hive.openBox(AppConstants.budgetBoxName);
 
@@ -42,6 +49,7 @@ void main() async {
           groceryPreferencesDataSource,
         ),
         settingsLocalDataSourceProvider.overrideWithValue(settingsDataSource),
+        dailySpendLocalDataSourceProvider.overrideWithValue(dailySpendDataSource),
       ],
       observers: const [LoggerObserver()],
       child: const SmartExpenseTrackerApp(),

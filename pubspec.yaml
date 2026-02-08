@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # State Management - Riverpod 2.x for reactive state management
+  # State Management - Riverpod 3.x for reactive state management
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
 

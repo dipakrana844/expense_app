@@ -6,6 +6,7 @@ import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/analytics/presentation/providers/analytics_providers.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/presentation/widgets/daily_spend_card.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -53,6 +54,10 @@ class AnalyticsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Daily Spend Guard Card - Always visible at top
+            const DailySpendCard(showFullDetails: false),
+            const SizedBox(height: 24),
+            
             // 1. Daily Snapshot
             _buildDailySnapshot(context, snapshot),
             const SizedBox(height: 24),
