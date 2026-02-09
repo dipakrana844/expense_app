@@ -145,7 +145,8 @@ class AddEditIncomeScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: state.source.isEmpty ? null : state.source,
+          key: ValueKey(state.source), // Force rebuild when source changes
+          value: state.source.trim().isEmpty ? null : state.source,
           onChanged: (String? newValue) {
             if (newValue != null) {
               notifier.setSource(newValue);
@@ -162,8 +163,7 @@ class AddEditIncomeScreen extends ConsumerWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            errorText:
-                state.source.isEmpty ? 'Please select an income source' : null,
+            errorText: state.source.trim().isEmpty ? 'Please select an income source' : null,
           ),
         ),
       ],

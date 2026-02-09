@@ -21,6 +21,11 @@ class MainLayout extends StatelessWidget {
             label: 'Expenses',
           ),
           NavigationDestination(
+            icon: Icon(Icons.payments_outlined),
+            selectedIcon: Icon(Icons.payments),
+            label: 'Income',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.pie_chart_outline),
             selectedIcon: Icon(Icons.pie_chart),
             label: 'Analytics',

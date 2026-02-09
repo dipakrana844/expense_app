@@ -77,6 +77,7 @@ class IncomeLocalDataSource {
   /// Add new income record
   /// Returns the created IncomeEntity
   Future<IncomeEntity> addIncome(IncomeEntity income) async {
+    _ensureInitialized();
     final incomeModel = IncomeModel.fromEntity(income);
     await _incomeBox.put(income.id, incomeModel);
     return income; // Return the entity version

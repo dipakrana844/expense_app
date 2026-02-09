@@ -10,6 +10,7 @@ import 'package:smart_expense_tracker/features/settings/presentation/screens/set
 import 'package:smart_expense_tracker/features/grocery/presentation/screens/grocery_session_screen.dart';
 import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan_screen.dart';
 import 'package:smart_expense_tracker/features/income/presentation/screens/add_edit_income_screen.dart';
+import 'package:smart_expense_tracker/features/income/presentation/screens/income_list_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -17,6 +18,9 @@ final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
 );
 final _shellNavigatorAnalyticsKey = GlobalKey<NavigatorState>(
   debugLabel: 'analytics',
+);
+final _shellNavigatorIncomeKey = GlobalKey<NavigatorState>(
+  debugLabel: 'income',
 );
 final _shellNavigatorBudgetKey = GlobalKey<NavigatorState>(
   debugLabel: 'budget',
@@ -86,6 +90,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: '/analytics',
                 name: 'analytics',
                 builder: (context, state) => const AnalyticsScreen(),
+              ),
+            ],
+          ),
+
+          // Branch Income
+          StatefulShellBranch(
+            navigatorKey: _shellNavigatorIncomeKey,
+            routes: [
+              GoRoute(
+                path: '/income',
+                name: 'income',
+                builder: (context, state) => const IncomeListScreen(),
               ),
             ],
           ),

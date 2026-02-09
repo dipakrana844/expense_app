@@ -229,7 +229,7 @@ class IncomeFormNotifier extends StateNotifier<IncomeFormState> {
         return;
       }
 
-      if (state.source.isEmpty) {
+      if (state.source.trim().isEmpty) {
         state = state.copyWith(
           isLoading: false,
           error: 'Please select an income source',
