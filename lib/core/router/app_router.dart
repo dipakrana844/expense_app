@@ -4,13 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_expense_tracker/core/presentation/screens/main_layout.dart';
 import 'package:smart_expense_tracker/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:smart_expense_tracker/features/budget/presentation/screens/budget_screen.dart';
-import 'package:smart_expense_tracker/features/expenses/presentation/screens/expense_list_screen.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/screens/add_edit_expense_screen.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:smart_expense_tracker/features/grocery/presentation/screens/grocery_session_screen.dart';
 import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan_screen.dart';
 import 'package:smart_expense_tracker/features/income/presentation/screens/add_edit_income_screen.dart';
-import 'package:smart_expense_tracker/features/income/presentation/screens/income_list_screen.dart';
+import 'package:smart_expense_tracker/features/transactions/presentation/screens/transactions_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -32,7 +31,7 @@ final _shellNavigatorSettingsKey = GlobalKey<NavigatorState>(
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/expenses',
+    initialLocation: '/transactions',
     debugLogDiagnostics: true,
     routes: [
       StatefulShellRoute.indexedStack(
@@ -45,9 +44,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             navigatorKey: _shellNavigatorExpenseKey,
             routes: [
               GoRoute(
-                path: '/expenses',
-                name: 'expenses',
-                builder: (context, state) => const ExpenseListScreen(),
+                path: '/transactions',
+                name: 'transactions',
+                builder: (context, state) => const TransactionsScreen(),
                 routes: [
                   GoRoute(
                     path: 'add',
@@ -95,16 +94,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
 
           // Branch Income
-          StatefulShellBranch(
-            navigatorKey: _shellNavigatorIncomeKey,
-            routes: [
-              GoRoute(
-                path: '/income',
-                name: 'income',
-                builder: (context, state) => const IncomeListScreen(),
-              ),
-            ],
-          ),
+          // StatefulShellBranch(
+          //   navigatorKey: _shellNavigatorIncomeKey,
+          //   routes: [
+          //     GoRoute(
+          //       path: '/income',
+          //       name: 'income',
+          //       builder: (context, state) => const TransactionsScreen(),
+          //     ),
+          //   ],
+          // ),
 
           // Branch Budget
           StatefulShellBranch(

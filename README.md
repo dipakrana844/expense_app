@@ -6,6 +6,14 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 
 ## ✨ Key Features
 
+### 📱 Modern Unified Transactions (NEW)
+- **Seamless Integration**: Single chronological view combining income and expenses naturally
+- **Power User Controls**: Instant filtering between All/Income/Expenses with segmented controls
+- **Smart Navigation**: Month-by-month browsing with Previous/Next/TODAY controls
+- **Real-time Summary**: Sticky financial overview showing Income/Expenses/Net balance
+- **Premium Design**: Dark-first fintech aesthetic with clear visual hierarchy
+- **Daily Usage Optimized**: Designed for heavy, real-world money tracking
+
 ### 🛡️ Daily Spend Guard (NEW)
 - **Real-time Protection**: Know exactly how much you can spend TODAY with instant updates
 - **Smart Daily Limits**: Automatically calculated from monthly budget or 30-day average
@@ -85,8 +93,10 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 lib/
 ├── core/               # Shared utilities, routing, and global services
 ├── features/
+│   ├── transactions/     # NEW: Unified income/expense tracking (default home screen)
 │   ├── daily_spend_guard/ # NEW: Real-time daily spending protection
 │   ├── expenses/       # Core CRUD and recurring logic
+│   ├── income/         # Income tracking and management
 │   ├── spending_intelligence/ # AI engine and insight logic
 │   ├── ocr/            # Receipt scanning functionality
 │   ├── grocery/        # specialized bulk entry mode

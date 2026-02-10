@@ -6,7 +6,9 @@ import 'package:smart_expense_tracker/features/income/presentation/providers/inc
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/algorithms/spending_algorithms.dart';
 import 'package:smart_expense_tracker/features/budget/presentation/providers/budget_providers.dart';
-import 'package:smart_expense_tracker/core/services/balance_service.dart';
+import 'package:smart_expense_tracker/core/services/balance_service.dart' hide FinancialHealth;
+import 'package:smart_expense_tracker/core/services/aggregation_service.dart';
+import 'package:smart_expense_tracker/core/services/financial_calculator.dart';
 
 /// Daily Snapshot Data
 class DailySnapshot {
@@ -39,6 +41,7 @@ class CategoryInsight {
 }
 
 /// Provider for Daily Snapshot
+/// Uses shared AggregationService for consistent calculations
 final dailySnapshotProvider = Provider<DailySnapshot>((ref) {
   final expensesAsync = ref.watch(expensesProvider);
   return expensesAsync.maybeWhen(
@@ -47,36 +50,24 @@ final dailySnapshotProvider = Provider<DailySnapshot>((ref) {
       final today = DateTime(now.year, now.month, now.day);
       final yesterday = today.subtract(const Duration(days: 1));
 
-      final todayTotal = expenses
-          .where(
-            (e) =>
-                e.date.year == today.year &&
-                e.date.month == today.month &&
-                e.date.day == today.day,
-          )
-          .fold(0.0, (sum, e) => sum + e.amount);
-
-      final yesterdayTotal = expenses
-          .where(
-            (e) =>
-                e.date.year == yesterday.year &&
-                e.date.month == yesterday.month &&
-                e.date.day == yesterday.day,
-          )
-          .fold(0.0, (sum, e) => sum + e.amount);
-
-      // Daily average this month (excluding today in count to be fair? or including?)
-      // User says "Daily average this month"
-      final currentMonthExpenses = expenses
-          .where((e) => e.date.year == now.year && e.date.month == now.month)
-          .toList();
-
-      final daysPassed = now.day;
-      final monthTotal = currentMonthExpenses.fold(
-        0.0,
-        (sum, e) => sum + e.amount,
+      // Use shared service for date filtering and calculations
+      final todayExpenses = AggregationService.filterByDateRange(
+        transactions: expenses,
+        start: today,
+        end: DateTime(now.year, now.month, now.day, 23, 59, 59),
       );
-      final dailyAverage = daysPassed > 0 ? monthTotal / daysPassed : 0.0;
+      
+      final yesterdayExpenses = AggregationService.filterByDateRange(
+        transactions: expenses,
+        start: yesterday,
+        end: today.subtract(const Duration(milliseconds: 1)),
+      );
+      
+      final todayTotal = AggregationService.calculateTotal(transactions: todayExpenses);
+      final yesterdayTotal = AggregationService.calculateTotal(transactions: yesterdayExpenses);
+      
+      // Use shared service for daily average calculation
+      final dailyAverage = AggregationService.calculateDailyAverage(transactions: expenses);
 
       double percentChange = 0;
       if (dailyAverage > 0) {
@@ -270,9 +261,8 @@ final financialAnalyticsProvider = Provider<FinancialAnalytics>((ref) {
           incomes: incomes.cast<IncomeEntity>(),
           expenses: expenses.cast<ExpenseEntity>(),
         );
-        final financialHealth = balanceService.getFinancialHealth(
-          incomes: incomes.cast<IncomeEntity>(),
-          expenses: expenses.cast<ExpenseEntity>(),
+        final financialHealth = FinancialCalculator.assessFinancialHealth(
+          transactions: [...incomes.cast(), ...expenses.cast()],
         );
         final incomeBySource = balanceService.getIncomeSourceBreakdown(incomes.cast<IncomeEntity>());
         

@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:uuid/uuid.dart';
 import 'package:hive/hive.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
+import 'package:smart_expense_tracker/core/services/aggregation_service.dart';
 import 'package:smart_expense_tracker/features/expenses/data/local/expense_local_data_source.dart';
 import 'package:smart_expense_tracker/features/expenses/data/repositories/expense_repository.dart';
 import 'package:smart_expense_tracker/features/expenses/domain/entities/expense_entity.dart';
@@ -266,38 +267,35 @@ class MonthlyAnalytics {
 }
 
 /// Monthly Analytics Provider
+/// Uses shared AggregationService for consistent calculations
 final monthlyAnalyticsProvider = Provider<MonthlyAnalytics>((ref) {
   final expensesAsync = ref.watch(expensesProvider);
 
   return expensesAsync.maybeWhen(
     data: (expenses) {
       final now = DateTime.now();
-      final currentMonthExpenses = expenses
-          .where((e) => e.date.year == now.year && e.date.month == now.month)
-          .toList();
+      final currentMonthExpenses = AggregationService.filterByMonth(
+        transactions: expenses,
+        year: now.year,
+        month: now.month,
+      );
 
-      double total = 0;
-      final categories = <String, double>{};
-
-      for (final e in currentMonthExpenses) {
-        total += e.amount;
-        categories[e.category] = (categories[e.category] ?? 0) + e.amount;
-      }
-
-      String? topCat;
-      double topAmt = 0;
-      categories.forEach((cat, amt) {
-        if (amt > topAmt) {
-          topAmt = amt;
-          topCat = cat;
-        }
-      });
+      // Use shared service for calculations
+      final total = AggregationService.calculateTotal(transactions: currentMonthExpenses);
+      final categoryBreakdown = AggregationService.calculateCategoryBreakdown(
+        transactions: currentMonthExpenses,
+      );
+      
+      final topCategories = AggregationService.getTopCategories(
+        transactions: currentMonthExpenses,
+        limit: 1,
+      );
 
       return MonthlyAnalytics(
         totalSpent: total,
-        categoryBreakdown: categories,
-        topCategory: topCat,
-        topAmount: topAmt,
+        categoryBreakdown: categoryBreakdown.map((key, value) => MapEntry(key, value.amount)),
+        topCategory: topCategories.isNotEmpty ? topCategories.first.category : null,
+        topAmount: topCategories.isNotEmpty ? topCategories.first.amount : 0.0,
         expenseCount: currentMonthExpenses.length,
       );
     },
@@ -306,6 +304,7 @@ final monthlyAnalyticsProvider = Provider<MonthlyAnalytics>((ref) {
 });
 
 /// Provider: Monthly Trend Data (Last 6 Months)
+/// Uses shared AggregationService for consistent monthly calculations
 final monthlyTrendProvider = Provider<Map<String, double>>((ref) {
   final expensesAsync = ref.watch(expensesProvider);
 
@@ -314,20 +313,21 @@ final monthlyTrendProvider = Provider<Map<String, double>>((ref) {
       final trend = <String, double>{};
       final now = DateTime.now();
 
+      // Use shared service for consistent month-based filtering
       for (int i = 5; i >= 0; i--) {
         final monthDate = DateTime(now.year, now.month - i, 1);
         final monthKey = "${monthDate.month}/${monthDate.year}";
 
-        final monthTotal = expenses
-            .where(
-              (e) =>
-                  e.date.year == monthDate.year &&
-                  e.date.month == monthDate.month,
-            )
-            .fold(0.0, (sum, e) => sum + e.amount);
-
+        final monthExpenses = AggregationService.filterByMonth(
+          transactions: expenses,
+          year: monthDate.year,
+          month: monthDate.month,
+        );
+        
+        final monthTotal = AggregationService.calculateTotal(transactions: monthExpenses);
         trend[monthKey] = monthTotal;
       }
+      
       return trend;
     },
     orElse: () => {},
