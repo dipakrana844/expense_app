@@ -8,10 +8,17 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 
 ### 📱 Modern Unified Transactions (NEW)
 - **Seamless Integration**: Single chronological view combining income and expenses naturally
+- **Multi-View Interface**: Five comprehensive views for different financial perspectives:
+  - **Daily View**: Chronological transactions grouped by date
+  - **Calendar View**: Month grid with income/expense indicators per day
+  - **Monthly View**: Year summary with expandable monthly breakdowns
+  - **Total View**: Overall financial overview with budget status and comparisons
+  - **Notes View**: Transactions with notes only, grouped by date
 - **Power User Controls**: Instant filtering between All/Income/Expenses with segmented controls
-- **Smart Navigation**: Month-by-month browsing with Previous/Next/TODAY controls
+- **Smart Navigation**: Month-by-month browsing with Previous/Next controls
 - **Real-time Summary**: Sticky financial overview showing Income/Expenses/Net balance
 - **Premium Design**: Dark-first fintech aesthetic with clear visual hierarchy
+- **Advanced Search**: Real-time search across categories, sources, and notes
 - **Daily Usage Optimized**: Designed for heavy, real-world money tracking
 
 ### 🛡️ Daily Spend Guard (NEW)
