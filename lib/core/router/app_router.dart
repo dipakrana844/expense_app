@@ -10,6 +10,7 @@ import 'package:smart_expense_tracker/features/grocery/presentation/screens/groc
 import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan_screen.dart';
 import 'package:smart_expense_tracker/features/income/presentation/screens/add_edit_income_screen.dart';
 import 'package:smart_expense_tracker/features/transactions/presentation/screens/transactions_screen.dart';
+import 'package:smart_expense_tracker/features/accounts_overview/presentation/screens/accounts_overview_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -89,6 +90,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: '/analytics',
                 name: 'analytics',
                 builder: (context, state) => const AnalyticsScreen(),
+              ),
+              GoRoute(
+                path: '/accounts-overview',
+                name: 'accounts-overview',
+                builder: (context, state) => const AccountsOverviewScreen(),
               ),
             ],
           ),

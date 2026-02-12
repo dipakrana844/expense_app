@@ -31,6 +31,11 @@ class MainLayout extends StatelessWidget {
             label: 'Analytics',
           ),
           NavigationDestination(
+            icon: Icon(Icons.account_balance_wallet_outlined),
+            selectedIcon: Icon(Icons.account_balance_wallet),
+            label: 'Net Worth',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.savings_outlined),
             selectedIcon: Icon(Icons.savings),
             label: 'Budget',
