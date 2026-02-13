@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../core/services/balance_service.dart';
 import '../../../transactions/presentation/providers/transaction_providers.dart';
 import '../../domain/entities/financial_trend_dto.dart';
 import '../../domain/usecases/financial_trend_usecase.dart';
@@ -9,8 +8,7 @@ import '../../domain/usecases/financial_trend_usecase.dart';
 ///
 /// Purpose: Provides the financial trend use case with required dependencies
 final financialTrendUseCaseProvider = Provider<FinancialTrendUseCase>((ref) {
-  final balanceService = BalanceService();
-  return FinancialTrendUseCase(balanceService: balanceService);
+  return FinancialTrendUseCase();
 });
 
 /// Provider: Financial Trend Data

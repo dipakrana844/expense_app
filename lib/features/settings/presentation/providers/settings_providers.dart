@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/local/settings_local_data_source.dart';
 import '../../data/models/app_settings.dart';
@@ -7,7 +8,11 @@ part 'settings_providers.g.dart';
 /// Provider for Settings Local Data Source
 final settingsLocalDataSourceProvider = Provider((ref) {
   final dataSource = SettingsLocalDataSource();
-  dataSource.init();
+  // Initialize asynchronously and handle errors
+  dataSource.init().catchError((error) {
+    // Log error but don't rethrow to prevent app crash
+    print('Settings data source initialization failed: $error');
+  });
   ref.onDispose(() => dataSource.close());
   return dataSource;
 });
@@ -18,6 +23,7 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
   @override
   AppSettings build() {
     final dataSource = ref.read(settingsLocalDataSourceProvider);
+    // Ensure we return the latest settings
     return dataSource.getSettings();
   }
 
@@ -55,8 +61,11 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
       requireAuthOnLaunch: requireAuthOnLaunch,
     );
 
-    // Update the state
+    // Update the state immediately to reflect changes
     state = dataSource.getSettings();
+    
+    // Also notify listeners by rebuilding
+    ref.invalidateSelf();
   }
 
   /// Reset all settings to defaults
@@ -64,6 +73,7 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
     final dataSource = ref.read(settingsLocalDataSourceProvider);
     await dataSource.resetToDefaults();
     state = dataSource.getSettings();
+    ref.invalidateSelf();
   }
 
   /// Update storage usage information
@@ -71,6 +81,21 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
     final dataSource = ref.read(settingsLocalDataSourceProvider);
     await dataSource.updateStorageUsage(bytes);
     state = dataSource.getSettings();
+    ref.invalidateSelf();
+  }
+  
+  /// Recalculate and update storage usage
+  Future<void> recalculateStorageUsage() async {
+    final dataSource = ref.read(settingsLocalDataSourceProvider);
+    await dataSource.recalculateAndSaveStorageUsage();
+    state = dataSource.getSettings();
+    ref.invalidateSelf();
+  }
+  
+  /// Get estimated actual storage usage
+  Future<int> getEstimatedStorageUsage() async {
+    final dataSource = ref.read(settingsLocalDataSourceProvider);
+    return await dataSource.calculateActualStorageUsage();
   }
 
   /// Update last export date
@@ -78,6 +103,7 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
     final dataSource = ref.read(settingsLocalDataSourceProvider);
     await dataSource.updateLastExportDate(date);
     state = dataSource.getSettings();
+    ref.invalidateSelf();
   }
 }
 

@@ -19,8 +19,10 @@ final groceryPreferencesDataSourceProvider = Provider((ref) {
 class GroceryNotifier extends _$GroceryNotifier {
   @override
   GrocerySessionState build() {
-    // Read global settings
+    // Read global settings instead of local preferences
     final settings = ref.watch(appSettingsNotifierProvider);
+    
+    // Get grocery preferences for data, but use global settings for behavior
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
     final preferences = prefsDataSource.getPreferences();
 

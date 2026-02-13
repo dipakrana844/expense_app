@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:hive/hive.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import 'package:smart_expense_tracker/core/services/aggregation_service.dart';
+import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
 import 'package:smart_expense_tracker/features/expenses/data/local/expense_local_data_source.dart';
 import 'package:smart_expense_tracker/features/expenses/data/repositories/expense_repository.dart';
 import 'package:smart_expense_tracker/features/expenses/domain/entities/expense_entity.dart';
@@ -38,9 +39,10 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 /// State Notifier for Expenses
 class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
   final ExpenseRepository _repository;
+  final Ref _ref;
   StreamSubscription? _subscription;
 
-  ExpensesNotifier(this._repository) : super(const AsyncValue.loading()) {
+  ExpensesNotifier(this._repository, this._ref) : super(const AsyncValue.loading()) {
     _listenToExpenses();
   }
 
@@ -94,6 +96,15 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
         note: note,
       );
     }
+    
+    // Update storage usage after adding expense
+    try {
+      final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
+      await settingsNotifier.recalculateStorageUsage();
+    } catch (e) {
+      // Silently fail if settings not available
+      debugPrint('Failed to update storage usage after adding expense: $e');
+    }
   }
 
   Future<void> updateExpense({
@@ -110,10 +121,28 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       date: date,
       note: note,
     );
+    
+    // Update storage usage after updating expense
+    try {
+      final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
+      await settingsNotifier.recalculateStorageUsage();
+    } catch (e) {
+      // Silently fail if settings not available
+      debugPrint('Failed to update storage usage after updating expense: $e');
+    }
   }
 
   Future<void> deleteExpense(String id) async {
     await _repository.deleteExpense(id);
+    
+    // Update storage usage after deleting expense
+    try {
+      final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
+      await settingsNotifier.recalculateStorageUsage();
+    } catch (e) {
+      // Silently fail if settings not available
+      debugPrint('Failed to update storage usage after deleting expense: $e');
+    }
   }
 
   /// Seed dummy data for testing purposes
@@ -196,7 +225,7 @@ final expensesProvider =
       ref,
     ) {
       final repository = ref.watch(expenseRepositoryProvider);
-      return ExpensesNotifier(repository);
+      return ExpensesNotifier(repository, ref);
     });
 
 /// Search & Filter State

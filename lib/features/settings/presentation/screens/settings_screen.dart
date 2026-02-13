@@ -8,11 +8,46 @@ import '../providers/settings_providers.dart';
 import '../widgets/setting_tiles.dart';
 import '../../data/models/app_settings.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _isCalculatingStorage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Calculate storage usage when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _recalculateStorageUsage();
+    });
+  }
+
+  Future<void> _recalculateStorageUsage() async {
+    if (_isCalculatingStorage) return;
+    
+    setState(() {
+      _isCalculatingStorage = true;
+    });
+    
+    try {
+      final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
+      await settingsNotifier.recalculateStorageUsage();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCalculatingStorage = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(appSettingsNotifierProvider);
     final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
 
@@ -268,10 +303,19 @@ class SettingsScreen extends ConsumerWidget {
               ),
               SettingInfoTile(
                 title: 'Storage Usage',
-                subtitle: settings.storageUsageBytes != null
-                    ? '${_formatBytes(settings.storageUsageBytes!)} used'
-                    : 'Calculating...',
+                subtitle: _isCalculatingStorage
+                    ? 'Calculating...'
+                    : settings.storageUsageBytes != null
+                        ? '${_formatBytes(settings.storageUsageBytes!)} used'
+                        : 'Storage usage not calculated',
                 icon: Icons.storage,
+              ),
+              SettingActionTile(
+                title: 'Refresh Storage Usage',
+                subtitle: 'Recalculate current storage usage',
+                icon: _isCalculatingStorage ? Icons.hourglass_empty : Icons.refresh,
+                iconColor: _isCalculatingStorage ? Colors.grey : Colors.blue,
+                onPressed: _isCalculatingStorage ? null : _recalculateStorageUsage,
               ),
               SettingActionTile(
                 title: 'Clear All Data',

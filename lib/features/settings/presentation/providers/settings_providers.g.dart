@@ -7,7 +7,7 @@ part of 'settings_providers.dart';
 // **************************************************************************
 
 String _$appSettingsNotifierHash() =>
-    r'007ca190b9438a2f2584c1e74d7190eb3b21223f';
+    r'96e419e9e6eafd19c8fd657dbde3ba769028121e';
 
 /// Main Settings Provider - exposes current settings state
 ///

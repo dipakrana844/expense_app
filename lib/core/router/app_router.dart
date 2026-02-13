@@ -19,6 +19,9 @@ final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
 final _shellNavigatorAnalyticsKey = GlobalKey<NavigatorState>(
   debugLabel: 'analytics',
 );
+final _shellNavigatorNetWorthKey = GlobalKey<NavigatorState>(
+  debugLabel: 'networth',
+);
 final _shellNavigatorIncomeKey = GlobalKey<NavigatorState>(
   debugLabel: 'income',
 );
@@ -91,6 +94,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: 'analytics',
                 builder: (context, state) => const AnalyticsScreen(),
               ),
+            ],
+          ),
+
+          // Branch Net Worth
+          StatefulShellBranch(
+            navigatorKey: _shellNavigatorNetWorthKey,
+            routes: [
               GoRoute(
                 path: '/accounts-overview',
                 name: 'accounts-overview',
