@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/local/settings_local_data_source.dart';
 import '../../data/models/app_settings.dart';
@@ -173,3 +173,10 @@ final lastExportDateProvider = Provider<DateTime?>((ref) {
 final storageUsageBytesProvider = Provider<int?>((ref) {
   return ref.watch(appSettingsNotifierProvider).storageUsageBytes;
 });
+
+/// UI State Providers
+/// Provider for tracking security settings loading state
+final securitySettingsLoadingProvider = StateProvider<bool>((ref) => false);
+
+/// Provider for tracking storage calculation loading state
+final storageCalculationLoadingProvider = StateProvider<bool>((ref) => false);

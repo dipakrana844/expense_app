@@ -16,8 +16,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  bool _isCalculatingStorage = false;
-
   @override
   void initState() {
     super.initState();
@@ -28,21 +26,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _recalculateStorageUsage() async {
-    if (_isCalculatingStorage) return;
+    // Check if already calculating to prevent duplicate calls
+    if (ref.read(storageCalculationLoadingProvider)) return;
     
-    setState(() {
-      _isCalculatingStorage = true;
-    });
+    // Set loading state
+    ref.read(storageCalculationLoadingProvider.notifier).state = true;
     
     try {
       final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
       await settingsNotifier.recalculateStorageUsage();
     } finally {
-      if (mounted) {
-        setState(() {
-          _isCalculatingStorage = false;
-        });
-      }
+      // Reset loading state
+      ref.read(storageCalculationLoadingProvider.notifier).state = false;
     }
   }
 
@@ -231,13 +226,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 subtitle: 'Require biometric authentication',
                 icon: Icons.lock,
                 value: settings.enableAppLock,
-                onChanged: (value) {
-                  if (value) {
-                    _handleAppLockToggle(context, settingsNotifier, value);
-                  } else {
-                    settingsNotifier.updateSettings(enableAppLock: value);
-                  }
-                },
+                isLoading: ref.watch(securitySettingsLoadingProvider),
+                onChanged: ref.watch(securitySettingsLoadingProvider)
+                    ? null
+                    : (value) async {
+                        if (value) {
+                          await _handleAppLockToggle(context, settingsNotifier, value);
+                        } else {
+                          await settingsNotifier.updateSettings(enableAppLock: value);
+                        }
+                      },
               ),
               SettingDropdownTile<AutoLockTimer>(
                 title: 'Auto-Lock Timer',
@@ -263,9 +261,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ],
                 onChanged: settings.enableAppLock
-                    ? (value) {
+                    ? (value) async {
                         if (value != null) {
-                          settingsNotifier.updateSettings(autoLockTimer: value);
+                          await settingsNotifier.updateSettings(autoLockTimer: value);
                         }
                       }
                     : null,
@@ -276,8 +274,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 icon: Icons.login,
                 value: settings.requireAuthOnLaunch,
                 onChanged: settings.enableAppLock
-                    ? (value) {
-                        settingsNotifier.updateSettings(requireAuthOnLaunch: value);
+                    ? (value) async {
+                        await settingsNotifier.updateSettings(requireAuthOnLaunch: value);
                       }
                     : null,
               ),
@@ -303,7 +301,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               SettingInfoTile(
                 title: 'Storage Usage',
-                subtitle: _isCalculatingStorage
+                subtitle: ref.watch(storageCalculationLoadingProvider)
                     ? 'Calculating...'
                     : settings.storageUsageBytes != null
                         ? '${_formatBytes(settings.storageUsageBytes!)} used'
@@ -313,9 +311,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               SettingActionTile(
                 title: 'Refresh Storage Usage',
                 subtitle: 'Recalculate current storage usage',
-                icon: _isCalculatingStorage ? Icons.hourglass_empty : Icons.refresh,
-                iconColor: _isCalculatingStorage ? Colors.grey : Colors.blue,
-                onPressed: _isCalculatingStorage ? null : _recalculateStorageUsage,
+                icon: ref.watch(storageCalculationLoadingProvider) 
+                    ? Icons.hourglass_empty 
+                    : Icons.refresh,
+                iconColor: ref.watch(storageCalculationLoadingProvider) 
+                    ? Colors.grey 
+                    : Colors.blue,
+                onPressed: ref.watch(storageCalculationLoadingProvider) 
+                    ? null 
+                    : _recalculateStorageUsage,
               ),
               SettingActionTile(
                 title: 'Clear All Data',
@@ -371,24 +375,65 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   // Helper Methods
 
-  void _handleAppLockToggle(
+  Future<void> _handleAppLockToggle(
     BuildContext context,
     AppSettingsNotifier settingsNotifier,
     bool value,
-  ) {
-    Future.microtask(() async {
+  ) async {
+    // Set processing state to show loading indicator
+    ref.read(securitySettingsLoadingProvider.notifier).state = true;
+    
+    try {
+      // Check if biometric authentication is available
+      final isAvailable = await SecurityService().isBiometricAvailable();
+      
+      if (!isAvailable) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Biometric authentication is not available on this device'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+      
+      // Perform authentication
       final success = await SecurityService().authenticate();
+      
       if (success && context.mounted) {
-        settingsNotifier.updateSettings(enableAppLock: value);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Biometric authentication enabled')),
-        );
+        await settingsNotifier.updateSettings(enableAppLock: value);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Biometric authentication enabled successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       } else if (context.mounted) {
+        // Show failure message
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Authentication failed')),
+          const SnackBar(
+            content: Text('Authentication failed. App lock not enabled.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
-    });
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error enabling app lock: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      // Reset processing state
+      ref.read(securitySettingsLoadingProvider.notifier).state = false;
+    }
   }
 
   Future<void> _exportExpenses(BuildContext context, WidgetRef ref) async {

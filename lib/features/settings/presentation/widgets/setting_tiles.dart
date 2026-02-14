@@ -38,7 +38,10 @@ class SettingSwitchTile extends StatelessWidget {
               height: 24,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Switch(value: value, onChanged: onChanged),
+          : Switch(
+              value: value, 
+              onChanged: isLoading || onChanged == null ? null : onChanged,
+            ),
       onTap: isLoading || onChanged == null ? null : () => onChanged!(!value),
     );
   }

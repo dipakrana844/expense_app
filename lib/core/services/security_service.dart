@@ -15,18 +15,30 @@ class SecurityService {
     }
   }
 
-  Future<bool> authenticate() async {
+  Future<bool> authenticate({String? localizedReason}) async {
     try {
+      // Check if biometric authentication is available
+      final isAvailable = await isBiometricAvailable();
+      if (!isAvailable) {
+        return false;
+      }
+      
       // In local_auth 3.0.0:
       // - AuthenticationOptions is removed.
       // - stickyAuth is replaced by persistAcrossBackgrounding.
       // - biometricOnly is a parameter of authenticate.
       return await _auth.authenticate(
-        localizedReason: 'Please authenticate to access Smart Expense Tracker',
+        localizedReason: localizedReason ?? 'Please authenticate to access Smart Expense Tracker',
         persistAcrossBackgrounding: true,
         // options parameter is removed in 3.0.0 according to breaking changes
       );
-    } on PlatformException catch (_) {
+    } on PlatformException catch (e) {
+      // Log the specific error for debugging
+      print('Authentication failed: ${e.message}');
+      return false;
+    } catch (e) {
+      // Handle any other exceptions
+      print('Unexpected authentication error: $e');
       return false;
     }
   }
