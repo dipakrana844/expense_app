@@ -11,6 +11,8 @@ import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan
 import 'package:smart_expense_tracker/features/income/presentation/screens/add_edit_income_screen.dart';
 import 'package:smart_expense_tracker/features/transactions/presentation/screens/transactions_screen.dart';
 import 'package:smart_expense_tracker/features/accounts_overview/presentation/screens/accounts_overview_screen.dart';
+import 'package:smart_expense_tracker/features/smart_entry/presentation/screens/smart_entry_screen.dart';
+import 'package:smart_expense_tracker/features/smart_entry/presentation/providers/smart_entry_controller.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -180,6 +182,29 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             income: extras['income'] as dynamic, // Will need proper casting
           );
         },
+      ),
+      // Smart Entry Routes
+      GoRoute(
+        path: '/smart-entry',
+        name: 'smart-entry',
+        builder: (context, state) => const SmartEntryScreen(),
+        routes: [
+          GoRoute(
+            path: 'income',
+            name: 'smart-entry-income',
+            builder: (context, state) => const SmartEntryScreen(initialMode: TransactionMode.income),
+          ),
+          GoRoute(
+            path: 'expense',
+            name: 'smart-entry-expense',
+            builder: (context, state) => const SmartEntryScreen(initialMode: TransactionMode.expense),
+          ),
+          GoRoute(
+            path: 'transfer',
+            name: 'smart-entry-transfer',
+            builder: (context, state) => const SmartEntryScreen(initialMode: TransactionMode.transfer),
+          ),
+        ],
       ),
     ],
   );

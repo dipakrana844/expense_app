@@ -258,7 +258,46 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> with Ti
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Quick Expense - Primary option for daily use
+            // Smart Entry - Unified transaction entry
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.smart_toy,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              title: const Text(
+                'Smart Entry',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text('Add Income, Expense or Transfer'),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'NEW',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/smart-entry');
+              },
+            ),
+            const Divider(height: 1),
+            // Quick Expense - Fast daily use
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
