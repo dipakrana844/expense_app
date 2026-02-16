@@ -4,7 +4,9 @@ import 'package:smart_expense_tracker/features/income/data/repositories/income_r
 import 'package:smart_expense_tracker/features/income/domain/repositories/income_repository.dart';
 import 'package:smart_expense_tracker/features/income/domain/usecases/add_income_usecase.dart';
 import 'package:smart_expense_tracker/features/income/domain/usecases/update_income_usecase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:smart_expense_tracker/features/income/domain/usecases/delete_income_usecase.dart';
+import '../../../transactions/presentation/providers/transaction_providers.dart';
 import 'package:smart_expense_tracker/features/income/domain/usecases/get_incomes_usecase.dart';
 import 'package:smart_expense_tracker/features/income/domain/entities/income_entity.dart';
 
@@ -258,6 +260,13 @@ class IncomeFormNotifier extends StateNotifier<IncomeFormState> {
 
       // Refresh the incomes provider
       _ref.invalidate(incomesProvider);
+      
+      // Also refresh transaction providers to update the UI
+      try {
+        _ref.read(transactionActionsProvider.notifier).refresh();
+      } catch (e) {
+        debugPrint('Failed to refresh transaction providers after income operation: $e');
+      }
       
       state = state.copyWith(isLoading: false, error: null);
     } catch (e) {

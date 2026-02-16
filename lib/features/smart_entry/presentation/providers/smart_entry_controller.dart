@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
@@ -7,6 +8,7 @@ import '../../../../features/income/presentation/providers/income_providers.dart
 import '../../../../features/transfer/presentation/providers/transfer_providers.dart';
 import '../../../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../../../core/services/smart_suggestion_service.dart';
+import '../../../../features/transactions/presentation/providers/transaction_providers.dart';
 
 enum TransactionMode { income, expense, transfer }
 
@@ -192,6 +194,13 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
   Future<void> _saveIncome() async {
     final addUseCase = _ref.read(addIncomeUseCaseProvider);
     await addUseCase.execute(amount: state.amount, source: state.source!, date: state.date, note: state.note);
+    
+    // Refresh transaction providers to update the UI
+    try {
+      _ref.read(transactionActionsProvider.notifier).refresh();
+    } catch (e) {
+      debugPrint('Failed to refresh transaction providers after smart entry income: $e');
+    }
   }
 
   Future<void> _saveTransfer() async {

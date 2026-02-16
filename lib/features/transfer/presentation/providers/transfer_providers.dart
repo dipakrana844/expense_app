@@ -1,9 +1,11 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+﻿import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/transfer_local_data_source.dart';
 import '../../data/repositories/transfer_repository_impl.dart';
 import '../../domain/entities/transfer_entity.dart';
 import '../../domain/repositories/transfer_repository.dart';
 import '../../domain/usecases/add_transfer_usecase.dart';
+import '../../../transactions/presentation/providers/transaction_providers.dart';
 
 final transferLocalDataSourceProvider = Provider<TransferLocalDataSource>((ref) {
   return TransferLocalDataSource();
@@ -20,16 +22,17 @@ final addTransferUseCaseProvider = Provider<AddTransferUseCase>((ref) {
 });
 
 final transfersProvider =
-    StateNotifierProvider<TransfersNotifier, AsyncValue<List<TransferEntity>>>(
-        (ref) {
+    StateNotifierProvider<TransfersNotifier, AsyncValue<List<TransferEntity>>>
+        ((ref) {
   final repository = ref.watch(transferRepositoryProvider);
-  return TransfersNotifier(repository);
+  return TransfersNotifier(repository, ref);
 });
 
 class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> {
   final TransferRepository _repository;
+  final Ref _ref;
 
-  TransfersNotifier(this._repository) : super(const AsyncLoading()) {
+  TransfersNotifier(this._repository, this._ref) : super(const AsyncLoading()) {
     _loadTransfers();
   }
 
@@ -66,6 +69,13 @@ class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> 
 
       await _repository.addTransfer(transfer);
       await _loadTransfers();
+      
+      // Refresh transaction providers to update the UI
+      try {
+        _ref.read(transactionActionsProvider.notifier).refresh();
+      } catch (e) {
+        debugPrint('Failed to refresh transaction providers after adding transfer: $e');
+      }
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
@@ -75,6 +85,13 @@ class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> 
     try {
       await _repository.updateTransfer(transfer);
       await _loadTransfers();
+      
+      // Refresh transaction providers to update the UI
+      try {
+        _ref.read(transactionActionsProvider.notifier).refresh();
+      } catch (e) {
+        debugPrint('Failed to refresh transaction providers after updating transfer: $e');
+      }
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
@@ -84,6 +101,13 @@ class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> 
     try {
       await _repository.deleteTransfer(id);
       await _loadTransfers();
+      
+      // Refresh transaction providers to update the UI
+      try {
+        _ref.read(transactionActionsProvider.notifier).refresh();
+      } catch (e) {
+        debugPrint('Failed to refresh transaction providers after deleting transfer: $e');
+      }
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }

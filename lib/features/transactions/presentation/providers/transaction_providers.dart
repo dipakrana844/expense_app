@@ -3,6 +3,8 @@ import '../../domain/entities/transaction_entity.dart';
 import '../../domain/enums/transaction_type.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../../shared/utils/transaction_utils.dart';
+import '../../../income/presentation/providers/income_providers.dart';
+import '../../../expenses/presentation/providers/expense_providers.dart';
 
 /// State for transaction filtering
 class TransactionFilterState {
@@ -90,6 +92,9 @@ final currentMonthProvider = StateProvider<DateTime>((ref) {
 final allTransactionsProvider =
     FutureProvider<List<TransactionEntity>>((ref) async {
   final repository = ref.watch(transactionRepositoryProvider);
+  // Watch income and expense providers to trigger refresh when they change
+  ref.watch(incomesProvider);
+  ref.watch(expensesProvider);
   return await repository.getAllTransactions();
 });
 
@@ -99,6 +104,10 @@ final filteredTransactionsProvider =
   final repository = ref.watch(transactionRepositoryProvider);
   final filterState = ref.watch(transactionFilterProvider);
   final currentMonth = ref.watch(currentMonthProvider);
+
+  // Watch income and expense providers to trigger refresh when they change
+  ref.watch(incomesProvider);
+  ref.watch(expensesProvider);
 
   List<TransactionEntity> transactions;
 
@@ -141,6 +150,10 @@ final transactionSummaryProvider =
     FutureProvider<TransactionSummary>((ref) async {
   final repository = ref.watch(transactionRepositoryProvider);
   final currentMonth = ref.watch(currentMonthProvider);
+  
+  // Watch income and expense providers to trigger refresh when they change
+  ref.watch(incomesProvider);
+  ref.watch(expensesProvider);
   
   return await repository.getMonthSummary(currentMonth);
 });

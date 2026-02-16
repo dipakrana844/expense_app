@@ -11,6 +11,7 @@ import 'package:smart_expense_tracker/features/expenses/data/local/expense_local
 import 'package:smart_expense_tracker/features/expenses/data/repositories/expense_repository.dart';
 import 'package:smart_expense_tracker/features/expenses/domain/entities/expense_entity.dart';
 import 'package:smart_expense_tracker/features/expenses/data/models/scheduled_expense_model.dart';
+import '../../../transactions/presentation/providers/transaction_providers.dart';
 
 /// Provider: Connectivity
 final connectivityProvider = StreamProvider<ConnectivityResult>((ref) {
@@ -105,6 +106,13 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       // Silently fail if settings not available
       debugPrint('Failed to update storage usage after adding expense: $e');
     }
+    
+    // Refresh transaction providers to update the UI
+    try {
+      _ref.read(transactionActionsProvider.notifier).refresh();
+    } catch (e) {
+      debugPrint('Failed to refresh transaction providers after adding expense: $e');
+    }
   }
 
   Future<void> updateExpense({
@@ -130,6 +138,13 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       // Silently fail if settings not available
       debugPrint('Failed to update storage usage after updating expense: $e');
     }
+    
+    // Refresh transaction providers to update the UI
+    try {
+      _ref.read(transactionActionsProvider.notifier).refresh();
+    } catch (e) {
+      debugPrint('Failed to refresh transaction providers after updating expense: $e');
+    }
   }
 
   Future<void> deleteExpense(String id) async {
@@ -142,6 +157,13 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
     } catch (e) {
       // Silently fail if settings not available
       debugPrint('Failed to update storage usage after deleting expense: $e');
+    }
+    
+    // Refresh transaction providers to update the UI
+    try {
+      _ref.read(transactionActionsProvider.notifier).refresh();
+    } catch (e) {
+      debugPrint('Failed to refresh transaction providers after deleting expense: $e');
     }
   }
 
