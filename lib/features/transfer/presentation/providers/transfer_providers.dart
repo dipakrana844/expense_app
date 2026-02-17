@@ -18,7 +18,7 @@ final transferRepositoryProvider = Provider<TransferRepository>((ref) {
 
 final addTransferUseCaseProvider = Provider<AddTransferUseCase>((ref) {
   final repository = ref.watch(transferRepositoryProvider);
-  return AddTransferUseCase(repository);
+  return AddTransferUseCase(repository, ref);
 });
 
 final transfersProvider =

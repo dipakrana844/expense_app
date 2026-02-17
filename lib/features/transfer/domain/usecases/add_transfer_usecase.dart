@@ -1,6 +1,8 @@
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/transfer_entity.dart';
 import '../../domain/repositories/transfer_repository.dart';
+import '../../../../core/services/account_balance_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Use Case: AddTransferUseCase
 ///
@@ -10,9 +12,10 @@ import '../../domain/repositories/transfer_repository.dart';
 /// - Generates unique IDs when needed
 class AddTransferUseCase {
   final TransferRepository _repository;
+  final Ref? _ref;
   final Uuid _uuid = const Uuid();
 
-  AddTransferUseCase(this._repository);
+  AddTransferUseCase(this._repository, [this._ref]);
 
   /// Execute the use case to add a new transfer
   /// Returns the created TransferEntity with generated ID
@@ -52,6 +55,20 @@ class AddTransferUseCase {
     // Validate date is reasonable
     if (transferDate.isAfter(now.add(const Duration(days: 1)))) {
       throw Exception('Date cannot be too far in the future');
+    }
+
+    // Validate account balance if ref is available (for balance checking)
+    if (_ref != null) {
+      final balanceService = _ref.read(accountBalanceServiceProvider);
+      final validation = await balanceService.validateTransfer(
+        fromAccount: fromAccount,
+        amount: amount,
+        fee: fee ?? 0.0,
+      );
+      
+      if (!validation.isValid) {
+        throw Exception(validation.message);
+      }
     }
 
     // Create transfer entity
