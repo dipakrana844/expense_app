@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
 import '../../features/income/domain/entities/income_entity.dart';
 import '../../features/expenses/domain/entities/expense_entity.dart';
 
@@ -237,8 +236,3 @@ enum FinancialHealth {
   negative   // Spending more than earning
 }
 
-/// Extension for mathematical operations
-extension on num {
-  num power(num exponent) => math.pow(this, exponent);
-  double squareRoot() => math.sqrt(this.toDouble());
-}

@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 import '../providers/smart_entry_controller.dart';
 import '../widgets/numeric_keypad.dart';
 import '../widgets/mode_selector.dart';
@@ -36,45 +37,56 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     return Scaffold(
       appBar: _buildAppBar(context, state, controller, accentColor),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Mode Selector
-            ModeSelector(
-              currentMode: state.mode,
-              onModeChanged: (mode) => controller.switchMode(mode),
+        child: CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.escape): () => _handleBack(context, state),
+            const SingleActivator(LogicalKeyboardKey.enter): () => _handleSave(context, controller),
+            const SingleActivator(LogicalKeyboardKey.keyS, control: true): () => _handleSave(context, controller),
+            const SingleActivator(LogicalKeyboardKey.keyC, control: true): () => _handleContinue(context, controller),
+          },
+          child: Focus(
+            autofocus: true,
+            child: Column(
+              children: [
+                // Mode Selector
+                ModeSelector(
+                  currentMode: state.mode,
+                  onModeChanged: (mode) => controller.switchMode(mode),
+                ),
+                // Amount Display
+                _buildAmountDisplay(context, state, controller),
+                // Smart Preview
+                SmartPreviewCard(
+                  mode: state.mode,
+                  dailySpendPreview: controller.getDailySpendPreview(),
+                  incomeBalancePreview: controller.getIncomeBalancePreview(),
+                  transferPreview: controller.getTransferPreview(),
+                ),
+                // Form Fields (IndexedStack for performance)
+                Expanded(
+                  child: SmartEntryFormFields(
+                    state: state,
+                    onCategoryChanged: controller.setCategory,
+                    onSourceChanged: controller.setSource,
+                    onAccountChanged: controller.setAccount,
+                    onFromAccountChanged: controller.setFromAccount,
+                    onToAccountChanged: controller.setToAccount,
+                    onFeeChanged: controller.setTransferFee,
+                    onNoteChanged: controller.setNote,
+                    onDateChanged: controller.setDate,
+                    onTimeChanged: controller.setTime,
+                  ),
+                ),
+                // Numeric Keypad
+                NumericKeypad(
+                  onKeyPressed: controller.updateAmount,
+                  accentColor: accentColor,
+                ),
+                // Action Buttons
+                _buildActionButtons(context, state, controller, accentColor),
+              ],
             ),
-            // Amount Display
-            _buildAmountDisplay(context, state, controller),
-            // Smart Preview
-            SmartPreviewCard(
-              mode: state.mode,
-              dailySpendPreview: controller.getDailySpendPreview(),
-              incomeBalancePreview: controller.getIncomeBalancePreview(),
-              transferPreview: controller.getTransferPreview(),
-            ),
-            // Form Fields (IndexedStack for performance)
-            Expanded(
-              child: SmartEntryFormFields(
-                state: state,
-                onCategoryChanged: controller.setCategory,
-                onSourceChanged: controller.setSource,
-                onAccountChanged: controller.setAccount,
-                onFromAccountChanged: controller.setFromAccount,
-                onToAccountChanged: controller.setToAccount,
-                onFeeChanged: controller.setTransferFee,
-                onNoteChanged: controller.setNote,
-                onDateChanged: controller.setDate,
-                onTimeChanged: controller.setTime,
-              ),
-            ),
-            // Numeric Keypad
-            NumericKeypad(
-              onKeyPressed: controller.updateAmount,
-              accentColor: accentColor,
-            ),
-            // Action Buttons
-            _buildActionButtons(context, state, controller, accentColor),
-          ],
+          ),
         ),
       ),
     );
@@ -83,31 +95,47 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context, SmartEntryState state, SmartEntryController controller, Color accentColor) {
     return AppBar(
       title: const Text('Add Transaction'),
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () => _handleBack(context, state),
+      leading: Semantics(
+        label: 'Close and exit',
+        hint: 'Discard changes and return to previous screen',
+        child: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => _handleBack(context, state),
+        ),
       ),
       actions: [
         // OCR Scan
-        IconButton(
-          icon: const Icon(Icons.document_scanner_outlined),
-          onPressed: () => _openOcrScanner(),
-          tooltip: 'OCR Scan',
+        Semantics(
+          label: 'Scan receipt with OCR',
+          hint: 'Extract transaction details from a receipt image',
+          child: IconButton(
+            icon: const Icon(Icons.document_scanner_outlined),
+            onPressed: () => _openOcrScanner(),
+            tooltip: 'OCR Scan',
+          ),
         ),
         // Grocery Session
-        IconButton(
-          icon: const Icon(Icons.shopping_basket_outlined),
-          onPressed: () => _openGrocerySession(),
-          tooltip: 'Grocery Session',
+        Semantics(
+          label: 'Start grocery session',
+          hint: 'Track multiple grocery items in one session',
+          child: IconButton(
+            icon: const Icon(Icons.shopping_basket_outlined),
+            onPressed: () => _openGrocerySession(),
+            tooltip: 'Grocery Session',
+          ),
         ),
         // Recurring Toggle
-        IconButton(
-          icon: Icon(
-            state.isRecurring ? Icons.repeat_on : Icons.repeat,
-            color: state.isRecurring ? accentColor : null,
+        Semantics(
+          label: 'Toggle recurring transaction',
+          hint: state.isRecurring ? 'Turn off recurring' : 'Turn on recurring',
+          child: IconButton(
+            icon: Icon(
+              state.isRecurring ? Icons.repeat_on : Icons.repeat,
+              color: state.isRecurring ? accentColor : null,
+            ),
+            onPressed: controller.toggleRecurring,
+            tooltip: 'Recurring',
           ),
-          onPressed: controller.toggleRecurring,
-          tooltip: 'Recurring',
         ),
       ],
     );
@@ -115,14 +143,18 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
 
   Widget _buildAmountDisplay(BuildContext context, SmartEntryState state, SmartEntryController controller) {
     final accentColor = controller.getAccentColor(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      child: Text(
-        controller.getFormattedAmount(),
-        style: TextStyle(
-          fontSize: 48,
-          fontWeight: FontWeight.bold,
-          color: accentColor,
+    return Semantics(
+      label: 'Current amount: ${controller.getFormattedAmount()}',
+      value: controller.getFormattedAmount(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Text(
+          controller.getFormattedAmount(),
+          style: TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            color: accentColor,
+          ),
         ),
       ),
     );
@@ -135,12 +167,17 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
         children: [
           // Continue Button
           Expanded(
-            child: OutlinedButton.icon(
-              onPressed: state.isLoading || !state.isValid ? null : () => _handleContinue(context, controller),
-              icon: const Icon(Icons.add),
-              label: const Text('Continue'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Semantics(
+              label: 'Continue to next transaction',
+              hint: 'Save current transaction and prepare for next entry',
+              enabled: !state.isLoading && state.isValid,
+              child: OutlinedButton.icon(
+                onPressed: state.isLoading || !state.isValid ? null : () => _handleContinue(context, controller),
+                icon: const Icon(Icons.add),
+                label: const Text('Continue'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
             ),
           ),
@@ -148,15 +185,20 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
           // Save Button
           Expanded(
             flex: 2,
-            child: FilledButton.icon(
-              onPressed: state.isLoading || !state.isValid ? null : () => _handleSave(context, controller),
-              icon: state.isLoading
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Icon(Icons.check),
-              label: const Text('Save'),
-              style: FilledButton.styleFrom(
-                backgroundColor: accentColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Semantics(
+              label: 'Save transaction',
+              hint: 'Save the current transaction and exit',
+              enabled: !state.isLoading && state.isValid,
+              child: FilledButton.icon(
+                onPressed: state.isLoading || !state.isValid ? null : () => _handleSave(context, controller),
+                icon: state.isLoading
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.check),
+                label: const Text('Save'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: accentColor,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
             ),
           ),

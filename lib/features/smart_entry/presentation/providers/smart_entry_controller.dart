@@ -47,15 +47,96 @@ class SmartEntryState {
 
   double get amount => CurrencyUtils.parseAmount(amountString) ?? 0.0;
 
+  /// Get validation errors for current state
+  List<String> get validationErrors {
+    final errors = <String>[];
+    
+    // Amount validation
+    if (amount <= 0) {
+      errors.add('Amount must be greater than 0');
+    }
+    if (amount > AppConstants.maxExpenseAmount) {
+      errors.add('Amount exceeds maximum limit of ${CurrencyUtils.formatAmount(AppConstants.maxExpenseAmount)}');
+    }
+    
+    // Mode-specific validation
+    switch (mode) {
+      case TransactionMode.income:
+        if (source == null || source!.trim().isEmpty) {
+          errors.add('Source is required for income');
+        }
+        break;
+      case TransactionMode.expense:
+        if (category == null || category!.trim().isEmpty) {
+          errors.add('Category is required for expense');
+        }
+        break;
+      case TransactionMode.transfer:
+        if (fromAccount == null || fromAccount!.trim().isEmpty) {
+          errors.add('From account is required for transfer');
+        }
+        if (toAccount == null || toAccount!.trim().isEmpty) {
+          errors.add('To account is required for transfer');
+        }
+        if (fromAccount != null && toAccount != null && fromAccount!.trim() == toAccount!.trim()) {
+          errors.add('Cannot transfer to the same account');
+        }
+        break;
+    }
+    
+    // Date validation
+    if (date.isAfter(DateTime.now().add(const Duration(days: 1)))) {
+      errors.add('Date cannot be in the future');
+    }
+    
+    // Note length validation
+    if (note != null && note!.length > AppConstants.maxNoteLength) {
+      errors.add('Note is too long (maximum ${AppConstants.maxNoteLength} characters)');
+    }
+    
+    return errors;
+  }
+  
+  /// Check if form is ready for submission (more comprehensive than isValid)
+  bool get isReadyForSubmission {
+    // Must be valid
+    if (!isValid) return false;
+    
+    // Must not be loading
+    if (isLoading) return false;
+    
+    // Must have required fields filled
+    switch (mode) {
+      case TransactionMode.income:
+        return source != null && source!.isNotEmpty && amount > 0;
+      case TransactionMode.expense:
+        return category != null && category!.isNotEmpty && amount > 0;
+      case TransactionMode.transfer:
+        return fromAccount != null && 
+               toAccount != null && 
+               fromAccount!.isNotEmpty && 
+               toAccount!.isNotEmpty && 
+               fromAccount != toAccount && 
+               amount > 0;
+    }
+  }
   bool get isValid {
+    // Amount validation
     if (amount <= 0) return false;
+    if (amount > AppConstants.maxExpenseAmount) return false;
+    
+    // Mode-specific validation
     switch (mode) {
       case TransactionMode.income:
         return source != null && source!.isNotEmpty;
       case TransactionMode.expense:
         return category != null && category!.isNotEmpty;
       case TransactionMode.transfer:
-        return fromAccount != null && toAccount != null && fromAccount!.isNotEmpty && toAccount!.isNotEmpty && fromAccount != toAccount;
+        return fromAccount != null && 
+               toAccount != null && 
+               fromAccount!.isNotEmpty && 
+               toAccount!.isNotEmpty && 
+               fromAccount != toAccount;
     }
   }
 
