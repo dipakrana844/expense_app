@@ -67,7 +67,7 @@ class IncomeListScreen extends ConsumerWidget {
         error: (error, stackTrace) => _buildErrorState(context, theme, error.toString()),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.pushNamed('add-income'),
+        onPressed: () => context.push('/smart-entry/income'),
         child: const Icon(Icons.add),
         tooltip: 'Add Income',
       ),
@@ -96,7 +96,7 @@ class IncomeListScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           FilledButton.icon(
-            onPressed: () => context.pushNamed('add-income'),
+            onPressed: () => context.push('/smart-entry/income'),
             icon: const Icon(Icons.add),
             label: const Text('Add Income'),
           ),

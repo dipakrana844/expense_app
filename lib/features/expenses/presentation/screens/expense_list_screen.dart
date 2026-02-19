@@ -234,54 +234,10 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Quick Expense - Primary option for daily use
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.flash_on,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              title: const Text(
-                'Quick Expense',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: const Text('Add expense in seconds'),
-              trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'FAST',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                QuickExpenseSheet.show(context);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.payments, color: Colors.green),
-              title: const Text('Add Income'),
-              subtitle: const Text('Record money received'),
-              onTap: () {
-                context.pop();
-                context.push('/income/add');
-              },
-            ),
+            // Quick Expense button removed - use Smart Entry for streamlined transactions
+            // Quick Expense feature and backend logic preserved for backward compatibility
+            // Add Income button removed - use Smart Entry for all transactions
+            // Income feature and backend logic preserved for backward compatibility
             ListTile(
               leading: const Icon(Icons.shopping_cart),
               title: const Text('Grocery Session'),

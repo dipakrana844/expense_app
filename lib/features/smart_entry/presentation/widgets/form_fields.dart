@@ -3,8 +3,11 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart' as app_utils;
 import '../../../../core/services/smart_suggestion_service.dart';
 import '../providers/smart_entry_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'category_picker.dart';
+import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
 
-class SmartEntryFormFields extends StatelessWidget {
+class SmartEntryFormFields extends ConsumerWidget {
   final SmartEntryState state;
   final Function(String?) onCategoryChanged;
   final Function(String?) onSourceChanged;
@@ -33,38 +36,47 @@ class SmartEntryFormFields extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return IndexedStack(
       index: state.mode.index,
       children: [
-        _buildIncomeFields(context),
-        _buildExpenseFields(context),
+        _buildIncomeFields(context, ref),
+        _buildExpenseFields(context, ref),
         _buildTransferFields(context),
       ],
     );
   }
 
-  Widget _buildExpenseFields(BuildContext context) {
-    final suggestionService = SmartSuggestionServiceHolder.service;
-    final categories = suggestionService?.getFrequentExpenseCategories() ?? AppConstants.expenseCategories;
-    final accounts = suggestionService?.getAllAccounts() ?? ['Cash', 'Bank', 'UPI', 'Wallet'];
+  Widget _buildExpenseFields(BuildContext context, WidgetRef ref) {
+    final accounts = _getAccounts();
     
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildDateTimeRow(context),
-          const SizedBox(height: 16),
-          _buildCategoryDropdown(context, categories, state.category, onCategoryChanged),
-          const SizedBox(height: 16),
-          _buildAccountDropdown(context, accounts, state.account, 'Account (Optional)', onAccountChanged),
-          const SizedBox(height: 16),
-          _buildNoteField(context, state.note, onNoteChanged),
-          const SizedBox(height: 16),
-          _buildReceiptAttachment(context),
-        ],
-      ),
+    return Consumer(
+      builder: (context, ref, child) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDateTimeRow(context),
+              const SizedBox(height: 16),
+              CategoryPicker(
+                transactionType: 'expense',
+                selectedCategory: state.category,
+                onCategoryChanged: onCategoryChanged,
+                onAddCategoryPressed: () {
+                  _showAddCategorySheet(context, ref);
+                },
+              ),
+              const SizedBox(height: 16),
+              _buildAccountDropdown(context, accounts, state.account, 'Account (Optional)', onAccountChanged),
+              const SizedBox(height: 16),
+              _buildNoteField(context, state.note, onNoteChanged),
+              const SizedBox(height: 16),
+              _buildReceiptAttachment(context),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -112,7 +124,7 @@ class SmartEntryFormFields extends StatelessWidget {
     );
   }
 
-  Widget _buildIncomeFields(BuildContext context) {
+  Widget _buildIncomeFields(BuildContext context, WidgetRef ref) {
     final suggestionService = SmartSuggestionServiceHolder.service;
     final sources = suggestionService?.getFrequentIncomeSources() ?? ['Salary', 'Freelance', 'Investment', 'Gift', 'Others'];
     final accounts = suggestionService?.getAllAccounts() ?? ['Cash', 'Bank', 'UPI', 'Wallet'];
@@ -307,6 +319,71 @@ class SmartEntryFormFields extends StatelessWidget {
     // Copy previous date functionality - shows a snackbar for now
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Long press to copy previous transaction date')),
+    );
+  }
+
+  List<String> _getAccounts() {
+    final suggestionService = SmartSuggestionServiceHolder.service;
+    return suggestionService?.getAllAccounts() ?? ['Cash', 'Bank', 'UPI', 'Wallet'];
+  }
+
+  Future<void> _showAddCategorySheet(BuildContext context, WidgetRef ref) async {
+    final TextEditingController nameController = TextEditingController();
+    int selectedIcon = 0xe5cc; // Default icon
+    int selectedColor = 0xFF2196F3; // Default blue color
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Add New Category',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Category Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (nameController.text.trim().isNotEmpty) {
+                        // Get the category controller from the provider
+                        final controller = ref.read(categoryControllerProvider.notifier);
+                        await controller.addCategory(
+                          name: nameController.text.trim(),
+                          type: 'expense',
+                          iconCodePoint: selectedIcon,
+                          colorValue: selectedColor,
+                        );
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: const Text('Add Category'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

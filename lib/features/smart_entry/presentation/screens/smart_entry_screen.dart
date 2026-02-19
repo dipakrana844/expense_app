@@ -7,6 +7,8 @@ import '../widgets/numeric_keypad.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/smart_preview_card.dart';
 import '../widgets/form_fields.dart';
+import '../widgets/category_picker.dart';
+import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
 
 class SmartEntryScreen extends ConsumerStatefulWidget {
   final TransactionMode? initialMode;
@@ -303,5 +305,65 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
         }
       }
     });
+  }
+
+  Future<void> _showAddCategorySheet(String transactionType) async {
+    final TextEditingController nameController = TextEditingController();
+    int selectedIcon = 0xe5cc; // Default icon
+    int selectedColor = 0xFF2196F3; // Default blue color
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => Consumer(
+        builder: (context, ref, child) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Add New ${transactionType == 'income' ? 'Source' : 'Category'}',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText: '${transactionType == 'income' ? 'Source' : 'Category'} Name',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (nameController.text.trim().isNotEmpty) {
+                        // Get the category controller from the provider
+                        final controller = ref.read(categoryControllerProvider.notifier);
+                        await controller.addCategory(
+                          name: nameController.text.trim(),
+                          type: transactionType,
+                          iconCodePoint: selectedIcon,
+                          colorValue: selectedColor,
+                        );
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Text('Add ${transactionType == 'income' ? 'Source' : 'Category'}'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

@@ -9,6 +9,7 @@ import '../../../../features/transfer/presentation/providers/transfer_providers.
 import '../../../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../../../core/services/smart_suggestion_service.dart';
 import '../../../../features/transactions/presentation/providers/transaction_providers.dart';
+// NEW IMPORT
 
 enum TransactionMode { income, expense, transfer }
 

@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
-import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
 
 void main() {
   group('Storage Usage Tests', () {

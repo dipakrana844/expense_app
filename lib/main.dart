@@ -13,6 +13,8 @@ import 'features/daily_spend_guard/data/local/daily_spend_local_data_source.dart
 import 'features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import 'features/income/data/local/income_local_data_source.dart';
 import 'features/income/presentation/providers/income_providers.dart';
+import 'features/categories/data/datasource/category_local_data_source.dart';
+import 'features/categories/presentation/providers/category_providers.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 
@@ -44,6 +46,10 @@ void main() async {
   final dailySpendDataSource = DailySpendLocalDataSource();
   await dailySpendDataSource.init();
 
+  // Initialize Categories Data Source
+  final categoryDataSource = CategoryLocalDataSource();
+  await categoryDataSource.init();
+
   // Open Budget Box
   await Hive.openBox(AppConstants.budgetBoxName);
 
@@ -57,6 +63,7 @@ void main() async {
         ),
         settingsLocalDataSourceProvider.overrideWithValue(settingsDataSource),
         dailySpendLocalDataSourceProvider.overrideWithValue(dailySpendDataSource),
+        categoryLocalDataSourceProvider.overrideWithValue(categoryDataSource),
       ],
       observers: const [LoggerObserver()],
       child: const SmartExpenseTrackerApp(),

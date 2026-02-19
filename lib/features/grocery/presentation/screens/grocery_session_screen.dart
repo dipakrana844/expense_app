@@ -79,6 +79,16 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
               ? 'Edit Grocery Session'
               : 'New Grocery Session',
         ),
+        actions: [
+          if (settings.enableGroceryOCR)
+            IconButton(
+              onPressed: () {
+                context.pushNamed('grocery-ocr');
+              },
+              icon: const Icon(Icons.document_scanner_outlined),
+              tooltip: 'Scan Receipt',
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -92,15 +102,6 @@ class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
           _buildStickyFooter(state, settings.confirmBeforeGrocerySubmit),
         ],
       ),
-      floatingActionButton: settings.enableGroceryOCR
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                context.pushNamed('grocery-ocr');
-              },
-              icon: const Icon(Icons.document_scanner_outlined),
-              label: const Text('Scan Receipt'),
-            )
-          : null,
     );
   }
 
