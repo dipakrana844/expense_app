@@ -2,7 +2,7 @@ import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../providers/transaction_providers.dart';
-import 'transaction_card.dart';
+import 'modern_transaction_card.dart';
 import '../../../../core/utils/utils.dart';
 
 /// Widget: DailyView
@@ -29,6 +29,9 @@ class DailyView extends ConsumerWidget {
         
         return CustomScrollView(
           slivers: [
+            SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -119,7 +122,7 @@ class DailyView extends ConsumerWidget {
         
         // Transactions for this date
         ...transactions.map(
-          (transaction) => TransactionCard(
+          (transaction) => ModernTransactionCard(
             transaction: transaction,
             onTap: () {
               // Show transaction details
