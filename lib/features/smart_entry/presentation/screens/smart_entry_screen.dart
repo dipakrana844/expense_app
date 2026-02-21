@@ -1,14 +1,14 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/services.dart';
-import '../providers/smart_entry_controller.dart';
-import '../widgets/numeric_keypad.dart';
-import '../widgets/mode_selector.dart';
-import '../widgets/smart_preview_card.dart';
-import '../widgets/form_fields.dart';
-import '../widgets/category_picker.dart';
 import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
+
+import '../providers/smart_entry_controller.dart';
+import '../widgets/form_fields.dart';
+import '../widgets/mode_selector.dart';
+import '../widgets/numeric_keypad.dart';
+import '../widgets/smart_preview_card.dart';
 
 class SmartEntryScreen extends ConsumerStatefulWidget {
   final TransactionMode? initialMode;
@@ -25,7 +25,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.initialMode != null) {
-        ref.read(smartEntryControllerProvider.notifier).switchMode(widget.initialMode!);
+        ref
+            .read(smartEntryControllerProvider.notifier)
+            .switchMode(widget.initialMode!);
       }
     });
   }
@@ -41,10 +43,14 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
       body: SafeArea(
         child: CallbackShortcuts(
           bindings: {
-            const SingleActivator(LogicalKeyboardKey.escape): () => _handleBack(context, state),
-            const SingleActivator(LogicalKeyboardKey.enter): () => _handleSave(context, controller),
-            const SingleActivator(LogicalKeyboardKey.keyS, control: true): () => _handleSave(context, controller),
-            const SingleActivator(LogicalKeyboardKey.keyC, control: true): () => _handleContinue(context, controller),
+            const SingleActivator(LogicalKeyboardKey.escape): () =>
+                _handleBack(context, state),
+            const SingleActivator(LogicalKeyboardKey.enter): () =>
+                _handleSave(context, controller),
+            const SingleActivator(LogicalKeyboardKey.keyS, control: true): () =>
+                _handleSave(context, controller),
+            const SingleActivator(LogicalKeyboardKey.keyC, control: true): () =>
+                _handleContinue(context, controller),
           },
           child: Focus(
             autofocus: true,
@@ -80,10 +86,11 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
                   ),
                 ),
                 // Numeric Keypad
-                NumericKeypad(
-                  onKeyPressed: controller.updateAmount,
-                  accentColor: accentColor,
-                ),
+                if (MediaQuery.of(context).viewInsets.bottom == 0)
+                  NumericKeypad(
+                    onKeyPressed: controller.updateAmount,
+                    accentColor: accentColor,
+                  ),
                 // Action Buttons
                 _buildActionButtons(context, state, controller, accentColor),
               ],
@@ -94,7 +101,12 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, SmartEntryState state, SmartEntryController controller, Color accentColor) {
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    SmartEntryState state,
+    SmartEntryController controller,
+    Color accentColor,
+  ) {
     return AppBar(
       title: const Text('Add Transaction'),
       leading: Semantics(
@@ -143,7 +155,11 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     );
   }
 
-  Widget _buildAmountDisplay(BuildContext context, SmartEntryState state, SmartEntryController controller) {
+  Widget _buildAmountDisplay(
+    BuildContext context,
+    SmartEntryState state,
+    SmartEntryController controller,
+  ) {
     final accentColor = controller.getAccentColor(context);
     return Semantics(
       label: 'Current amount: ${controller.getFormattedAmount()}',
@@ -162,7 +178,12 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, SmartEntryState state, SmartEntryController controller, Color accentColor) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    SmartEntryState state,
+    SmartEntryController controller,
+    Color accentColor,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -174,7 +195,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
               hint: 'Save current transaction and prepare for next entry',
               enabled: !state.isLoading && state.isValid,
               child: OutlinedButton.icon(
-                onPressed: state.isLoading || !state.isValid ? null : () => _handleContinue(context, controller),
+                onPressed: state.isLoading || !state.isValid
+                    ? null
+                    : () => _handleContinue(context, controller),
                 icon: const Icon(Icons.add),
                 label: const Text('Continue'),
                 style: OutlinedButton.styleFrom(
@@ -192,9 +215,18 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
               hint: 'Save the current transaction and exit',
               enabled: !state.isLoading && state.isValid,
               child: FilledButton.icon(
-                onPressed: state.isLoading || !state.isValid ? null : () => _handleSave(context, controller),
+                onPressed: state.isLoading || !state.isValid
+                    ? null
+                    : () => _handleSave(context, controller),
                 icon: state.isLoading
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : const Icon(Icons.check),
                 label: const Text('Save'),
                 style: FilledButton.styleFrom(
@@ -209,7 +241,10 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     );
   }
 
-  Future<void> _handleSave(BuildContext context, SmartEntryController controller) async {
+  Future<void> _handleSave(
+    BuildContext context,
+    SmartEntryController controller,
+  ) async {
     String? errorMessage;
     final success = await controller.save().then((success) {
       errorMessage = controller.state.error;
@@ -227,7 +262,10 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     }
   }
 
-  Future<void> _handleContinue(BuildContext context, SmartEntryController controller) async {
+  Future<void> _handleContinue(
+    BuildContext context,
+    SmartEntryController controller,
+  ) async {
     String? errorMessage;
     final success = await controller.saveAndContinue().then((success) {
       errorMessage = controller.state.error;
@@ -235,7 +273,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     });
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Transaction saved, ready for next entry')),
+        const SnackBar(
+          content: Text('Transaction saved, ready for next entry'),
+        ),
       );
     } else if (!success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -245,15 +285,17 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
   }
 
   void _handleBack(BuildContext context, SmartEntryState state) {
-    if (state.amountString.isNotEmpty || 
-        state.category != null || 
+    if (state.amountString.isNotEmpty ||
+        state.category != null ||
         state.source != null ||
         state.note?.isNotEmpty == true) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Discard changes?'),
-          content: const Text('You have unsaved changes. Are you sure you want to discard them?'),
+          content: const Text(
+            'You have unsaved changes. Are you sure you want to discard them?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -337,7 +379,8 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText: '${transactionType == 'income' ? 'Source' : 'Category'} Name',
+                      labelText:
+                          '${transactionType == 'income' ? 'Source' : 'Category'} Name',
                       border: const OutlineInputBorder(),
                     ),
                   ),
@@ -346,7 +389,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
                     onPressed: () async {
                       if (nameController.text.trim().isNotEmpty) {
                         // Get the category controller from the provider
-                        final controller = ref.read(categoryControllerProvider.notifier);
+                        final controller = ref.read(
+                          categoryControllerProvider.notifier,
+                        );
                         await controller.addCategory(
                           name: nameController.text.trim(),
                           type: transactionType,
@@ -356,7 +401,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
                         Navigator.of(context).pop();
                       }
                     },
-                    child: Text('Add ${transactionType == 'income' ? 'Source' : 'Category'}'),
+                    child: Text(
+                      'Add ${transactionType == 'income' ? 'Source' : 'Category'}',
+                    ),
                   ),
                 ],
               ),

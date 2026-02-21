@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../grocery/presentation/providers/grocery_notifier.dart';
-import '../providers/transaction_providers.dart';
-import '../widgets/daily_view.dart';
-import '../widgets/calendar_view.dart';
-import '../widgets/monthly_view.dart';
-import '../widgets/total_view.dart';
-import '../widgets/notes_view.dart';
-import '../widgets/modern_summary_header.dart';
-import '../widgets/segmented_view_selector.dart';
+
 import '../../domain/enums/transaction_type.dart';
+import '../providers/transaction_providers.dart';
+import '../widgets/calendar_view.dart';
+import '../widgets/daily_view.dart';
+import '../widgets/modern_summary_header.dart';
+import '../widgets/monthly_view.dart';
+import '../widgets/notes_view.dart';
+import '../widgets/segmented_view_selector.dart';
+import '../widgets/total_view.dart';
 
 /// Screen: TransactionsScreen
 ///
@@ -29,7 +29,8 @@ class TransactionsScreen extends ConsumerStatefulWidget {
   ConsumerState<TransactionsScreen> createState() => _TransactionsScreenState();
 }
 
-class _TransactionsScreenState extends ConsumerState<TransactionsScreen> with TickerProviderStateMixin {
+class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
+    with TickerProviderStateMixin {
   bool _isSearching = false;
   final _searchController = TextEditingController();
   late TabController _tabController;
@@ -90,7 +91,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> with Ti
                   preferredSize: const Size.fromHeight(48),
                   child: SegmentedViewSelector(
                     controller: _tabController,
-                    tabs: const ['Daily', 'Calendar', 'Monthly', 'Total', 'Notes'],
+                    tabs: const [
+                      'Daily',
+                      'Calendar',
+                      'Monthly',
+                      'Total',
+                      'Notes',
+                    ],
                   ),
                 ),
                 actions: [
@@ -101,7 +108,9 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> with Ti
                         _isSearching = !_isSearching;
                         if (!_isSearching) {
                           _searchController.clear();
-                          ref.read(transactionFilterProvider.notifier).setSearchTerm('');
+                          ref
+                              .read(transactionFilterProvider.notifier)
+                              .setSearchTerm('');
                         }
                       });
                     },
@@ -109,20 +118,35 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> with Ti
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.filter_list),
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'all', child: Text('All Transactions')),
-                      const PopupMenuItem(value: 'income', child: Text('Income Only')),
-                      const PopupMenuItem(value: 'expense', child: Text('Expenses Only')),
+                      const PopupMenuItem(
+                        value: 'all',
+                        child: Text('All Transactions'),
+                      ),
+                      const PopupMenuItem(
+                        value: 'income',
+                        child: Text('Income Only'),
+                      ),
+                      const PopupMenuItem(
+                        value: 'expense',
+                        child: Text('Expenses Only'),
+                      ),
                     ],
                     onSelected: (value) {
-                      switch(value) {
+                      switch (value) {
                         case 'all':
-                          ref.read(transactionFilterProvider.notifier).setType(null);
+                          ref
+                              .read(transactionFilterProvider.notifier)
+                              .setType(null);
                           break;
                         case 'income':
-                          ref.read(transactionFilterProvider.notifier).setType(TransactionType.income);
+                          ref
+                              .read(transactionFilterProvider.notifier)
+                              .setType(TransactionType.income);
                           break;
                         case 'expense':
-                          ref.read(transactionFilterProvider.notifier).setType(TransactionType.expense);
+                          ref
+                              .read(transactionFilterProvider.notifier)
+                              .setType(TransactionType.expense);
                           break;
                       }
                     },
@@ -145,12 +169,76 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> with Ti
         ),
       ),
 
-      // Floating Action Button - Direct Access to Smart Entry
+      // Floating Action Button - Opens Add Options Menu
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/smart-entry'),
-        tooltip: 'Smart Entry',
-        icon: const Icon(Icons.smart_toy_outlined),
-        label: const Text('Smart Entry'),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            builder: (context) => SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                        child: Icon(
+                          Icons.smart_toy_outlined,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                      title: const Text('Smart Entry'),
+                      subtitle: const Text('Add via smart form or OCR'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/smart-entry');
+                      },
+                    ),
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer,
+                        child: Icon(
+                          Icons.shopping_cart_outlined,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      title: const Text('Add Grocery'),
+                      subtitle: const Text('Track items in a grocery session'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/grocery/add');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+        tooltip: 'Add Transaction',
+        icon: const Icon(Icons.add),
+        label: const Text('Add Options'),
         elevation: 2,
       ),
     );

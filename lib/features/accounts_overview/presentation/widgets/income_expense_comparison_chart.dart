@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
 import '../../domain/entities/financial_trend_dto.dart';
 import '../providers/financial_trend_providers.dart';
 
@@ -14,11 +15,8 @@ import '../providers/financial_trend_providers.dart';
 /// - Clear financial direction visualization
 class IncomeExpenseComparisonChart extends ConsumerWidget {
   final double height;
-  
-  const IncomeExpenseComparisonChart({
-    super.key,
-    this.height = 250,
-  });
+
+  const IncomeExpenseComparisonChart({super.key, this.height = 250});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,8 +36,8 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3) 
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
                 : Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -58,14 +56,12 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Chart
           Expanded(
-            child: BarChart(
-              _buildChartData(comparisons, theme, isDark),
-            ),
+            child: BarChart(_buildChartData(comparisons, theme, isDark)),
           ),
-          
+
           // Legend
           const SizedBox(height: 16),
           _buildLegend(theme, isDark),
@@ -77,7 +73,7 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
   /// Build empty state when no data is available
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       height: height,
       padding: const EdgeInsets.all(16),
@@ -120,7 +116,11 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
   }
 
   /// Build chart data configuration
-  BarChartData _buildChartData(List<IncomeExpenseComparison> comparisons, ThemeData theme, bool isDark) {
+  BarChartData _buildChartData(
+    List<IncomeExpenseComparison> comparisons,
+    ThemeData theme,
+    bool isDark,
+  ) {
     if (comparisons.isEmpty) {
       return _buildEmptyChartData(theme, isDark);
     }
@@ -179,19 +179,19 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
         },
       ),
       borderData: FlBorderData(show: false),
-      barTouchData: BarTouchData(
-        enabled: true,
-      ),
+      barTouchData: BarTouchData(enabled: true),
       maxY: _calculateMaxY(comparisons),
     );
   }
 
   /// Generate bar groups for the chart
-  List<BarChartGroupData> _generateBarGroups(List<IncomeExpenseComparison> comparisons) {
+  List<BarChartGroupData> _generateBarGroups(
+    List<IncomeExpenseComparison> comparisons,
+  ) {
     return comparisons.asMap().entries.map((entry) {
       final index = entry.key;
       final comparison = entry.value;
-      
+
       return BarChartGroupData(
         x: index,
         barRods: [
@@ -284,11 +284,11 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
     try {
       final parts = monthKey.split('-');
       if (parts.length != 2) return monthKey;
-      
+
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
       final date = DateTime(year, month, 1);
-      
+
       return DateFormat('MMM').format(date);
     } catch (e) {
       return monthKey;
@@ -296,22 +296,29 @@ class IncomeExpenseComparisonChart extends ConsumerWidget {
   }
 
   /// Calculate horizontal grid interval
-  double _calculateHorizontalInterval(List<IncomeExpenseComparison> comparisons) {
+  double _calculateHorizontalInterval(
+    List<IncomeExpenseComparison> comparisons,
+  ) {
     if (comparisons.isEmpty) return 1;
     final maxValue = comparisons
         .map((c) => c.income > c.expense ? c.income : c.expense)
         .reduce((a, b) => a > b ? a : b);
+
+    if (maxValue <= 0) return 1;
+
     return maxValue / 5;
   }
 
   /// Calculate maximum Y value for chart
   double _calculateMaxY(List<IncomeExpenseComparison> comparisons) {
     if (comparisons.isEmpty) return 100;
-    
+
     final maxValue = comparisons
         .map((c) => c.income > c.expense ? c.income : c.expense)
         .reduce((a, b) => a > b ? a : b);
-    
+
+    if (maxValue <= 0) return 100;
+
     final buffer = maxValue * 0.1;
     return maxValue + buffer;
   }
