@@ -31,20 +31,31 @@ class SegmentedViewSelector extends StatelessWidget {
                 onTap: () => controller.animateTo(index),
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(20),
-                    border: isSelected ? null : Border.all(
-                      color: colorScheme.outline.withOpacity(0.2),
-                    ),
+                    border: isSelected
+                        ? null
+                        : Border.all(
+                            color: colorScheme.outline.withOpacity(0.2),
+                          ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     tabs[index],
                     style: TextStyle(
-                      color: isSelected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      color: isSelected
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurfaceVariant,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
                       fontSize: 13,
                     ),
                   ),

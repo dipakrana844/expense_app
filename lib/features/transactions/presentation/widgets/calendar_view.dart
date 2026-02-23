@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/utils/utils.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../providers/transaction_providers.dart';
-import '../../../../core/utils/utils.dart';
 
 /// Widget: CalendarView
 ///
@@ -15,7 +16,7 @@ class CalendarView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentMonth = ref.watch(currentMonthProvider);
     final allTransactionsAsync = ref.watch(allTransactionsProvider);
-    
+
     return allTransactionsAsync.when(
       data: (allTransactions) {
         return CalendarGridView(
@@ -24,9 +25,8 @@ class CalendarView extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Error loading calendar view: $error'),
-      ),
+      error: (error, stack) =>
+          Center(child: Text('Error loading calendar view: $error')),
     );
   }
 }
@@ -47,18 +47,20 @@ class CalendarGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Get first day of the month
     final firstDayOfMonth = DateTime(month.year, month.month, 1);
     // Get last day of the month
     final lastDayOfMonth = DateTime(month.year, month.month + 1, 0);
     // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
-    final firstDayWeekday = firstDayOfMonth.weekday % 7; // Adjust for Sunday = 0
-    
+    final firstDayWeekday =
+        firstDayOfMonth.weekday % 7; // Adjust for Sunday = 0
+
     // Group transactions by day
     final transactionsByDay = <int, List<TransactionEntity>>{};
     for (final transaction in transactions) {
-      if (transaction.date.year == month.year && transaction.date.month == month.month) {
+      if (transaction.date.year == month.year &&
+          transaction.date.month == month.month) {
         final day = transaction.date.day;
         if (!transactionsByDay.containsKey(day)) {
           transactionsByDay[day] = [];
@@ -69,7 +71,7 @@ class CalendarGridView extends StatelessWidget {
 
     // Calculate total days to show (6 weeks = 42 days)
     final totalDays = ((lastDayOfMonth.day + firstDayWeekday) ~/ 7 + 1) * 7;
-    
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -79,17 +81,19 @@ class CalendarGridView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-                  .map((day) => Expanded(
-                        child: Center(
-                          child: Text(
-                            day,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  .map(
+                    (day) => Expanded(
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ))
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -107,7 +111,9 @@ class CalendarGridView extends StatelessWidget {
             itemBuilder: (context, index) {
               final day = index - firstDayWeekday + 1;
               final isCurrentMonth = day >= 1 && day <= lastDayOfMonth.day;
-              final dayTransactions = isCurrentMonth ? (transactionsByDay[day] ?? []) : [];
+              final dayTransactions = isCurrentMonth
+                  ? (transactionsByDay[day] ?? [])
+                  : [];
 
               // Calculate income and expenses for this day
               double dayIncome = 0;
@@ -178,8 +184,8 @@ class CalendarDayCell extends ConsumerWidget {
           color: !isCurrentMonth
               ? theme.cardColor.withOpacity(0.3)
               : index % 7 == 0 || index % 7 == 6
-                  ? theme.cardColor.withOpacity(0.6) // Weekend highlight
-                  : theme.cardColor,
+              ? theme.cardColor.withOpacity(0.6) // Weekend highlight
+              : theme.cardColor,
           border: Border.all(
             color: theme.dividerColor.withOpacity(0.3),
             width: 0.5,
@@ -196,10 +202,10 @@ class CalendarDayCell extends ConsumerWidget {
                 color: !isCurrentMonth
                     ? theme.colorScheme.onSurface.withOpacity(0.4)
                     : day == DateTime.now().day &&
-                            month.month == DateTime.now().month &&
-                            month.year == DateTime.now().year
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface,
+                          month.month == DateTime.now().month &&
+                          month.year == DateTime.now().year
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface,
               ),
             ),
             if (isCurrentMonth && dayIncome > 0)
@@ -213,10 +219,7 @@ class CalendarDayCell extends ConsumerWidget {
             if (isCurrentMonth && dayExpense > 0)
               Text(
                 '-${CurrencyUtils.formatAmountWithoutSymbol(dayExpense)}',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: theme.colorScheme.error,
-                ),
+                style: TextStyle(fontSize: 10, color: theme.colorScheme.error),
               ),
           ],
         ),

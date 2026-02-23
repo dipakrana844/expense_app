@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/utils/utils.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../providers/transaction_providers.dart';
-import '../../../../core/utils/utils.dart';
 
 /// Widget: MonthlyView
 ///
@@ -13,17 +14,14 @@ class MonthlyView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allTransactionsAsync = ref.watch(allTransactionsProvider);
-    
+
     return allTransactionsAsync.when(
       data: (allTransactions) {
-        return MonthlyListView(
-          transactions: allTransactions,
-        );
+        return MonthlyListView(transactions: allTransactions);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Error loading monthly view: $error'),
-      ),
+      error: (error, stack) =>
+          Center(child: Text('Error loading monthly view: $error')),
     );
   }
 }
@@ -34,15 +32,12 @@ class MonthlyView extends ConsumerWidget {
 class MonthlyListView extends StatelessWidget {
   final List<TransactionEntity> transactions;
 
-  const MonthlyListView({
-    super.key,
-    required this.transactions,
-  });
+  const MonthlyListView({super.key, required this.transactions});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Group transactions by month
     final transactionsByMonth = <String, List<TransactionEntity>>{};
     for (final transaction in transactions) {
@@ -55,14 +50,16 @@ class MonthlyListView extends StatelessWidget {
 
     // Sort months in descending order
     final sortedMonths = transactionsByMonth.keys.toList()
-      ..sort((a, b) => DateTime.parse('$b-01').compareTo(DateTime.parse('$a-01')));
+      ..sort(
+        (a, b) => DateTime.parse('$b-01').compareTo(DateTime.parse('$a-01')),
+      );
 
     return ListView.builder(
       itemCount: sortedMonths.length,
       itemBuilder: (context, index) {
         final monthKey = sortedMonths[index];
         final monthTransactions = transactionsByMonth[monthKey]!;
-        
+
         // Calculate totals for this month
         double monthIncome = 0;
         double monthExpense = 0;
@@ -108,7 +105,9 @@ class MonthlyListView extends StatelessWidget {
           subtitle: Text(
             'Net: ${net >= 0 ? '+' : ''}${CurrencyUtils.formatAmountWithoutSymbol(net)}',
             style: TextStyle(
-              color: net >= 0 ? theme.colorScheme.primary : theme.colorScheme.error,
+              color: net >= 0
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.error,
             ),
           ),
           children: [
@@ -128,8 +127,18 @@ class MonthlyListView extends StatelessWidget {
     final year = int.parse(parts[0]);
     final month = int.parse(parts[1]);
     final monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${monthNames[month - 1]} $year';
   }
@@ -151,7 +160,7 @@ class WeeklyBreakdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Group by week
     final transactionsByWeek = <int, List<TransactionEntity>>{};
     for (final transaction in transactions) {
@@ -172,7 +181,7 @@ class WeeklyBreakdown extends StatelessWidget {
       itemBuilder: (context, index) {
         final weekNumber = sortedWeeks[index];
         final weekTransactions = transactionsByWeek[weekNumber]!;
-        
+
         // Calculate totals for this week
         double weekIncome = 0;
         double weekExpense = 0;
@@ -221,7 +230,9 @@ class WeeklyBreakdown extends StatelessWidget {
                     Text(
                       'Net: ${net >= 0 ? '+' : ''}${CurrencyUtils.formatAmountWithoutSymbol(net)}',
                       style: TextStyle(
-                        color: net >= 0 ? theme.colorScheme.primary : theme.colorScheme.error,
+                        color: net >= 0
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.error,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),

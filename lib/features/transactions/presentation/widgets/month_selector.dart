@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
 import '../providers/transaction_providers.dart';
 
 /// Widget: MonthSelector
@@ -37,9 +38,9 @@ class MonthSelector extends ConsumerWidget {
                 .goToPreviousMonth(),
             tooltip: 'Previous month',
           ),
-          
+
           const SizedBox(width: 8),
-          
+
           // Current Month Display
           Expanded(
             child: Center(
@@ -52,23 +53,23 @@ class MonthSelector extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           const SizedBox(width: 8),
-          
+
           // Next Month Button
           IconButton(
             icon: const Icon(Icons.chevron_right),
-            onPressed: () => ref
-                .read(transactionActionsProvider.notifier)
-                .goToNextMonth(),
+            onPressed: () =>
+                ref.read(transactionActionsProvider.notifier).goToNextMonth(),
             tooltip: 'Next month',
           ),
-          
+
           const SizedBox(width: 8),
-          
+
           // Today Button
           TextButton.icon(
-            onPressed: () => ref.read(transactionActionsProvider.notifier).goToToday(),
+            onPressed: () =>
+                ref.read(transactionActionsProvider.notifier).goToToday(),
             icon: const Icon(Icons.today, size: 18),
             label: const Text('Today'),
             style: TextButton.styleFrom(

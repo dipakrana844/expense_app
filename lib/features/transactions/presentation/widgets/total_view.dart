@@ -1,8 +1,9 @@
- import 'package:flutter/material.dart' hide DateUtils;
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/utils/utils.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../providers/transaction_providers.dart';
-import '../../../../core/utils/utils.dart';
 
 /// Widget: TotalView
 ///
@@ -13,17 +14,14 @@ class TotalView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(transactionSummaryProvider);
-    
+
     return summaryAsync.when(
       data: (summary) {
-        return TotalViewContent(
-          summary: summary,
-        );
+        return TotalViewContent(summary: summary);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Error loading total view: $error'),
-      ),
+      error: (error, stack) =>
+          Center(child: Text('Error loading total view: $error')),
     );
   }
 }
@@ -34,15 +32,12 @@ class TotalView extends ConsumerWidget {
 class TotalViewContent extends StatelessWidget {
   final TransactionSummary summary;
 
-  const TotalViewContent({
-    super.key,
-    required this.summary,
-  });
+  const TotalViewContent({super.key, required this.summary});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -64,14 +59,17 @@ class TotalViewContent extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     LinearProgressIndicator(
-                      value: summary.totalExpenses / 1000, // Assuming budget of 1000 for demo
-                      backgroundColor: theme.colorScheme.surfaceVariant,
+                      value:
+                          summary.totalExpenses /
+                          1000, // Assuming budget of 1000 for demo
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         summary.totalExpenses / 1000 > 0.8
                             ? theme.colorScheme.error
                             : summary.totalExpenses / 1000 > 0.6
-                                ? theme.colorScheme.secondary
-                                : theme.colorScheme.primary,
+                            ? theme.colorScheme.secondary
+                            : theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -92,9 +90,9 @@ class TotalViewContent extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Comparison Card
             Card(
               child: Padding(
@@ -115,13 +113,15 @@ class TotalViewContent extends StatelessWidget {
                         ComparisonItem(
                           label: 'Income',
                           currentValue: summary.totalIncome,
-                          previousValue: summary.totalIncome * 0.95, // Placeholder
+                          previousValue:
+                              summary.totalIncome * 0.95, // Placeholder
                           theme: theme,
                         ),
                         ComparisonItem(
                           label: 'Expenses',
                           currentValue: summary.totalExpenses,
-                          previousValue: summary.totalExpenses * 1.1, // Placeholder
+                          previousValue:
+                              summary.totalExpenses * 1.1, // Placeholder
                           theme: theme,
                         ),
                       ],
@@ -130,9 +130,9 @@ class TotalViewContent extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Account Totals
             Card(
               child: Padding(
@@ -160,15 +160,17 @@ class TotalViewContent extends StatelessWidget {
                     AccountTotalItem(
                       label: 'Net Balance',
                       amount: summary.netBalance,
-                      color: summary.netBalance >= 0 ? theme.colorScheme.primary : theme.colorScheme.error,
+                      color: summary.netBalance >= 0
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.error,
                     ),
                   ],
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Export Option
             FilledButton.icon(
               onPressed: () {
@@ -206,11 +208,11 @@ class ComparisonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final changePercent = previousValue != 0 
-        ? ((currentValue - previousValue) / previousValue * 100).abs() 
+    final changePercent = previousValue != 0
+        ? ((currentValue - previousValue) / previousValue * 100).abs()
         : 0;
     final isPositiveChange = currentValue >= previousValue;
-    
+
     return Column(
       children: [
         Text(
@@ -233,12 +235,16 @@ class ComparisonItem extends StatelessWidget {
             Icon(
               isPositiveChange ? Icons.arrow_upward : Icons.arrow_downward,
               size: 14,
-              color: isPositiveChange ? theme.colorScheme.primary : theme.colorScheme.error,
+              color: isPositiveChange
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.error,
             ),
             Text(
               '${isPositiveChange ? "+" : "-"}${changePercent.toStringAsFixed(1)}%',
               style: TextStyle(
-                color: isPositiveChange ? theme.colorScheme.primary : theme.colorScheme.error,
+                color: isPositiveChange
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.error,
                 fontSize: 12,
               ),
             ),
@@ -271,10 +277,7 @@ class AccountTotalItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text(label, style: Theme.of(context).textTheme.bodyMedium),
           Text(
             CurrencyUtils.formatAmount(amount),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

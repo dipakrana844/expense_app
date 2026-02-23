@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../domain/enums/transaction_type.dart';
 import '../providers/transaction_providers.dart';
 
@@ -36,16 +37,16 @@ class TransactionFilterBar extends ConsumerWidget {
           //     color: theme.colorScheme.onSurfaceVariant,
           //   ),
           // ),
-          
+
           // const SizedBox(width: 12),
-          
+
           // Segmented Control
           Expanded(
             child: _buildSegmentedControl(context, ref, filterState, theme),
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // Clear Filters Button (only show when filters are active)
           if (filterState.hasFilters)
             IconButton(
@@ -54,9 +55,8 @@ class TransactionFilterBar extends ConsumerWidget {
                 size: 20,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
-              onPressed: () => ref
-                  .read(transactionFilterProvider.notifier)
-                  .clearFilters(),
+              onPressed: () =>
+                  ref.read(transactionFilterProvider.notifier).clearFilters(),
               tooltip: 'Clear filters',
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -67,13 +67,17 @@ class TransactionFilterBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildSegmentedControl(BuildContext context, WidgetRef ref,
-      TransactionFilterState filterState, ThemeData theme) {
+  Widget _buildSegmentedControl(
+    BuildContext context,
+    WidgetRef ref,
+    TransactionFilterState filterState,
+    ThemeData theme,
+  ) {
     final isSelected = filterState.type;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
@@ -87,7 +91,7 @@ class TransactionFilterBar extends ConsumerWidget {
             theme,
             () => ref.read(transactionFilterProvider.notifier).setType(null),
           ),
-          
+
           // Income Button
           _buildFilterButton(
             context,
@@ -99,7 +103,7 @@ class TransactionFilterBar extends ConsumerWidget {
                 .read(transactionFilterProvider.notifier)
                 .toggleType(TransactionType.income),
           ),
-          
+
           // Expenses Button
           _buildFilterButton(
             context,
@@ -128,7 +132,7 @@ class TransactionFilterBar extends ConsumerWidget {
     final textColor = isSelected
         ? theme.colorScheme.onPrimary
         : theme.colorScheme.onSurfaceVariant;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: onPressed,
@@ -155,13 +159,15 @@ class TransactionFilterBar extends ConsumerWidget {
                   ),
                   const SizedBox(width: 4),
                 ],
-                
+
                 // Label
                 Flexible(
                   child: Text(
                     label,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: textColor,
                       fontSize: 13, // Slightly smaller font
                     ),

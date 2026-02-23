@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/utils/utils.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../providers/transaction_providers.dart';
@@ -11,10 +12,7 @@ import '../providers/transaction_providers.dart';
 class SummaryStrip extends ConsumerWidget {
   final bool isSticky;
 
-  const SummaryStrip({
-    super.key,
-    this.isSticky = true,
-  });
+  const SummaryStrip({super.key, this.isSticky = true});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,10 +27,13 @@ class SummaryStrip extends ConsumerWidget {
   }
 
   Widget _buildSummaryContent(
-      BuildContext context, ThemeData theme, TransactionSummary summary) {
+    BuildContext context,
+    ThemeData theme,
+    TransactionSummary summary,
+  ) {
     final netBalance = summary.netBalance;
     final isPositive = netBalance >= 0;
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -69,9 +70,9 @@ class SummaryStrip extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Metrics Row
           Row(
             children: [
@@ -83,9 +84,9 @@ class SummaryStrip extends ConsumerWidget {
                 Icons.trending_up,
                 theme.colorScheme.primary,
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Expenses
               _buildMetricCard(
                 context,
@@ -94,22 +95,18 @@ class SummaryStrip extends ConsumerWidget {
                 Icons.trending_down,
                 theme.colorScheme.error,
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Net Balance
               Expanded(
-                child: _buildNetBalanceCard(
-                  context,
-                  netBalance,
-                  isPositive,
-                ),
+                child: _buildNetBalanceCard(context, netBalance, isPositive),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Additional Stats
           _buildAdditionalStats(context, theme, summary),
         ],
@@ -125,17 +122,14 @@ class SummaryStrip extends ConsumerWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 1,
-          ),
+          border: Border.all(color: color.withOpacity(0.3), width: 1),
         ),
         child: Column(
           children: [
@@ -169,19 +163,16 @@ class SummaryStrip extends ConsumerWidget {
     bool isPositive,
   ) {
     final theme = Theme.of(context);
-    final color = isPositive 
-        ? theme.colorScheme.primary 
+    final color = isPositive
+        ? theme.colorScheme.primary
         : theme.colorScheme.error;
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Column(
         children: [
@@ -213,11 +204,14 @@ class SummaryStrip extends ConsumerWidget {
   }
 
   Widget _buildAdditionalStats(
-      BuildContext context, ThemeData theme, TransactionSummary summary) {
+    BuildContext context,
+    ThemeData theme,
+    TransactionSummary summary,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -253,7 +247,7 @@ class SummaryStrip extends ConsumerWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
         Text(
@@ -291,9 +285,7 @@ class SummaryStrip extends ConsumerWidget {
               ]
             : null,
       ),
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -316,11 +308,7 @@ class SummaryStrip extends ConsumerWidget {
       child: Center(
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: theme.colorScheme.error,
-              size: 24,
-            ),
+            Icon(Icons.error_outline, color: theme.colorScheme.error, size: 24),
             const SizedBox(height: 8),
             Text(
               'Unable to load summary',

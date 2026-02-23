@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/entities/transaction_entity.dart';
-import '../../shared/utils/transaction_utils.dart';
-import '../../presentation/providers/transaction_providers.dart';
+
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../income/presentation/providers/income_providers.dart';
+import '../../domain/entities/transaction_entity.dart';
+import '../../presentation/providers/transaction_providers.dart';
+import '../../shared/utils/transaction_utils.dart';
 
 /// Widget: TransactionCard
 ///
@@ -15,16 +16,12 @@ class TransactionCard extends ConsumerWidget {
   final TransactionEntity transaction;
   final VoidCallback? onTap;
 
-  const TransactionCard({
-    super.key,
-    required this.transaction,
-    this.onTap,
-  });
+  const TransactionCard({super.key, required this.transaction, this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 1,
@@ -38,14 +35,12 @@ class TransactionCard extends ConsumerWidget {
             children: [
               // Category/Source Icon
               _buildCategoryIcon(theme),
-              
+
               const SizedBox(width: 16),
-              
+
               // Transaction Details
-              Expanded(
-                child: _buildTransactionDetails(theme),
-              ),
-              
+              Expanded(child: _buildTransactionDetails(theme)),
+
               // Amount and Actions
               _buildAmountAndActions(context, theme, ref),
             ],
@@ -58,20 +53,17 @@ class TransactionCard extends ConsumerWidget {
   /// Build category/source icon with appropriate styling
   Widget _buildCategoryIcon(ThemeData theme) {
     final isIncome = transaction.isIncome;
-    final color = isIncome 
-        ? theme.colorScheme.primary 
+    final color = isIncome
+        ? theme.colorScheme.primary
         : theme.colorScheme.error;
-    
+
     return Container(
       width: 48,
       height: 48,
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Icon(
         TransactionUtils.getCategoryIcon(transaction.categoryOrSource),
@@ -96,9 +88,9 @@ class TransactionCard extends ConsumerWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        
+
         const SizedBox(height: 4),
-        
+
         // Note (if available)
         if (transaction.note != null && transaction.note!.isNotEmpty)
           Text(
@@ -109,7 +101,7 @@ class TransactionCard extends ConsumerWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-        
+
         // Date
         Text(
           TransactionUtils.formatTransactionDate(transaction.date),
@@ -124,12 +116,15 @@ class TransactionCard extends ConsumerWidget {
 
   /// Build amount display with actions
   Widget _buildAmountAndActions(
-      BuildContext context, ThemeData theme, WidgetRef ref) {
+    BuildContext context,
+    ThemeData theme,
+    WidgetRef ref,
+  ) {
     final isIncome = transaction.isIncome;
-    final color = isIncome 
-        ? theme.colorScheme.primary 
+    final color = isIncome
+        ? theme.colorScheme.primary
         : theme.colorScheme.error;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -141,9 +136,9 @@ class TransactionCard extends ConsumerWidget {
             color: color,
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Action buttons
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -160,9 +155,9 @@ class TransactionCard extends ConsumerWidget {
               constraints: const BoxConstraints(),
               visualDensity: VisualDensity.compact,
             ),
-            
+
             const SizedBox(width: 8),
-            
+
             // Delete button
             IconButton(
               icon: Icon(
@@ -222,9 +217,7 @@ class TransactionCard extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
-          'Delete ${transaction.isIncome ? 'Income' : 'Expense'}?',
-        ),
+        title: Text('Delete ${transaction.isIncome ? 'Income' : 'Expense'}?'),
         content: Text(
           'Are you sure you want to delete this '
           '${transaction.isIncome ? 'income' : 'expense'} entry?',

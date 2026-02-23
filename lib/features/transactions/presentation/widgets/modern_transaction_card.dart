@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../domain/entities/transaction_entity.dart';
 import '../../shared/utils/transaction_utils.dart';
 
@@ -17,7 +18,9 @@ class ModernTransactionCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isIncome = transaction.isIncome;
-    final color = isIncome ? theme.colorScheme.primary : theme.colorScheme.error;
+    final color = isIncome
+        ? theme.colorScheme.primary
+        : theme.colorScheme.error;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -45,7 +48,9 @@ class ModernTransactionCard extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  TransactionUtils.getCategoryIcon(transaction.categoryOrSource),
+                  TransactionUtils.getCategoryIcon(
+                    transaction.categoryOrSource,
+                  ),
                   color: color,
                   size: 20,
                 ),
@@ -67,7 +72,8 @@ class ModernTransactionCard extends ConsumerWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (transaction.note != null && transaction.note!.isNotEmpty)
+                    if (transaction.note != null &&
+                        transaction.note!.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
@@ -99,7 +105,9 @@ class ModernTransactionCard extends ConsumerWidget {
                   Text(
                     _formatTime(transaction.date),
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                      color: theme.colorScheme.onSurfaceVariant.withOpacity(
+                        0.7,
+                      ),
                       fontSize: 11,
                     ),
                   ),
@@ -113,7 +121,9 @@ class ModernTransactionCard extends ConsumerWidget {
   }
 
   String _formatTime(DateTime date) {
-    final hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
+    final hour = date.hour > 12
+        ? date.hour - 12
+        : (date.hour == 0 ? 12 : date.hour);
     final period = date.hour >= 12 ? 'PM' : 'AM';
     final minute = date.minute.toString().padLeft(2, '0');
     return "$hour:$minute $period";

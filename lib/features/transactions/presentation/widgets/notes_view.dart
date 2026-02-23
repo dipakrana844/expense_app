@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/utils/utils.dart';
 import '../../domain/entities/transaction_entity.dart';
 import 'transaction_card.dart';
-import '../../../../core/utils/utils.dart';
 
 /// Widget: NotesView
 ///
 /// Displays only transactions that have notes, grouped by date.
 class NotesView extends ConsumerWidget {
-  final AsyncValue<Map<String, List<TransactionEntity>>> groupedTransactionsAsync;
+  final AsyncValue<Map<String, List<TransactionEntity>>>
+  groupedTransactionsAsync;
 
-  const NotesView({
-    super.key,
-    required this.groupedTransactionsAsync,
-  });
+  const NotesView({super.key, required this.groupedTransactionsAsync});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,44 +22,46 @@ class NotesView extends ConsumerWidget {
         final transactionsWithNotes = <String, List<TransactionEntity>>{};
         for (final entry in groupedTransactions.entries) {
           final filteredTransactions = entry.value
-              .where((transaction) => transaction.note != null && transaction.note!.isNotEmpty)
+              .where(
+                (transaction) =>
+                    transaction.note != null && transaction.note!.isNotEmpty,
+              )
               .toList();
           if (filteredTransactions.isNotEmpty) {
             transactionsWithNotes[entry.key] = filteredTransactions;
           }
         }
-        
+
         if (transactionsWithNotes.isEmpty) {
           return const EmptyNotesView();
         }
-        
+
         return CustomScrollView(
           slivers: [
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final dateKey = transactionsWithNotes.keys.elementAt(index);
-                  final transactions = transactionsWithNotes[dateKey]!;
-                  
-                  return _buildDateGroup(context, dateKey, transactions);
-                },
-                childCount: transactionsWithNotes.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final dateKey = transactionsWithNotes.keys.elementAt(index);
+                final transactions = transactionsWithNotes[dateKey]!;
+
+                return _buildDateGroup(context, dateKey, transactions);
+              }, childCount: transactionsWithNotes.length),
             ),
           ],
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Error loading notes view: $error'),
-      ),
+      error: (error, stack) =>
+          Center(child: Text('Error loading notes view: $error')),
     );
   }
 
   Widget _buildDateGroup(
-      BuildContext context, String dateKey, List<TransactionEntity> transactions) {
+    BuildContext context,
+    String dateKey,
+    List<TransactionEntity> transactions,
+  ) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -95,7 +96,7 @@ class NotesView extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         // Transactions for this date
         ...transactions.map(
           (transaction) => TransactionCard(
@@ -116,7 +117,7 @@ class NotesView extends ConsumerWidget {
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
       final day = int.parse(parts[2]);
-      
+
       final date = DateTime(year, month, day);
       return DateUtils.formatDate(date);
     } catch (e) {
@@ -124,7 +125,10 @@ class NotesView extends ConsumerWidget {
     }
   }
 
-  void _showTransactionDetails(BuildContext context, TransactionEntity transaction) {
+  void _showTransactionDetails(
+    BuildContext context,
+    TransactionEntity transaction,
+  ) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -218,7 +222,7 @@ class EmptyNotesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
