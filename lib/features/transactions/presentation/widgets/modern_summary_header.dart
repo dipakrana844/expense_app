@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/utils/utils.dart';
 import '../providers/transaction_providers.dart';
 
@@ -11,13 +12,12 @@ class ModernSummaryHeader extends ConsumerWidget {
     final summaryAsync = ref.watch(transactionSummaryProvider);
     final currentMonth = ref.watch(currentMonthProvider);
     final theme = Theme.of(context);
-    final monthYear = "${DateTime(currentMonth.year, currentMonth.month, 1).month.toString()}, ${currentMonth.year}"; // Simplified for now, should use proper formatting
+    final monthYear =
+        "${DateTime(currentMonth.year, currentMonth.month, 1).month.toString()}, ${currentMonth.year}"; // Simplified for now, should use proper formatting
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 16, 16, 16),
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: theme.scaffoldBackgroundColor),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,14 +28,18 @@ class ModernSummaryHeader extends ConsumerWidget {
               // Month Selector (Compact)
               Container(
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                  color: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                    0.5,
+                  ),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.chevron_left, size: 20),
-                      onPressed: () => ref.read(transactionActionsProvider.notifier).goToPreviousMonth(),
+                      onPressed: () => ref
+                          .read(transactionActionsProvider.notifier)
+                          .goToPreviousMonth(),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.all(8),
                       constraints: const BoxConstraints(),
@@ -52,7 +56,9 @@ class ModernSummaryHeader extends ConsumerWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.chevron_right, size: 20),
-                      onPressed: () => ref.read(transactionActionsProvider.notifier).goToNextMonth(),
+                      onPressed: () => ref
+                          .read(transactionActionsProvider.notifier)
+                          .goToNextMonth(),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.all(8),
                       constraints: const BoxConstraints(),
@@ -88,7 +94,9 @@ class ModernSummaryHeader extends ConsumerWidget {
                           CurrencyUtils.formatAmount(netBalance),
                           style: theme.textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.w800,
-                            color: isPositive ? theme.colorScheme.primary : theme.colorScheme.error,
+                            color: isPositive
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.error,
                           ),
                         ),
                       ],
@@ -132,7 +140,13 @@ class ModernSummaryHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context, String label, double amount, IconData icon, Color color) {
+  Widget _buildSummaryCard(
+    BuildContext context,
+    String label,
+    double amount,
+    IconData icon,
+    Color color,
+  ) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -179,8 +193,18 @@ class ModernSummaryHeader extends ConsumerWidget {
 
   String _formatMonth(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return "${months[date.month - 1]} ${date.year}";
   }

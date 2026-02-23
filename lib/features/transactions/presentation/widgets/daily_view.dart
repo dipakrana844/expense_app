@@ -1,47 +1,43 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/utils/utils.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../providers/transaction_providers.dart';
 import 'modern_transaction_card.dart';
-import '../../../../core/utils/utils.dart';
 
 /// Widget: DailyView
 ///
 /// Displays transactions grouped by date in chronological order.
 /// Shows income and expense transactions together with per-day totals.
 class DailyView extends ConsumerWidget {
-  final AsyncValue<Map<String, List<TransactionEntity>>> groupedTransactionsAsync;
+  final AsyncValue<Map<String, List<TransactionEntity>>>
+  groupedTransactionsAsync;
 
-  const DailyView({
-    super.key,
-    required this.groupedTransactionsAsync,
-  });
+  const DailyView({super.key, required this.groupedTransactionsAsync});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     return groupedTransactionsAsync.when(
       data: (groupedTransactions) {
         if (groupedTransactions.isEmpty) {
           return const _EmptyTransactionsView();
         }
-        
+
         return CustomScrollView(
           slivers: [
             SliverOverlapInjector(
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
             ),
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final dateKey = groupedTransactions.keys.elementAt(index);
-                  final transactions = groupedTransactions[dateKey]!;
-                  
-                  return _buildDateGroup(context, dateKey, transactions, theme);
-                },
-                childCount: groupedTransactions.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final dateKey = groupedTransactions.keys.elementAt(index);
+                final transactions = groupedTransactions[dateKey]!;
+
+                return _buildDateGroup(context, dateKey, transactions, theme);
+              }, childCount: groupedTransactions.length),
             ),
           ],
         );
@@ -51,11 +47,7 @@ class DailyView extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text(
               'Failed to load transactions',
@@ -71,9 +63,8 @@ class DailyView extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => ref
-                  .read(transactionActionsProvider.notifier)
-                  .refresh(),
+              onPressed: () =>
+                  ref.read(transactionActionsProvider.notifier).refresh(),
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
             ),
@@ -84,7 +75,11 @@ class DailyView extends ConsumerWidget {
   }
 
   Widget _buildDateGroup(
-      BuildContext context, String dateKey, List<TransactionEntity> transactions, ThemeData theme) {
+    BuildContext context,
+    String dateKey,
+    List<TransactionEntity> transactions,
+    ThemeData theme,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,7 +114,7 @@ class DailyView extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         // Transactions for this date
         ...transactions.map(
           (transaction) => ModernTransactionCard(
@@ -140,7 +135,7 @@ class DailyView extends ConsumerWidget {
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
       final day = int.parse(parts[2]);
-      
+
       final date = DateTime(year, month, day);
       return DateUtils.formatDate(date);
     } catch (e) {
@@ -148,7 +143,10 @@ class DailyView extends ConsumerWidget {
     }
   }
 
-  void _showTransactionDetails(BuildContext context, TransactionEntity transaction) {
+  void _showTransactionDetails(
+    BuildContext context,
+    TransactionEntity transaction,
+  ) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -239,7 +237,7 @@ class _EmptyTransactionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
