@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import '../models/daily_spend_state.dart';
 
 /// Local Data Source: DailySpendLocalDataSource

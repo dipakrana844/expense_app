@@ -1,87 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/config/app_config.dart';
 import 'core/router/app_router.dart';
-import 'core/services/background_service.dart';
 import 'core/theme/app_theme.dart';
-import 'features/expenses/data/local/expense_local_data_source.dart';
-import 'features/expenses/presentation/providers/expense_providers.dart';
-import 'features/grocery/data/local/grocery_preferences_local_data_source.dart';
-import 'features/grocery/presentation/providers/grocery_notifier.dart';
-import 'features/settings/data/local/settings_local_data_source.dart';
-import 'features/settings/presentation/providers/settings_providers.dart';
-import 'features/daily_spend_guard/data/local/daily_spend_local_data_source.dart';
-import 'features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
-import 'features/income/data/local/income_local_data_source.dart';
-import 'features/income/presentation/providers/income_providers.dart';
-import 'features/categories/data/datasource/category_local_data_source.dart';
-import 'features/categories/presentation/providers/category_providers.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'core/constants/app_constants.dart';
+import 'core/bootstrap/app_bootstrap.dart';
+import 'core/enums/environment.dart';
 
-void main() async {
-  // For backward compatibility during transition
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Background Service
-  await BackgroundService.initialize();
-  await BackgroundService.scheduleDailyJob();
-  await BackgroundService.scheduleMidnightReset();
-
-  // Initialize Data Sources (Handles Hive initialization and adapters internally)
-  final localDataSource = ExpenseLocalDataSource();
-  await localDataSource.init();
-
-  // Initialize Income Data Source
-  final incomeDataSource = IncomeLocalDataSource();
-  await incomeDataSource.init();
-
-  // Initialize Grocery Preferences Data Source
-  final groceryPreferencesDataSource = GroceryPreferencesLocalDataSource();
-  await groceryPreferencesDataSource.init();
-
-  // Initialize Settings Data Source
-  final settingsDataSource = SettingsLocalDataSource();
-  await settingsDataSource.init();
-
-  // Initialize Daily Spend Guard Data Source
-  final dailySpendDataSource = DailySpendLocalDataSource();
-  await dailySpendDataSource.init();
-
-  // Initialize Categories Data Source
-  final categoryDataSource = CategoryLocalDataSource();
-  await categoryDataSource.init();
-
-  // Open Budget Box
-  await Hive.openBox(AppConstants.budgetBoxName);
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        expenseLocalDataSourceProvider.overrideWithValue(localDataSource),
-        incomeLocalDataSourceProvider.overrideWithValue(incomeDataSource),
-        groceryPreferencesDataSourceProvider.overrideWithValue(
-          groceryPreferencesDataSource,
-        ),
-        settingsLocalDataSourceProvider.overrideWithValue(settingsDataSource),
-        dailySpendLocalDataSourceProvider.overrideWithValue(
-          dailySpendDataSource,
-        ),
-        categoryLocalDataSourceProvider.overrideWithValue(categoryDataSource),
-      ],
-      observers: const [LoggerObserver()],
-      child: MyApp(
-        config: AppConfig(
-          baseUrl: '',
-          appName: '',
-          enableLogging: false,
-          apiTimeout: Duration.zero,
-          flavorName: '',
-          isDebugBannerEnabled: false,
-        ),
-      ),
-    ),
-  );
+void main() {
+  // For backward compatibility, run with default dev environment
+  bootstrap(Environment.dev);
 }
 
 class LoggerObserver extends ProviderObserver {
@@ -99,12 +25,11 @@ class LoggerObserver extends ProviderObserver {
 }
 
 class MyApp extends ConsumerWidget {
-  final AppConfig config;
-
-  const MyApp({super.key, required this.config});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final config = ref.watch(appConfigProvider);
     final router = ref.watch(goRouterProvider);
 
     return MaterialApp.router(

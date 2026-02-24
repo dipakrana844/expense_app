@@ -4,24 +4,122 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-    
         {
-            "name": "expense_app",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "expense_app (profile mode)",
+            "name": "expense_app (dev)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--flavor",
+                "dev",
+                "-t",
+                "lib/main_dev.dart",
+                "--dart-define=ENV=dev"
+            ]
         },
         {
-            "name": "expense_app (release mode)",
+            "name": "expense_app (staging)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--flavor",
+                "staging",
+                "-t",
+                "lib/main_staging.dart",
+                "--dart-define=ENV=staging"
+            ]
+        },
+        {
+            "name": "expense_app (prod)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--flavor",
+                "prod",
+                "-t",
+                "lib/main_prod.dart",
+                "--dart-define=ENV=prod"
+            ]
+        },
+        {
+            "name": "expense_app (dev - profile)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--flavor",
+                "dev",
+                "-t",
+                "lib/main_dev.dart",
+                "--dart-define=ENV=dev"
+            ]
+        },
+        {
+            "name": "expense_app (dev - release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--flavor",
+                "dev",
+                "-t",
+                "lib/main_dev.dart",
+                "--dart-define=ENV=dev"
+            ]
+        },
+        {
+            "name": "expense_app (staging - profile)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--flavor",
+                "staging",
+                "-t",
+                "lib/main_staging.dart",
+                "--dart-define=ENV=staging"
+            ]
+        },
+        {
+            "name": "expense_app (staging - release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--flavor",
+                "staging",
+                "-t",
+                "lib/main_staging.dart",
+                "--dart-define=ENV=staging"
+            ]
+        },
+        {
+            "name": "expense_app (prod - profile)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--flavor",
+                "prod",
+                "-t",
+                "lib/main_prod.dart",
+                "--dart-define=ENV=prod"
+            ]
+        },
+        {
+            "name": "expense_app (prod - release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--flavor",
+                "prod",
+                "-t",
+                "lib/main_prod.dart",
+                "--dart-define=ENV=prod"
+            ]
         }
     ]
 }

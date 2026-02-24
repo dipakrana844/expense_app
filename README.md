@@ -2,6 +2,15 @@
 
 A production-grade, offline-first, and intelligence-driven Flutter application for comprehensive personal finance management.
 
+## 🌐 Multi-Environment Support
+
+This application supports multiple deployment environments:
+- **Development** (`dev`) - For active development and testing
+- **Staging** (`staging`) - For pre-production validation
+- **Production** (`prod`) - For live releases
+
+Each environment has distinct configurations for API endpoints, app naming, logging, and UI banners.
+
 ---
 
 ## ✨ Key Features
@@ -88,8 +97,22 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
     ```
 
 3.  **Run Application**:
+    
+    By default, the app runs in development mode:
     ```bash
     flutter run
+    ```
+    
+    To run with specific flavors:
+    ```bash
+    # Development flavor
+    flutter run --flavor dev -t lib/main_dev.dart --dart-define=ENV=dev
+    
+    # Staging flavor
+    flutter run --flavor staging -t lib/main_staging.dart --dart-define=ENV=staging
+    
+    # Production flavor
+    flutter run --flavor prod -t lib/main_prod.dart --dart-define=ENV=prod
     ```
 
 ---
@@ -98,19 +121,49 @@ A production-grade, offline-first, and intelligence-driven Flutter application f
 
 ```text
 lib/
-├── core/               # Shared utilities, routing, and global services
-├── features/
-│   ├── transactions/     # NEW: Unified income/expense tracking (default home screen)
-│   ├── daily_spend_guard/ # NEW: Real-time daily spending protection
-│   ├── expenses/       # Core CRUD and recurring logic
-│   ├── income/         # Income tracking and management
+├── core/                    # Shared utilities, routing, and global services
+│   ├── bootstrap/           # App initialization logic
+│   ├── config/              # Environment-specific configuration
+│   └── enums/               # App enumerations
+├── features/                # Feature modules
+│   ├── transactions/        # NEW: Unified income/expense tracking (default home screen)
+│   ├── daily_spend_guard/   # NEW: Real-time daily spending protection
+│   ├── expenses/            # Core CRUD and recurring logic
+│   ├── income/              # Income tracking and management
 │   ├── spending_intelligence/ # AI engine and insight logic
-│   ├── ocr/            # Receipt scanning functionality
-│   ├── grocery/        # specialized bulk entry mode
-│   ├── analytics/      # fl_chart implementations
-│   ├── budget/         # Limit monitoring and alerts
-│   └── settings/       # App config and security
-└── main.dart           # DI initialization and app entry
+│   ├── ocr/                 # Receipt scanning functionality
+│   ├── grocery/             # specialized bulk entry mode
+│   ├── analytics/           # fl_chart implementations
+│   ├── budget/              # Limit monitoring and alerts
+│   └── settings/            # App config and security
+├── main.dart                # Default entry point
+├── main_dev.dart            # Development entry point
+├── main_staging.dart        # Staging entry point
+└── main_prod.dart           # Production entry point
+```
+
+## 🛠️ Building for Different Environments
+
+The app can be built with different flavors for various environments:
+
+```bash
+# Build development APK
+flutter build apk --flavor dev --target lib/main_dev.dart --dart-define=ENV=dev
+
+# Build staging APK
+flutter build apk --flavor staging --target lib/main_staging.dart --dart-define=ENV=staging
+
+# Build production APK
+flutter build apk --flavor prod --target lib/main_prod.dart --dart-define=ENV=prod
+```
+
+For iOS builds:
+
+```bash
+# Build for iOS with different flavors
+flutter build ios --flavor dev --target lib/main_dev.dart --dart-define=ENV=dev
+flutter build ios --flavor staging --target lib/main_staging.dart --dart-define=ENV=staging
+flutter build ios --flavor prod --target lib/main_prod.dart --dart-define=ENV=prod
 ```
 
 ---
