@@ -1,0 +1,4 @@
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+PRODUCT_BUNDLE_IDENTIFIER = com.example.expenseapp.staging
+APP_DISPLAY_NAME = Smart Expense Tracker Staging
+DART_DEFINES = ENV=staging

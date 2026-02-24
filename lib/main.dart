@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_expense_tracker/core/router/app_router.dart';
-import 'package:smart_expense_tracker/core/services/background_service.dart';
-import 'package:smart_expense_tracker/core/theme/app_theme.dart';
+import 'core/config/app_config.dart';
+import 'core/router/app_router.dart';
+import 'core/services/background_service.dart';
+import 'core/theme/app_theme.dart';
 import 'features/expenses/data/local/expense_local_data_source.dart';
 import 'features/expenses/presentation/providers/expense_providers.dart';
 import 'features/grocery/data/local/grocery_preferences_local_data_source.dart';
@@ -16,9 +17,10 @@ import 'features/income/presentation/providers/income_providers.dart';
 import 'features/categories/data/datasource/category_local_data_source.dart';
 import 'features/categories/presentation/providers/category_providers.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:smart_expense_tracker/core/constants/app_constants.dart';
+import 'core/constants/app_constants.dart';
 
 void main() async {
+  // For backward compatibility during transition
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Background Service
@@ -62,11 +64,22 @@ void main() async {
           groceryPreferencesDataSource,
         ),
         settingsLocalDataSourceProvider.overrideWithValue(settingsDataSource),
-        dailySpendLocalDataSourceProvider.overrideWithValue(dailySpendDataSource),
+        dailySpendLocalDataSourceProvider.overrideWithValue(
+          dailySpendDataSource,
+        ),
         categoryLocalDataSourceProvider.overrideWithValue(categoryDataSource),
       ],
       observers: const [LoggerObserver()],
-      child: const SmartExpenseTrackerApp(),
+      child: MyApp(
+        config: AppConfig(
+          baseUrl: '',
+          appName: '',
+          enableLogging: false,
+          apiTimeout: Duration.zero,
+          flavorName: '',
+          isDebugBannerEnabled: false,
+        ),
+      ),
     ),
   );
 }
@@ -85,16 +98,18 @@ class LoggerObserver extends ProviderObserver {
   }
 }
 
-class SmartExpenseTrackerApp extends ConsumerWidget {
-  const SmartExpenseTrackerApp({super.key});
+class MyApp extends ConsumerWidget {
+  final AppConfig config;
+
+  const MyApp({super.key, required this.config});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
 
     return MaterialApp.router(
-      title: 'Smart Expense Tracker Pro',
-      debugShowCheckedModeBanner: false,
+      title: config.appName,
+      debugShowCheckedModeBanner: config.isDebugBannerEnabled,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
