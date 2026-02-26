@@ -12,8 +12,8 @@ class ModernSummaryHeader extends ConsumerWidget {
     final summaryAsync = ref.watch(transactionSummaryProvider);
     final currentMonth = ref.watch(currentMonthProvider);
     final theme = Theme.of(context);
-    final monthYear =
-        "${DateTime(currentMonth.year, currentMonth.month, 1).month.toString()}, ${currentMonth.year}"; // Simplified for now, should use proper formatting
+    // final monthYear =
+    //     "${DateTime(currentMonth.year, currentMonth.month, 1).month.toString()}, ${currentMonth.year}"; // Simplified for now, should use proper formatting
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 16, 16, 16),
@@ -77,59 +77,87 @@ class ModernSummaryHeader extends ConsumerWidget {
               final netBalance = summary.netBalance;
               final isPositive = netBalance >= 0;
 
-              return Column(
-                children: [
-                  // Main Balance (Big & Bold)
-                  Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Net Balance',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          CurrencyUtils.formatAmount(netBalance),
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: isPositive
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.error,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Income / Expense Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildSummaryCard(
-                          context,
-                          'Income',
-                          summary.totalIncome,
-                          Icons.arrow_downward, // Income comes in
-                          theme.colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildSummaryCard(
-                          context,
-                          'Expense',
-                          summary.totalExpenses,
-                          Icons.arrow_upward, // Expense goes out
-                          theme.colorScheme.error,
-                        ),
-                      ),
+              return Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primaryContainer.withOpacity(0.3),
+                      theme.colorScheme.secondaryContainer.withOpacity(0.1),
                     ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    // Left Side: Net Balance
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Net Balance',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              CurrencyUtils.formatAmount(netBalance),
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: isPositive
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.error,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Divider
+                    Container(
+                      height: 50,
+                      width: 1,
+                      color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+
+                    // Right Side: Income & Expenses
+                    Expanded(
+                      flex: 5,
+                      child: Column(
+                        children: [
+                          _buildInlineSummary(
+                            context,
+                            'Income',
+                            summary.totalIncome,
+                            Icons.arrow_downward,
+                            theme.colorScheme.primary,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInlineSummary(
+                            context,
+                            'Expense',
+                            summary.totalExpenses,
+                            Icons.arrow_upward,
+                            theme.colorScheme.error,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -140,7 +168,7 @@ class ModernSummaryHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard(
+  Widget _buildInlineSummary(
     BuildContext context,
     String label,
     double amount,
@@ -148,46 +176,38 @@ class ModernSummaryHeader extends ConsumerWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.15)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              shape: BoxShape.circle,
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 14, color: color),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const Spacer(),
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Text(
+              CurrencyUtils.formatAmount(amount),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
-            child: Icon(icon, size: 14, color: color),
           ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                CurrencyUtils.formatAmount(amount),
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
