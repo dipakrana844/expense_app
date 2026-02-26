@@ -322,10 +322,4 @@ class SettingsLocalDataSource {
     }
   }
 
-  /// Internal helper to ensure initialization
-  void _ensureInitialized() {
-    if (!_isInitialized) {
-      throw Exception('Settings data source not initialized. Call init() first.');
-    }
-  }
 }

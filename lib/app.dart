@@ -3,12 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/bootstrap/app_bootstrap.dart';
-import 'core/enums/environment.dart';
-
-// void main() {
-//   // For backward compatibility, run with default dev environment
-//   bootstrap(Environment.dev);
-// }
 
 class LoggerObserver extends ProviderObserver {
   const LoggerObserver();

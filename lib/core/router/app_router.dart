@@ -24,9 +24,9 @@ final _shellNavigatorAnalyticsKey = GlobalKey<NavigatorState>(
 final _shellNavigatorNetWorthKey = GlobalKey<NavigatorState>(
   debugLabel: 'networth',
 );
-final _shellNavigatorIncomeKey = GlobalKey<NavigatorState>(
-  debugLabel: 'income',
-);
+// final _shellNavigatorIncomeKey = GlobalKey<NavigatorState>(
+//   debugLabel: 'income',
+// );
 final _shellNavigatorBudgetKey = GlobalKey<NavigatorState>(
   debugLabel: 'budget',
 );
@@ -174,7 +174,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/income/edit/:id',
         name: 'edit-income',
         builder: (context, state) {
-          final id = state.pathParameters['id']!;
+          // final id = state.pathParameters['id']!;
           // For simplicity, we'll pass the income data through extras
           // In a real app, you'd fetch the income by ID
           final extras = state.extra as Map<String, dynamic>? ?? {};

@@ -38,7 +38,7 @@ class FinancialCalculator {
     DateTime? targetDate,
   }) {
     final calculationDate = targetDate ?? DateTime.now();
-    final daysRemaining = DateTime(calculationDate.year, calculationDate.month + 1, 0).day - calculationDate.day + 1;
+    // final daysRemaining = DateTime(calculationDate.year, calculationDate.month + 1, 0).day - calculationDate.day + 1;
     
     // Method 1: Budget-based calculation (primary)
     if (monthlyBudget != null && monthlyBudget > 0) {
@@ -161,7 +161,7 @@ class FinancialCalculator {
     
     // Convert to consistency score (inverse of coefficient of variation)
     final consistencyScore = (1 - coefficientOfVariation.clamp(0, 1)) * 100;
-    return (consistencyScore.clamp(0, 100) as num).toDouble();
+    return (consistencyScore.clamp(0, 100)).toDouble();
   }
 
   /// Calculate savings rate from mixed income/expense transactions
@@ -201,13 +201,13 @@ class FinancialCalculator {
     required List<TransactionInterface> transactions,
     double? monthlyBudget,
   }) {
-    final now = DateTime.now();
+    // final now = DateTime.now();
     final currentMonthTransactions = transactions.where((t) => t.isCurrentMonth).toList();
     
     // Calculate key metrics
     final savingsRate = calculateSavingsRate(transactions: currentMonthTransactions);
-    final totalIncome = currentMonthTransactions.where((t) => t.isIncome).fold(0.0, (sum, t) => sum + t.amount);
-    final totalExpenses = currentMonthTransactions.where((t) => t.isExpense).fold(0.0, (sum, t) => sum + t.amount);
+    // final totalIncome = currentMonthTransactions.where((t) => t.isIncome).fold(0.0, (sum, t) => sum + t.amount);
+    // final totalExpenses = currentMonthTransactions.where((t) => t.isExpense).fold(0.0, (sum, t) => sum + t.amount);
     
     // Determine health level
     if (savingsRate >= 20) {

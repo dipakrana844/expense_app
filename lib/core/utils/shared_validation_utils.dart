@@ -173,7 +173,7 @@ class SharedValidationUtils {
     final errors = <String>[];
     
     // Check if entity has validate method
-    if (entity is dynamic && entity.runtimeType.toString().contains('Entity')) {
+    if (entity.runtimeType.toString().contains('Entity')) {
       try {
         final result = entity.validate();
         if (result != null) {

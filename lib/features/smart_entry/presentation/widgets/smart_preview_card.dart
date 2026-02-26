@@ -1,5 +1,4 @@
 ﻿import 'package:flutter/material.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
 import '../providers/smart_entry_controller.dart';
 

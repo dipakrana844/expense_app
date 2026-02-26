@@ -199,7 +199,7 @@ class BalanceService {
     final coefficientOfVariation = standardDeviation / average;
     final consistencyScore = (1 - coefficientOfVariation.clamp(0, 1)) * 100;
     
-    return (consistencyScore.clamp(0, 100) as num).toDouble();
+    return (consistencyScore.clamp(0, 100)).toDouble();
   }
 
   /// Get income source breakdown
