@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_expense_tracker/core/constants/app_categories.dart';
+import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import 'package:smart_expense_tracker/core/services/export_service.dart';
 import 'package:smart_expense_tracker/core/services/security_service.dart';
+import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import '../providers/settings_providers.dart';
 import '../widgets/setting_tiles.dart';
@@ -45,6 +48,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final settings = ref.watch(appSettingsNotifierProvider);
     final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
+    final expenseCategoriesAsync = ref.watch(categoriesByTypeProvider('expense'));
+    final dynamicCategories = expenseCategoriesAsync.maybeWhen(
+      data: (categories) => categories.map((c) => c.name.trim()).toList(),
+      orElse: () => const <String>[],
+    );
+    final categoryOptions = <String>{
+      ...AppConstants.expenseCategories,
+      ...dynamicCategories,
+      settings.defaultExpenseCategory,
+    }.where((name) => name.isNotEmpty).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -75,24 +88,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 title: 'Default Category',
                 icon: Icons.category,
                 value: settings.defaultExpenseCategory,
-                items: const [
-                  DropdownMenuItem(value: 'Grocery', child: Text('Grocery')),
-                  DropdownMenuItem(
-                    value: 'Food & Dining',
-                    child: Text('Food & Dining'),
+                items: [
+                  ...categoryOptions.map(
+                    (category) => DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    ),
                   ),
-                  DropdownMenuItem(
-                    value: 'Transportation',
-                    child: Text('Transportation'),
+                  const DropdownMenuItem(
+                    value: AppCategories.addCategoryActionValue,
+                    child: Row(
+                      children: [
+                        Icon(Icons.add, size: 18),
+                        SizedBox(width: 8),
+                        Text('Add Category'),
+                      ],
+                    ),
                   ),
-                  DropdownMenuItem(value: 'Shopping', child: Text('Shopping')),
-                  DropdownMenuItem(value: 'Others', child: Text('Others')),
                 ],
-                onChanged: (value) {
+                onChanged: (value) async {
                   if (value != null) {
-                    settingsNotifier.updateSettings(
-                      defaultExpenseCategory: value,
-                    );
+                    if (value == AppCategories.addCategoryActionValue) {
+                      await _showAddCategorySheet(context, settingsNotifier);
+                      return;
+                    }
+                    await settingsNotifier.updateSettings(defaultExpenseCategory: value);
                   }
                 },
               ),
@@ -613,5 +633,107 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  Future<void> _showAddCategorySheet(
+    BuildContext context,
+    AppSettingsNotifier settingsNotifier,
+  ) async {
+    final nameController = TextEditingController();
+    int selectedIcon = 0xe5cc; // category
+    const int selectedColor = 0xFF2196F3;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Add New Category',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Category Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: AppConstants.categoryIcons.entries.take(10).map((entry) {
+                      final isSelected = selectedIcon == entry.value;
+                      return ChoiceChip(
+                        label: Text(entry.key),
+                        selected: isSelected,
+                        onSelected: (_) {
+                          setState(() => selectedIcon = entry.value);
+                        },
+                        avatar: Icon(
+                          IconData(entry.value, fontFamily: 'MaterialIcons'),
+                          size: 16,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final normalizedName = nameController.text.trim();
+                      if (normalizedName.isEmpty) return;
+
+                      final existing = await ref
+                          .read(getCategoriesUseCaseProvider)
+                          .call(type: 'expense');
+                      final alreadyExists = existing.any(
+                        (category) =>
+                            category.name.trim().toLowerCase() ==
+                            normalizedName.toLowerCase(),
+                      );
+                      if (alreadyExists) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Category already exists')),
+                        );
+                        return;
+                      }
+
+                      final controller = ref.read(categoryControllerProvider.notifier);
+                      await controller.addCategory(
+                        name: normalizedName,
+                        type: 'expense',
+                        iconCodePoint: selectedIcon,
+                        colorValue: selectedColor,
+                      );
+                      await settingsNotifier.updateSettings(
+                        defaultExpenseCategory: normalizedName,
+                      );
+                      if (!context.mounted) return;
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Add Category'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

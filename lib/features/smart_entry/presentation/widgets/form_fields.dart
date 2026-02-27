@@ -364,15 +364,37 @@ class SmartEntryFormFields extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () async {
-                      if (nameController.text.trim().isNotEmpty) {
+                      final normalizedName = nameController.text.trim();
+                      if (normalizedName.isNotEmpty) {
+                        final existingCategories = await ref
+                            .read(getCategoriesUseCaseProvider)
+                            .call(type: 'expense');
+                        final alreadyExists = existingCategories.any(
+                          (category) =>
+                              category.name.trim().toLowerCase() ==
+                              normalizedName.toLowerCase(),
+                        );
+                        if (alreadyExists) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Category already exists'),
+                            ),
+                          );
+                          return;
+                        }
+
                         // Get the category controller from the provider
-                        final controller = ref.read(categoryControllerProvider.notifier);
+                        final controller = ref.read(
+                          categoryControllerProvider.notifier,
+                        );
                         await controller.addCategory(
-                          name: nameController.text.trim(),
+                          name: normalizedName,
                           type: 'expense',
                           iconCodePoint: selectedIcon,
                           colorValue: selectedColor,
                         );
+                        if (!context.mounted) return;
                         Navigator.of(context).pop();
                       }
                     },

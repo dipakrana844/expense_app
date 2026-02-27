@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_expense_tracker/core/presentation/screens/main_layout.dart';
+import 'package:smart_expense_tracker/features/accounts_overview/presentation/screens/accounts_overview_screen.dart';
 import 'package:smart_expense_tracker/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:smart_expense_tracker/features/budget/presentation/screens/budget_screen.dart';
-import 'package:smart_expense_tracker/features/expenses/presentation/screens/add_edit_expense_screen.dart';
-import 'package:smart_expense_tracker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:smart_expense_tracker/features/grocery/presentation/screens/grocery_session_screen.dart';
-import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan_screen.dart';
 import 'package:smart_expense_tracker/features/income/presentation/screens/add_edit_income_screen.dart';
-import 'package:smart_expense_tracker/features/transactions/presentation/screens/transactions_screen.dart';
-import 'package:smart_expense_tracker/features/accounts_overview/presentation/screens/accounts_overview_screen.dart';
-import 'package:smart_expense_tracker/features/smart_entry/presentation/screens/smart_entry_screen.dart';
+import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan_screen.dart';
+import 'package:smart_expense_tracker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:smart_expense_tracker/features/smart_entry/presentation/providers/smart_entry_controller.dart';
+import 'package:smart_expense_tracker/features/smart_entry/presentation/screens/smart_entry_screen.dart';
+import 'package:smart_expense_tracker/features/transactions/presentation/screens/transactions_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -54,34 +53,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: 'transactions',
                 builder: (context, state) => const TransactionsScreen(),
                 routes: [
-                  GoRoute(
-                    path: 'add',
-                    name: 'add-expense',
-                    parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) => const AddEditExpenseScreen(),
-                  ),
-                  GoRoute(
-                    path: 'edit/:id',
-                    name: 'edit-expense',
-                    parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) {
-                      final id = state.pathParameters['id']!;
-                      final extras = state.extra as Map<String, dynamic>? ?? {};
-                      return AddEditExpenseScreen(
-                        expenseId: id,
-                        initialAmount: extras['amount'] as double?,
-                        initialCategory: extras['category'] as String?,
-                        initialDate: extras['date'] != null
-                            ? DateTime.fromMillisecondsSinceEpoch(
-                                extras['date'] as int,
-                              )
-                            : null,
-                        initialNote: extras['note'] as String?,
-                        initialMetadata:
-                            extras['metadata'] as Map<String, dynamic>?,
-                      );
-                    },
-                  ),
+                  // GoRoute(
+                  //   path: 'add',
+                  //   name: 'add-expense',
+                  //   parentNavigatorKey: _rootNavigatorKey,
+                  //   builder: (context, state) => const AddEditExpenseScreen(),
+                  // ),
+                  // GoRoute(
+                  //   path: 'edit/:id',
+                  //   name: 'edit-expense',
+                  //   parentNavigatorKey: _rootNavigatorKey,
+                  //   builder: (context, state) {
+                  //     final id = state.pathParameters['id']!;
+                  //     final extras = state.extra as Map<String, dynamic>? ?? {};
+                  //     return AddEditExpenseScreen(
+                  //       expenseId: id,
+                  //       initialAmount: extras['amount'] as double?,
+                  //       initialCategory: extras['category'] as String?,
+                  //       initialDate: extras['date'] != null
+                  //           ? DateTime.fromMillisecondsSinceEpoch(
+                  //               extras['date'] as int,
+                  //             )
+                  //           : null,
+                  //       initialNote: extras['note'] as String?,
+                  //       initialMetadata:
+                  //           extras['metadata'] as Map<String, dynamic>?,
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ],
@@ -192,17 +191,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'income',
             name: 'smart-entry-income',
-            builder: (context, state) => const SmartEntryScreen(initialMode: TransactionMode.income),
+            builder: (context, state) =>
+                const SmartEntryScreen(initialMode: TransactionMode.income),
           ),
           GoRoute(
             path: 'expense',
             name: 'smart-entry-expense',
-            builder: (context, state) => const SmartEntryScreen(initialMode: TransactionMode.expense),
+            builder: (context, state) =>
+                const SmartEntryScreen(initialMode: TransactionMode.expense),
           ),
           GoRoute(
             path: 'transfer',
             name: 'smart-entry-transfer',
-            builder: (context, state) => const SmartEntryScreen(initialMode: TransactionMode.transfer),
+            builder: (context, state) =>
+                const SmartEntryScreen(initialMode: TransactionMode.transfer),
           ),
         ],
       ),

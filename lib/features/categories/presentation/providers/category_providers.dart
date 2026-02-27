@@ -51,6 +51,7 @@ final categoriesByTypeProvider = FutureProvider.family<List<CategoryEntity>, Str
 
 final categoryControllerProvider = StateNotifierProvider<CategoryController, CategoryState>((ref) {
   return CategoryController(
+    ref,
     ref.watch(addCategoryUseCaseProvider),
     ref.watch(updateCategoryUseCaseProvider),
     ref.watch(deleteCategoryUseCaseProvider),
@@ -83,17 +84,29 @@ class CategoryState {
 }
 
 class CategoryController extends StateNotifier<CategoryState> {
+  final Ref _ref;
   final AddCategoryUseCase _addCategoryUseCase;
   final UpdateCategoryUseCase _updateCategoryUseCase;
   final DeleteCategoryUseCase _deleteCategoryUseCase;
   final GetCategoriesUseCase _getCategoriesUseCase;
 
   CategoryController(
+    this._ref,
     this._addCategoryUseCase,
     this._updateCategoryUseCase,
     this._deleteCategoryUseCase,
     this._getCategoriesUseCase,
   ) : super(CategoryState());
+
+  void _invalidateCategoryQueries({String? changedType}) {
+    _ref.invalidate(categoriesProvider);
+    if (changedType != null && changedType.isNotEmpty) {
+      _ref.invalidate(categoriesByTypeProvider(changedType));
+      return;
+    }
+    _ref.invalidate(categoriesByTypeProvider('expense'));
+    _ref.invalidate(categoriesByTypeProvider('income'));
+  }
 
   Future<void> loadCategories({String? type}) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -122,6 +135,7 @@ class CategoryController extends StateNotifier<CategoryState> {
     
     try {
       await _addCategoryUseCase.call(newCategory);
+      _invalidateCategoryQueries(changedType: type);
       // Reload categories
       await loadCategories();
     } catch (e) {
@@ -132,6 +146,7 @@ class CategoryController extends StateNotifier<CategoryState> {
   Future<void> updateCategory(CategoryEntity category) async {
     try {
       await _updateCategoryUseCase.call(category);
+      _invalidateCategoryQueries(changedType: category.type);
       // Reload categories
       await loadCategories();
     } catch (e) {
@@ -142,6 +157,7 @@ class CategoryController extends StateNotifier<CategoryState> {
   Future<void> deleteCategory(String id) async {
     try {
       await _deleteCategoryUseCase.call(id);
+      _invalidateCategoryQueries();
       // Reload categories
       await loadCategories();
     } catch (e) {

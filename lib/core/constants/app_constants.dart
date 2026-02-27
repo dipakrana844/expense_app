@@ -1,3 +1,5 @@
+import 'app_categories.dart';
+
 class AppConstants {
   // Hive Boxes
   static const String expensesBoxName = 'expenses_box';
@@ -18,31 +20,7 @@ class AppConstants {
   static const int maxNoteLength = 500;
 
   // Categories & Icons
-  static const List<String> expenseCategories = [
-    'Grocery',
-    'Food & Dining',
-    'Transportation',
-    'Shopping',
-    'Entertainment',
-    'Bills & Utilities',
-    'Healthcare',
-    'Education',
-    'Travel',
-    'Personal Care',
-    'Others',
-  ];
-
-  static const Map<String, int> categoryIcons = {
-    'Grocery': 0xe84f, // shopping_basket
-    'Food & Dining': 0xe57f,
-    'Transportation': 0xe531,
-    'Shopping': 0xe59c,
-    'Entertainment': 0xe30a,
-    'Bills & Utilities': 0xe1db,
-    'Healthcare': 0xe3af,
-    'Education': 0xe80c,
-    'Travel': 0xe539,
-    'Personal Care': 0xe4da,
-    'Others': 0xe5cc,
-  };
+  static const List<String> expenseCategories =
+      AppCategories.defaultExpenseCategories;
+  static const Map<String, int> categoryIcons = AppCategories.categoryIcons;
 }

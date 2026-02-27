@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
+import 'package:smart_expense_tracker/core/constants/app_categories.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
+import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
 
 class CategoryPicker extends ConsumerWidget {
   final String transactionType; // 'income' or 'expense'
@@ -19,17 +20,33 @@ class CategoryPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(categoriesByTypeProvider(transactionType));
+    final categoriesAsync = ref.watch(
+      categoriesByTypeProvider(transactionType),
+    );
 
     return categoriesAsync.when(
       data: (categories) {
-        final categoryNames = categories.map((c) => c.name).toList();
-        
+        final persistedNames = categories
+            .map((category) => category.name.trim())
+            .where((name) => name.isNotEmpty);
+        final defaultNames = transactionType == 'expense'
+            ? AppConstants.expenseCategories
+            : const <String>[];
+        final categoryNames = <String>{
+          ...defaultNames,
+          ...persistedNames,
+          if (selectedCategory != null) selectedCategory!.trim(),
+        }.where((name) => name.isNotEmpty).toList();
+        final selectedValue =
+            selectedCategory != null && categoryNames.contains(selectedCategory)
+            ? selectedCategory
+            : null;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<String>(
-              value: selectedCategory,
+              value: selectedValue,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
@@ -53,10 +70,10 @@ class CategoryPicker extends ConsumerWidget {
                       ],
                     ),
                   );
-                }).toList(),
+                }),
                 // Add category option at the bottom
                 DropdownMenuItem(
-                  value: '__ADD_CATEGORY__',
+                  value: AppCategories.addCategoryActionValue,
                   child: Row(
                     children: [
                       const Icon(Icons.add, size: 20),
@@ -67,7 +84,7 @@ class CategoryPicker extends ConsumerWidget {
                 ),
               ],
               onChanged: (value) {
-                if (value == '__ADD_CATEGORY__') {
+                if (value == AppCategories.addCategoryActionValue) {
                   onAddCategoryPressed();
                 } else {
                   onCategoryChanged(value);
