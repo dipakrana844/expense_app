@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_expense_tracker/core/constants/app_colors.dart';
+import 'package:smart_expense_tracker/core/constants/app_text_styles.dart';
 
 class AppTheme {
-  static const _seedColor = Color(0xFF6C63FF);
-  static const _secondaryColor = Color(0xFF03DAC6);
-
   static ThemeData get lightTheme => _buildTheme(Brightness.light);
   static ThemeData get darkTheme => _buildTheme(Brightness.dark);
 
@@ -16,12 +14,12 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _seedColor,
+        seedColor: AppColors.seed,
         brightness: brightness,
-        secondary: _secondaryColor,
-        surface: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FE),
+        secondary: AppColors.secondary,
+        surface: isDark ? AppColors.darkSurface : AppColors.lightSurface,
       ),
-      textTheme: GoogleFonts.outfitTextTheme(baseTheme.textTheme),
+      textTheme: AppTextStyles.buildTextTheme(baseTheme.textTheme),
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: 0,
@@ -32,7 +30,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.darkCard : Colors.white,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
       inputDecorationTheme: InputDecorationTheme(

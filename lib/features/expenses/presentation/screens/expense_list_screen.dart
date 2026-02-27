@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_expense_tracker/core/constants/app_strings.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/widgets/expense_widgets.dart';
@@ -37,7 +38,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                 controller: _searchController,
                 autofocus: true,
                 decoration: const InputDecoration(
-                  hintText: 'Search by category or note...',
+                  hintText: AppStrings.searchExpensesHint,
                   border: InputBorder.none,
                 ),
                 onChanged: (val) =>
@@ -92,7 +93,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
           if (groupedExpenses.isEmpty)
             const SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(child: Text('No matching expenses found')),
+              child: Center(child: Text(AppStrings.noMatchingExpenses)),
             )
           else
             SliverPadding(
