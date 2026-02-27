@@ -1,11 +1,11 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../../features/expenses/presentation/providers/expense_providers.dart';
 import '../../../../features/income/presentation/providers/income_providers.dart';
 import '../../../../features/transfer/presentation/providers/transfer_providers.dart';
+import '../../../../features/transfer/domain/entities/transfer_entity.dart';
 import '../../../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../../../core/services/smart_suggestion_service.dart';
 import '../../../../features/transactions/presentation/providers/transaction_providers.dart';
@@ -27,6 +27,8 @@ class SmartEntryState {
   final TimeOfDay time;
   final bool isRecurring;
   final bool isLoading;
+  final bool isEditing;
+  final String? editingTransactionId;
   final String? error;
 
   SmartEntryState({
@@ -43,6 +45,8 @@ class SmartEntryState {
     TimeOfDay? time,
     this.isRecurring = false,
     this.isLoading = false,
+    this.isEditing = false,
+    this.editingTransactionId,
     this.error,
   }) : date = date ?? DateTime.now(), time = time ?? TimeOfDay.now();
 
@@ -144,7 +148,8 @@ class SmartEntryState {
   SmartEntryState copyWith({
     TransactionMode? mode, String? amountString, String? category, String? source, String? account,
     String? fromAccount, String? toAccount, double? transferFee, String? note,
-    DateTime? date, TimeOfDay? time, bool? isRecurring, bool? isLoading, String? error,
+    DateTime? date, TimeOfDay? time, bool? isRecurring, bool? isLoading, bool? isEditing,
+    String? editingTransactionId, String? error,
   }) {
     return SmartEntryState(
       mode: mode ?? this.mode, amountString: amountString ?? this.amountString,
@@ -152,7 +157,8 @@ class SmartEntryState {
       fromAccount: fromAccount ?? this.fromAccount, toAccount: toAccount ?? this.toAccount,
       transferFee: transferFee ?? this.transferFee, note: note ?? this.note,
       date: date ?? this.date, time: time ?? this.time, isRecurring: isRecurring ?? this.isRecurring,
-      isLoading: isLoading ?? this.isLoading, error: error,
+      isLoading: isLoading ?? this.isLoading, isEditing: isEditing ?? this.isEditing,
+      editingTransactionId: editingTransactionId ?? this.editingTransactionId, error: error,
     );
   }
 
@@ -160,7 +166,8 @@ class SmartEntryState {
     return SmartEntryState(
       mode: mode, amountString: '', category: category, source: source, account: account,
       fromAccount: fromAccount, toAccount: toAccount, transferFee: null, note: null,
-      date: DateTime.now(), time: TimeOfDay.now(), isRecurring: false, isLoading: false, error: null,
+      date: DateTime.now(), time: TimeOfDay.now(), isRecurring: false, isLoading: false,
+      isEditing: false, editingTransactionId: null, error: null,
     );
   }
 }
@@ -169,8 +176,12 @@ final smartEntryControllerProvider = StateNotifierProvider<SmartEntryController,
 
 class SmartEntryController extends StateNotifier<SmartEntryState> {
   final Ref _ref;
+  late final _SmartEntryPersistenceCoordinator _persistence;
 
-  SmartEntryController(this._ref) : super(SmartEntryState()) { _initSuggestions(); }
+  SmartEntryController(this._ref) : super(SmartEntryState()) {
+    _persistence = _SmartEntryPersistenceCoordinator(_ref);
+    _initSuggestions();
+  }
 
   void _initSuggestions() {
     final suggestionService = _ref.read(smartSuggestionServiceProvider);
@@ -210,6 +221,53 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
     }
   }
 
+  void resetForCreate() {
+    state = SmartEntryState();
+    _initSuggestions();
+  }
+
+  void loadForEdit(Map<String, dynamic> editData) {
+    final id = editData['transactionId'] as String?;
+    final modeValue = (editData['mode'] as String? ?? '').toLowerCase();
+    final amount = (editData['amount'] as num?)?.toDouble() ?? 0.0;
+    final dateMillis = editData['date'] as int?;
+    final note = editData['note'] as String?;
+
+    if (id == null || amount <= 0) {
+      state = state.copyWith(error: 'Invalid edit transaction payload');
+      return;
+    }
+
+    final parsedMode = switch (modeValue) {
+      'income' => TransactionMode.income,
+      'expense' => TransactionMode.expense,
+      'transfer' => TransactionMode.transfer,
+      _ => null,
+    };
+
+    if (parsedMode == null) {
+      state = state.copyWith(error: 'Invalid edit mode');
+      return;
+    }
+
+    final parsedDate = dateMillis != null
+        ? DateTime.fromMillisecondsSinceEpoch(dateMillis)
+        : DateTime.now();
+
+    state = SmartEntryState(
+      mode: parsedMode,
+      amountString: amount.toStringAsFixed(2),
+      category: editData['category'] as String?,
+      source: editData['source'] as String?,
+      account: editData['account'] as String?,
+      note: note,
+      date: parsedDate,
+      time: TimeOfDay.fromDateTime(parsedDate),
+      isEditing: true,
+      editingTransactionId: id,
+    );
+  }
+
   void updateAmount(String digits) {
     if (digits.isEmpty) { state = state.copyWith(amountString: ''); return; }
     if (digits == 'BACK') {
@@ -217,10 +275,12 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
       return;
     }
     if (digits == '.') {
-      if (!state.amountString.contains('.')) state = state.copyWith(amountString: state.amountString + '.');
+      if (!state.amountString.contains('.')) {
+        state = state.copyWith(amountString: '${state.amountString}.');
+      }
       return;
     }
-    String newAmount = state.amountString + digits;
+    String newAmount = '${state.amountString}$digits';
     if (newAmount.contains('.')) {
       final parts = newAmount.split('.');
       if (parts.length > 1 && parts[1].length > 2) return;
@@ -230,7 +290,8 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
     state = state.copyWith(amountString: newAmount);
   }
 
-  void setAmount(double amount) => state = state.copyWith(amountString: amount.toStringAsFixed(2).replaceAll('.', ''));
+  void setAmount(double amount) =>
+      state = state.copyWith(amountString: amount.toStringAsFixed(2));
   void setCategory(String? category) => state = state.copyWith(category: category);
   void setSource(String? source) => state = state.copyWith(source: source);
   void setAccount(String? account) => state = state.copyWith(account: account);
@@ -247,11 +308,7 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
     if (!state.isValid) return false;
     state = state.copyWith(isLoading: true, error: null);
     try {
-      switch (state.mode) {
-        case TransactionMode.expense: await _saveExpense(); break;
-        case TransactionMode.income: await _saveIncome(); break;
-        case TransactionMode.transfer: await _saveTransfer(); break;
-      }
+      await _persistence.saveForState(state);
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
@@ -264,30 +321,6 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
     final success = await save();
     if (success) { state = state.resetForm(); _initSuggestions(); }
     return success;
-  }
-
-  Future<void> _saveExpense() async {
-    final notifier = _ref.read(expensesProvider.notifier);
-    await notifier.addExpense(amount: state.amount, category: state.category!, date: state.date, note: state.note, isRecurring: state.isRecurring);
-    final dailySpendNotifier = _ref.read(dailySpendStateProvider.notifier);
-    await dailySpendNotifier.addSpending(state.amount);
-  }
-
-  Future<void> _saveIncome() async {
-    final addUseCase = _ref.read(addIncomeUseCaseProvider);
-    await addUseCase.execute(amount: state.amount, source: state.source!, date: state.date, note: state.note);
-    
-    // Refresh transaction providers to update the UI
-    try {
-      _ref.read(transactionActionsProvider.notifier).refresh();
-    } catch (e) {
-      debugPrint('Failed to refresh transaction providers after smart entry income: $e');
-    }
-  }
-
-  Future<void> _saveTransfer() async {
-    final notifier = _ref.read(transfersProvider.notifier);
-    await notifier.addTransfer(amount: state.amount, fromAccount: state.fromAccount!, toAccount: state.toAccount!, date: state.date, fee: state.transferFee, note: state.note);
   }
 
   double? getDailySpendPreview() {
@@ -312,11 +345,11 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
     if (state.mode != TransactionMode.transfer) return null;
     if (state.fromAccount == null || state.toAccount == null) return null;
     if (state.amount <= 0) return null;
-    return state.fromAccount! + ' -> ' + state.toAccount!;
+    return '${state.fromAccount!} -> ${state.toAccount!}';
   }
 
   String getFormattedAmount() {
-    if (state.amountString.isEmpty) return AppConstants.currencySymbol + '0';
+    if (state.amountString.isEmpty) return '${AppConstants.currencySymbol}0';
     final amount = CurrencyUtils.parseAmount(state.amountString) ?? 0;
     return CurrencyUtils.formatAmount(amount);
   }
@@ -327,5 +360,123 @@ class SmartEntryController extends StateNotifier<SmartEntryState> {
       case TransactionMode.expense: return const Color(0xFFF44336);
       case TransactionMode.transfer: return const Color(0xFF757575);
     }
+  }
+}
+
+class _SmartEntryPersistenceCoordinator {
+  final Ref _ref;
+
+  const _SmartEntryPersistenceCoordinator(this._ref);
+
+  Future<void> saveForState(SmartEntryState state) async {
+    switch (state.mode) {
+      case TransactionMode.expense:
+        await _saveExpense(state);
+        break;
+      case TransactionMode.income:
+        await _saveIncome(state);
+        break;
+      case TransactionMode.transfer:
+        await _saveTransfer(state);
+        break;
+    }
+  }
+
+  Future<void> _saveExpense(SmartEntryState state) async {
+    if (state.isEditing && state.editingTransactionId != null) {
+      final repository = _ref.read(expenseRepositoryProvider);
+      await repository.updateExpense(
+        id: state.editingTransactionId!,
+        amount: state.amount,
+        category: state.category!,
+        date: state.date,
+        note: state.note,
+      );
+      try {
+        _ref.read(transactionActionsProvider.notifier).refresh();
+      } catch (e) {
+        debugPrint(
+          'Failed to refresh transaction providers after updating expense: $e',
+        );
+      }
+      return;
+    }
+
+    final notifier = _ref.read(expensesProvider.notifier);
+    await notifier.addExpense(
+      amount: state.amount,
+      category: state.category!,
+      date: state.date,
+      note: state.note,
+      isRecurring: state.isRecurring,
+    );
+    final dailySpendNotifier = _ref.read(dailySpendStateProvider.notifier);
+    await dailySpendNotifier.addSpending(state.amount);
+  }
+
+  Future<void> _saveIncome(SmartEntryState state) async {
+    if (state.isEditing && state.editingTransactionId != null) {
+      final updateUseCase = _ref.read(updateIncomeUseCaseProvider);
+      await updateUseCase.execute(
+        id: state.editingTransactionId!,
+        amount: state.amount,
+        source: state.source!,
+        date: state.date,
+        note: state.note,
+      );
+      _ref.invalidate(incomesProvider);
+    } else {
+      final addUseCase = _ref.read(addIncomeUseCaseProvider);
+      await addUseCase.execute(
+        amount: state.amount,
+        source: state.source!,
+        date: state.date,
+        note: state.note,
+      );
+    }
+
+    try {
+      _ref.read(transactionActionsProvider.notifier).refresh();
+    } catch (e) {
+      debugPrint(
+        'Failed to refresh transaction providers after smart entry income: $e',
+      );
+    }
+  }
+
+  Future<void> _saveTransfer(SmartEntryState state) async {
+    final notifier = _ref.read(transfersProvider.notifier);
+    if (state.isEditing && state.editingTransactionId != null) {
+      final repository = _ref.read(transferRepositoryProvider);
+      final existing = await repository.getTransferById(state.editingTransactionId!);
+      if (existing == null) {
+        throw Exception('Transfer with id ${state.editingTransactionId!} not found');
+      }
+
+      await notifier.updateTransfer(
+        TransferEntity(
+          id: existing.id,
+          amount: state.amount,
+          fromAccount: state.fromAccount!,
+          toAccount: state.toAccount!,
+          date: state.date,
+          fee: state.transferFee ?? 0.0,
+          note: state.note,
+          createdAt: existing.createdAt,
+          updatedAt: DateTime.now(),
+          metadata: existing.metadata,
+        ),
+      );
+      return;
+    }
+
+    await notifier.addTransfer(
+      amount: state.amount,
+      fromAccount: state.fromAccount!,
+      toAccount: state.toAccount!,
+      date: state.date,
+      fee: state.transferFee,
+      note: state.note,
+    );
   }
 }

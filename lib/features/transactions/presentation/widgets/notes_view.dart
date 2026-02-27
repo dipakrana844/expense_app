@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/utils.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../utils/transaction_actions.dart';
 import 'transaction_card.dart';
 
 /// Widget: NotesView
@@ -43,7 +44,7 @@ class NotesView extends ConsumerWidget {
                 final dateKey = transactionsWithNotes.keys.elementAt(index);
                 final transactions = transactionsWithNotes[dateKey]!;
 
-                return _buildDateGroup(context, dateKey, transactions);
+                return _buildDateGroup(context, ref, dateKey, transactions);
               }, childCount: transactionsWithNotes.length),
             ),
           ],
@@ -57,6 +58,7 @@ class NotesView extends ConsumerWidget {
 
   Widget _buildDateGroup(
     BuildContext context,
+    WidgetRef ref,
     String dateKey,
     List<TransactionEntity> transactions,
   ) {
@@ -103,7 +105,7 @@ class NotesView extends ConsumerWidget {
             transaction: transaction,
             onTap: () {
               // Show transaction details
-              _showTransactionDetails(context, transaction);
+              _showTransactionDetails(context, ref, transaction);
             },
           ),
         ),
@@ -127,6 +129,7 @@ class NotesView extends ConsumerWidget {
 
   void _showTransactionDetails(
     BuildContext context,
+    WidgetRef ref,
     TransactionEntity transaction,
   ) {
     showModalBottomSheet(
@@ -188,17 +191,24 @@ class NotesView extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   FilledButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
-                      // Handle edit - this would need to be passed from parent
+                      await TransactionActions.handleEdit(
+                        context,
+                        transaction,
+                      );
                     },
                     icon: const Icon(Icons.edit),
                     label: const Text('Edit'),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
-                      // Handle delete - this would need to be passed from parent
+                      await TransactionActions.handleDelete(
+                        context,
+                        ref,
+                        transaction,
+                      );
                     },
                     icon: const Icon(Icons.delete),
                     label: const Text('Delete'),

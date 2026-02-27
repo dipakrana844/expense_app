@@ -189,6 +189,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SmartEntryScreen(),
         routes: [
           GoRoute(
+            path: 'edit',
+            name: 'smart-entry-edit',
+            builder: (context, state) {
+              final extras = state.extra as Map<String, dynamic>? ?? {};
+              return SmartEntryScreen(initialEditData: extras);
+            },
+          ),
+          GoRoute(
             path: 'income',
             name: 'smart-entry-income',
             builder: (context, state) =>

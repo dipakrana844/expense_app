@@ -12,8 +12,9 @@ import '../widgets/smart_preview_card.dart';
 
 class SmartEntryScreen extends ConsumerStatefulWidget {
   final TransactionMode? initialMode;
+  final Map<String, dynamic>? initialEditData;
 
-  const SmartEntryScreen({super.key, this.initialMode});
+  const SmartEntryScreen({super.key, this.initialMode, this.initialEditData});
 
   @override
   ConsumerState<SmartEntryScreen> createState() => _SmartEntryScreenState();
@@ -24,12 +25,22 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.initialMode != null) {
-        ref
-            .read(smartEntryControllerProvider.notifier)
-            .switchMode(widget.initialMode!);
+      final controller = ref.read(smartEntryControllerProvider.notifier);
+      if (widget.initialEditData != null) {
+        controller.loadForEdit(widget.initialEditData!);
+      } else {
+        controller.resetForCreate();
+        if (widget.initialMode != null) {
+          controller.switchMode(widget.initialMode!);
+        }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    ref.read(smartEntryControllerProvider.notifier).resetForCreate();
+    super.dispose();
   }
 
   @override
@@ -108,7 +119,7 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     Color accentColor,
   ) {
     return AppBar(
-      title: const Text('Add Transaction'),
+      title: Text(state.isEditing ? 'Edit Transaction' : 'Add Transaction'),
       leading: Semantics(
         label: 'Close and exit',
         hint: 'Discard changes and return to previous screen',
@@ -193,9 +204,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
             child: Semantics(
               label: 'Continue to next transaction',
               hint: 'Save current transaction and prepare for next entry',
-              enabled: !state.isLoading && state.isValid,
+              enabled: !state.isEditing && !state.isLoading && state.isValid,
               child: OutlinedButton.icon(
-                onPressed: state.isLoading || !state.isValid
+                onPressed: state.isEditing || state.isLoading || !state.isValid
                     ? null
                     : () => _handleContinue(context, controller),
                 icon: const Icon(Icons.add),
@@ -228,7 +239,7 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
                         ),
                       )
                     : const Icon(Icons.check),
-                label: const Text('Save'),
+                label: Text(state.isEditing ? 'Update' : 'Save'),
                 style: FilledButton.styleFrom(
                   backgroundColor: accentColor,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -245,17 +256,23 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     BuildContext context,
     SmartEntryController controller,
   ) async {
-    String? errorMessage;
-    final success = await controller.save().then((success) {
-      errorMessage = controller.state.error;
-      return success;
-    });
-    if (success && mounted) {
+    final wasEditing = ref.read(smartEntryControllerProvider).isEditing;
+    final success = await controller.save();
+    if (!context.mounted) return;
+
+    final errorMessage = ref.read(smartEntryControllerProvider).error;
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Transaction saved successfully')),
+        SnackBar(
+          content: Text(
+            wasEditing
+                ? 'Transaction updated successfully'
+                : 'Transaction saved successfully',
+          ),
+        ),
       );
       Navigator.of(context).pop();
-    } else if (!success && mounted) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage ?? 'Failed to save transaction')),
       );
@@ -266,18 +283,21 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     BuildContext context,
     SmartEntryController controller,
   ) async {
-    String? errorMessage;
-    final success = await controller.saveAndContinue().then((success) {
-      errorMessage = controller.state.error;
-      return success;
-    });
-    if (success && mounted) {
+    if (ref.read(smartEntryControllerProvider).isEditing) {
+      await _handleSave(context, controller);
+      return;
+    }
+    final success = await controller.saveAndContinue();
+    if (!context.mounted) return;
+
+    final errorMessage = ref.read(smartEntryControllerProvider).error;
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Transaction saved, ready for next entry'),
         ),
       );
-    } else if (!success && mounted) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage ?? 'Failed to save transaction')),
       );

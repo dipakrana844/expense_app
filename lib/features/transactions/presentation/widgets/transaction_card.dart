@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../expenses/presentation/providers/expense_providers.dart';
-import '../../../income/presentation/providers/income_providers.dart';
 import '../../domain/entities/transaction_entity.dart';
-import '../../presentation/providers/transaction_providers.dart';
 import '../../shared/utils/transaction_utils.dart';
+import '../utils/transaction_actions.dart';
 
 /// Widget: TransactionCard
 ///
@@ -177,102 +174,12 @@ class TransactionCard extends ConsumerWidget {
   }
 
   /// Handle edit action
-  void _handleEdit(BuildContext context, WidgetRef ref) {
-    if (transaction.isIncome) {
-      // Navigate to edit income screen
-      context.pushNamed(
-        'edit-income',
-        pathParameters: {'id': transaction.id},
-        extra: {
-          'income': {
-            'id': transaction.id,
-            'amount': transaction.amount,
-            'source': transaction.categoryOrSource,
-            'date': transaction.date.millisecondsSinceEpoch,
-            'note': transaction.note,
-          },
-        },
-      );
-    } else {
-      // Navigate to edit expense screen
-      if (transaction.categoryOrSource == 'Grocery') {
-        context.pushNamed('add-grocery', extra: transaction.id);
-      } else {
-        context.pushNamed(
-          'edit-expense',
-          pathParameters: {'id': transaction.id},
-          extra: {
-            'amount': transaction.amount,
-            'category': transaction.categoryOrSource,
-            'date': transaction.date.millisecondsSinceEpoch,
-            'note': transaction.note,
-          },
-        );
-      }
-    }
+  Future<void> _handleEdit(BuildContext context, WidgetRef ref) async {
+    await TransactionActions.handleEdit(context, transaction);
   }
 
   /// Handle delete action
   Future<void> _handleDelete(BuildContext context, WidgetRef ref) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete ${transaction.isIncome ? 'Income' : 'Expense'}?'),
-        content: Text(
-          'Are you sure you want to delete this '
-          '${transaction.isIncome ? 'income' : 'expense'} entry?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              'Delete',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true) {
-      try {
-        if (transaction.isIncome) {
-          // Delete income
-          final incomeRepository = ref.read(incomeRepositoryProvider);
-          await incomeRepository.deleteIncome(transaction.id);
-        } else {
-          // Delete expense
-          final expenseRepository = ref.read(expenseRepositoryProvider);
-          await expenseRepository.deleteExpense(transaction.id);
-        }
-
-        // Show success message
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${transaction.isIncome ? 'Income' : 'Expense'} deleted successfully',
-              ),
-            ),
-          );
-        }
-
-        // Refresh the data
-        ref.read(transactionActionsProvider.notifier).refresh();
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to delete: ${e.toString()}'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
-    }
+    await TransactionActions.handleDelete(context, ref, transaction);
   }
 }
