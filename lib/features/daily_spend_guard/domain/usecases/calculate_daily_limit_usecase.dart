@@ -23,12 +23,8 @@ class CalculateDailyLimitUseCase {
     final daysInMonth = _getDaysInMonth(now.year, now.month);
     final daysRemaining = daysInMonth - now.day + 1;
 
-    if (daysRemaining <= 0) {
-      return monthlyBudget;
-    }
-
-    final safeDaysRemaining = daysRemaining == 0 ? 1 : daysRemaining;
-    return monthlyBudget / safeDaysRemaining;
+    final divisor = daysRemaining > 0 ? daysRemaining : 1;
+    return monthlyBudget / divisor;
   }
 
   Future<double> _calculateFromAverageSpending() async {
@@ -47,9 +43,10 @@ class CalculateDailyLimitUseCase {
       final oldestDate = expenses
           .map((expense) => expense.date)
           .reduce((a, b) => a.isBefore(b) ? a : b);
-      final daysOfData = DateTime.now().difference(oldestDate).inDays + 1;
-
-      return totalAmount / daysOfData.clamp(1, 30);
+      final rawDaysOfData = DateTime.now().difference(oldestDate).inDays + 1;
+      final normalizedDaysOfData = rawDaysOfData <= 0 ? 1 : rawDaysOfData;
+      final divisor = normalizedDaysOfData.clamp(1, 30);
+      return totalAmount / divisor;
     } catch (_) {
       return 0.0;
     }
