@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
-import 'package:smart_expense_tracker/features/daily_spend_guard/data/models/daily_spend_state.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 
 /// Widget: DailySpendCard
@@ -86,7 +86,7 @@ class DailySpendCard extends ConsumerWidget {
   }
 
   /// Content card with spending information
-  Widget _buildContentCard(BuildContext context, DailySpendState state) {
+  Widget _buildContentCard(BuildContext context, DailySpendStateEntity state) {
     final statusColor = _getStatusColor(state.status, context);
     final statusText = _getStatusText(state.status);
     final statusIcon = _getStatusIcon(state.status);
@@ -282,7 +282,7 @@ class DailySpendCard extends ConsumerWidget {
   }
 
   /// Build progress visualization bar
-  Widget _buildProgressIndicator(BuildContext context, DailySpendState state) {
+  Widget _buildProgressIndicator(BuildContext context, DailySpendStateEntity state) {
     final progress = state.dailyLimit > 0 
         ? (state.todaySpent / state.dailyLimit).clamp(0.0, 1.0)
         : 0.0;
@@ -309,37 +309,37 @@ class DailySpendCard extends ConsumerWidget {
   }
 
   /// Get color based on spending status
-  Color _getStatusColor(SpendStatus status, BuildContext context) {
+  Color _getStatusColor(SpendStatusEntity status, BuildContext context) {
     switch (status) {
-      case SpendStatus.safe:
+      case SpendStatusEntity.safe:
         return Colors.green;
-      case SpendStatus.caution:
+      case SpendStatusEntity.caution:
         return Colors.orange;
-      case SpendStatus.exceeded:
+      case SpendStatusEntity.exceeded:
         return Colors.red;
     }
   }
 
   /// Get text description for status
-  String _getStatusText(SpendStatus status) {
+  String _getStatusText(SpendStatusEntity status) {
     switch (status) {
-      case SpendStatus.safe:
+      case SpendStatusEntity.safe:
         return 'Safe to spend';
-      case SpendStatus.caution:
+      case SpendStatusEntity.caution:
         return 'Caution zone';
-      case SpendStatus.exceeded:
+      case SpendStatusEntity.exceeded:
         return 'Limit exceeded';
     }
   }
 
   /// Get icon for status
-  IconData _getStatusIcon(SpendStatus status) {
+  IconData _getStatusIcon(SpendStatusEntity status) {
     switch (status) {
-      case SpendStatus.safe:
+      case SpendStatusEntity.safe:
         return Icons.check_circle;
-      case SpendStatus.caution:
+      case SpendStatusEntity.caution:
         return Icons.warning;
-      case SpendStatus.exceeded:
+      case SpendStatusEntity.exceeded:
         return Icons.error;
     }
   }

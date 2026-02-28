@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 import '../models/daily_spend_state.dart';
 
 /// Local Data Source: DailySpendLocalDataSource
@@ -18,16 +19,41 @@ class DailySpendLocalDataSource {
   static const String _currentStateKey = 'current_state';
 
   late Box<DailySpendState> _dailySpendBox;
+  bool _isInitialized = false;
+  Future<void>? _initializationFuture;
 
   /// Initialize the data source
   /// Opens the Hive box and ensures proper setup
   Future<void> init() async {
-    _dailySpendBox = await Hive.openBox<DailySpendState>(_dailySpendBoxName);
+    if (_isInitialized) return;
+    if (_initializationFuture != null) {
+      return _initializationFuture!;
+    }
+
+    _initializationFuture = _initializeInternal();
+    await _initializationFuture;
+  }
+
+  Future<void> _initializeInternal() async {
+    try {
+      if (!Hive.isAdapterRegistered(5)) {
+        Hive.registerAdapter(DailySpendStateAdapter());
+      }
+      if (!Hive.isAdapterRegistered(6)) {
+        Hive.registerAdapter(SpendStatusAdapter());
+      }
+
+      _dailySpendBox = await Hive.openBox<DailySpendState>(_dailySpendBoxName);
+      _isInitialized = true;
+    } finally {
+      _initializationFuture = null;
+    }
   }
 
   /// Get current daily spend state
   /// Returns initial state if no state exists or if state is from previous day
   DailySpendState getCurrentState() {
+    _ensureInitialized();
     final storedState = _dailySpendBox.get(_currentStateKey);
 
     if (storedState == null) {
@@ -45,7 +71,12 @@ class DailySpendLocalDataSource {
   /// Save current daily spend state
   /// Persists the state to Hive storage
   Future<void> saveCurrentState(DailySpendState state) async {
+    _ensureInitialized();
     await _dailySpendBox.put(_currentStateKey, state);
+  }
+
+  Future<void> saveCurrentStateFromEntity(DailySpendStateEntity state) async {
+    await saveCurrentState(state.toModel());
   }
 
   /// Reset daily state to initial values
@@ -80,11 +111,23 @@ class DailySpendLocalDataSource {
   /// Close the Hive box
   /// Should be called when the app is shutting down
   Future<void> close() async {
-    await _dailySpendBox.close();
+    if (_isInitialized && _dailySpendBox.isOpen) {
+      await _dailySpendBox.close();
+      _isInitialized = false;
+    }
   }
 
   /// Clear all data (for testing/debugging purposes)
   Future<void> clearAll() async {
+    _ensureInitialized();
     await _dailySpendBox.clear();
+  }
+
+  void _ensureInitialized() {
+    if (!_isInitialized) {
+      throw StateError(
+        'DailySpendLocalDataSource is not initialized. Call init() first.',
+      );
+    }
   }
 }

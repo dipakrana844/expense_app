@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive/hive.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 
 part 'daily_spend_state.freezed.dart';
 part 'daily_spend_state.g.dart';
@@ -60,4 +61,54 @@ enum SpendStatus {
 
   @HiveField(2)
   exceeded,
+}
+
+extension DailySpendStateMapper on DailySpendState {
+  DailySpendStateEntity toEntity() {
+    return DailySpendStateEntity(
+      todaySpent: todaySpent,
+      dailyLimit: dailyLimit,
+      remaining: remaining,
+      status: status.toEntity(),
+      lastUpdated: lastUpdated,
+    );
+  }
+}
+
+extension DailySpendStateEntityMapper on DailySpendStateEntity {
+  DailySpendState toModel() {
+    return DailySpendState(
+      todaySpent: todaySpent,
+      dailyLimit: dailyLimit,
+      remaining: remaining,
+      status: status.toModel(),
+      lastUpdated: lastUpdated,
+    );
+  }
+}
+
+extension SpendStatusMapper on SpendStatus {
+  SpendStatusEntity toEntity() {
+    switch (this) {
+      case SpendStatus.safe:
+        return SpendStatusEntity.safe;
+      case SpendStatus.caution:
+        return SpendStatusEntity.caution;
+      case SpendStatus.exceeded:
+        return SpendStatusEntity.exceeded;
+    }
+  }
+}
+
+extension SpendStatusEntityMapper on SpendStatusEntity {
+  SpendStatus toModel() {
+    switch (this) {
+      case SpendStatusEntity.safe:
+        return SpendStatus.safe;
+      case SpendStatusEntity.caution:
+        return SpendStatus.caution;
+      case SpendStatusEntity.exceeded:
+        return SpendStatus.exceeded;
+    }
+  }
 }
