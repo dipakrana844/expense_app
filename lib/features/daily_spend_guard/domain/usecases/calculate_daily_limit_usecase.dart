@@ -27,7 +27,8 @@ class CalculateDailyLimitUseCase {
       return monthlyBudget;
     }
 
-    return monthlyBudget / daysRemaining;
+    final safeDaysRemaining = daysRemaining == 0 ? 1 : daysRemaining;
+    return monthlyBudget / safeDaysRemaining;
   }
 
   Future<double> _calculateFromAverageSpending() async {
@@ -58,4 +59,3 @@ class CalculateDailyLimitUseCase {
     return DateTime(year, month + 1, 0).day;
   }
 }
-

@@ -1,5 +1,6 @@
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/repositories/daily_spend_repository.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/domain/services/spend_status_policy.dart';
 
 /// Use Case: UpdateDailySpendUseCase
 ///
@@ -16,8 +17,12 @@ import 'package:smart_expense_tracker/features/daily_spend_guard/domain/reposito
 
 class UpdateDailySpendUseCase {
   final DailySpendRepository _repository;
+  final SpendStatusPolicy _statusPolicy;
 
-  UpdateDailySpendUseCase(this._repository);
+  UpdateDailySpendUseCase(
+    this._repository, {
+    SpendStatusPolicy statusPolicy = const SpendStatusPolicy(),
+  }) : _statusPolicy = statusPolicy;
 
   /// Update daily spending with new amount
   /// Adds the amount to today's total and recalculates status
@@ -60,7 +65,10 @@ class UpdateDailySpendUseCase {
     double newTotal
   ) async {
     final remaining = currentState.dailyLimit - newTotal;
-    final status = _determineStatus(newTotal, currentState.dailyLimit);
+    final status = _statusPolicy.determineStatus(
+      spent: newTotal,
+      limit: currentState.dailyLimit,
+    );
     
     final newState = currentState.copyWith(
       todaySpent: newTotal,
@@ -72,25 +80,6 @@ class UpdateDailySpendUseCase {
     await _repository.saveCurrentState(newState);
     return newState;
   }
-
-  /// Determine spending status based on thresholds
-  /// Safe: Below 80% of daily limit
-  /// Caution: 80-100% of daily limit
-  /// Exceeded: Above 100% of daily limit
-  SpendStatusEntity _determineStatus(double spent, double limit) {
-    if (limit <= 0) return SpendStatusEntity.safe; // No limit set
-    
-    final percentage = spent / limit;
-    
-    if (percentage >= 1.0) {
-      return SpendStatusEntity.exceeded;
-    } else if (percentage >= 0.8) {
-      return SpendStatusEntity.caution;
-    } else {
-      return SpendStatusEntity.safe;
-    }
-  }
-
   /// Get current daily spend state
   /// Convenience method for external access
   DailySpendStateEntity getCurrentState() {

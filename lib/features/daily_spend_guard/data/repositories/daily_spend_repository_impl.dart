@@ -4,6 +4,7 @@ import 'package:smart_expense_tracker/features/daily_spend_guard/domain/reposito
 import 'package:smart_expense_tracker/features/expenses/data/repositories/expense_repository.dart';
 
 import '../local/daily_spend_local_data_source.dart';
+import '../models/daily_spend_state.dart';
 
 class DailySpendRepositoryImpl implements DailySpendRepository {
   final DailySpendLocalDataSource _localDataSource;
@@ -49,13 +50,14 @@ class DailySpendRepositoryImpl implements DailySpendRepository {
 
   @override
   Future<List<ExpenseSnapshot>> getExpensesSince(DateTime since) async {
-    final (expenses, error) = _expenseRepository.getAllExpenses();
+    final (expenses, error) = _expenseRepository.getExpensesByDateRange(
+      since,
+      DateTime.now(),
+    );
     if (error != null || expenses == null) {
       return const [];
     }
-
     return expenses
-        .where((expense) => expense.date.isAfter(since))
         .map(
           (expense) => ExpenseSnapshot(
             amount: expense.amount,
@@ -65,4 +67,3 @@ class DailySpendRepositoryImpl implements DailySpendRepository {
         .toList();
   }
 }
-
