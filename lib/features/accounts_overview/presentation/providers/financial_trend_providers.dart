@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../transactions/presentation/providers/transaction_providers.dart';
+import '../../data/repositories/financial_trend_repository.dart';
+import '../../data/repositories/financial_trend_repository_impl.dart';
 import '../../domain/entities/financial_trend_dto.dart';
 import '../../domain/usecases/financial_trend_usecase.dart';
 
@@ -11,26 +13,27 @@ final financialTrendUseCaseProvider = Provider<FinancialTrendUseCase>((ref) {
   return FinancialTrendUseCase();
 });
 
+/// Provider: Financial Trend Repository
+///
+/// Purpose: Provides the financial trend repository implementation
+final financialTrendRepositoryProvider = Provider<FinancialTrendRepository>((ref) {
+  final useCase = ref.watch(financialTrendUseCaseProvider);
+  return FinancialTrendRepositoryImpl(
+    financialTrendUseCase: useCase,
+    ref: ref,
+  );
+});
+
 /// Provider: Financial Trend Data
 ///
 /// Purpose: Main provider for complete financial trend analysis
-/// - Fetches unified transaction data
+/// - Fetches unified transaction data via repository
 /// - Processes through use case
 /// - Provides comprehensive financial dashboard data
 final financialTrendProvider = FutureProvider<FinancialTrendDTO>((ref) async {
-  final useCase = ref.watch(financialTrendUseCaseProvider);
-  final transactionsAsync = ref.watch(allTransactionsProvider);
+  final repository = ref.watch(financialTrendRepositoryProvider);
   
-  return transactionsAsync.when(
-    data: (transactions) {
-      return useCase.getFinancialTrend(
-        transactions: transactions,
-        monthsBack: 12,
-      );
-    },
-    loading: () => throw Exception('Loading transactions'),
-    error: (error, stack) => throw Exception('Failed to load transactions: $error'),
-  );
+  return await repository.getFinancialTrend(monthsBack: 12);
 });
 
 /// Provider: Net Balance Trend for Chart
