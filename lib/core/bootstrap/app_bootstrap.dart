@@ -18,6 +18,9 @@ import '../../features/grocery/presentation/providers/grocery_notifier.dart';
 import '../../features/settings/presentation/providers/settings_providers.dart';
 import '../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../features/categories/presentation/providers/category_providers.dart';
+import '../../features/accounts_overview/presentation/providers/financial_trend_providers.dart';
+import '../../features/accounts_overview/data/repositories/financial_trend_repository_impl.dart';
+import '../../features/accounts_overview/domain/usecases/financial_trend_usecase.dart';
 
 final appConfigProvider = Provider<AppConfig>((ref) => throw UnimplementedError('appConfigProvider must be overridden'));
 
@@ -42,6 +45,13 @@ Future<void> bootstrap(Environment env) async {
         ),
         categoryLocalDataSourceProvider.overrideWithValue(_categoryDataSource),
         appConfigProvider.overrideWithValue(config),
+        // Financial Trend feature providers
+        financialTrendRepositoryProvider.overrideWithValue(
+          FinancialTrendRepositoryImpl(
+            financialTrendUseCase: FinancialTrendUseCase(),
+            ref: null, // Will be provided by ProviderScope
+          ),
+        ),
       ],
       observers: const [LoggerObserver()],
       child: MyApp(),
