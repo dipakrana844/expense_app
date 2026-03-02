@@ -1,4 +1,3 @@
-import '../../../../core/domain/interfaces/transaction_interface.dart';
 import '../../domain/entities/financial_trend_dto.dart';
 
 /// Repository Interface: Financial Trend Repository

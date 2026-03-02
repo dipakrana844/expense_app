@@ -1,39 +1,36 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../transactions/presentation/providers/transaction_providers.dart';
-import '../../data/repositories/financial_trend_repository.dart';
-import '../../data/repositories/financial_trend_repository_impl.dart';
 import '../../domain/entities/financial_trend_dto.dart';
 import '../../domain/usecases/financial_trend_usecase.dart';
 
 /// Provider: Financial Trend Use Case
 ///
-/// Purpose: Provides the financial trend use case with required dependencies
+/// Purpose: Provides the financial trend use case for calculations
 final financialTrendUseCaseProvider = Provider<FinancialTrendUseCase>((ref) {
   return FinancialTrendUseCase();
-});
-
-/// Provider: Financial Trend Repository
-///
-/// Purpose: Provides the financial trend repository implementation
-final financialTrendRepositoryProvider = Provider<FinancialTrendRepository>((ref) {
-  final useCase = ref.watch(financialTrendUseCaseProvider);
-  return FinancialTrendRepositoryImpl(
-    financialTrendUseCase: useCase,
-    ref: ref,
-  );
 });
 
 /// Provider: Financial Trend Data
 ///
 /// Purpose: Main provider for complete financial trend analysis
-/// - Fetches unified transaction data via repository
+/// - Fetches unified transaction data via allTransactionsProvider
 /// - Processes through use case
 /// - Provides comprehensive financial dashboard data
 final financialTrendProvider = FutureProvider<FinancialTrendDTO>((ref) async {
-  final repository = ref.watch(financialTrendRepositoryProvider);
+  final useCase = ref.watch(financialTrendUseCaseProvider);
+  final transactionsAsync = ref.watch(allTransactionsProvider);
   
-  return await repository.getFinancialTrend(monthsBack: 12);
+  return transactionsAsync.when(
+    data: (transactions) {
+      return useCase.getFinancialTrend(
+        transactions: transactions,
+        monthsBack: 12,
+      );
+    },
+    loading: () => throw Exception('Loading transactions...'),
+    error: (error, stack) => throw Exception('Failed to load transactions: $error'),
+  );
 });
 
 /// Provider: Net Balance Trend for Chart
