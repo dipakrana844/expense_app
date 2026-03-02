@@ -11,12 +11,10 @@ abstract class FinancialTrendRepository {
   /// Get financial trend analysis for specified period
   ///
   /// Parameters:
-  /// - transactions: Unified list of income and expense transactions
   /// - monthsBack: Number of months to analyze (default: 12)
   ///
   /// Returns: Complete financial trend data including trends, comparisons, and insights
   Future<FinancialTrendDTO> getFinancialTrend({
-    required List<TransactionInterface> transactions,
     int monthsBack = 12,
   });
 }
