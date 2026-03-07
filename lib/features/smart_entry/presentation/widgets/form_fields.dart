@@ -5,7 +5,7 @@ import '../../../../core/services/smart_suggestion_service.dart';
 import '../providers/smart_entry_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'category_picker.dart';
-import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
+import 'package:smart_expense_tracker/features/categories/presentation/widgets/add_category_sheet.dart';
 
 class SmartEntryFormFields extends ConsumerWidget {
   final SmartEntryState state;
@@ -40,62 +40,73 @@ class SmartEntryFormFields extends ConsumerWidget {
     return IndexedStack(
       index: state.mode.index,
       children: [
-        _buildIncomeFields(context, ref),
-        _buildExpenseFields(context, ref),
+        _buildIncomeFields(context),
+        _buildExpenseFields(context),
         _buildTransferFields(context),
       ],
     );
   }
 
-  Widget _buildExpenseFields(BuildContext context, WidgetRef ref) {
+  Widget _buildExpenseFields(BuildContext context) {
     final accounts = _getAccounts();
-    
-    return Consumer(
-      builder: (context, ref, child) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDateTimeRow(context),
-              const SizedBox(height: 16),
-              CategoryPicker(
-                transactionType: 'expense',
-                selectedCategory: state.category,
-                onCategoryChanged: onCategoryChanged,
-                onAddCategoryPressed: () {
-                  _showAddCategorySheet(context, ref);
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildAccountDropdown(context, accounts, state.account, 'Account (Optional)', onAccountChanged),
-              const SizedBox(height: 16),
-              _buildNoteField(context, state.note, onNoteChanged),
-              const SizedBox(height: 16),
-              _buildReceiptAttachment(context),
-            ],
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDateTimeRow(context),
+          const SizedBox(height: 16),
+          CategoryPicker(
+            transactionType: 'expense',
+            selectedCategory: state.category,
+            onCategoryChanged: onCategoryChanged,
+            onAddCategoryPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                showDragHandle: true,
+                builder: (_) =>
+                    const AddCategorySheet(transactionType: 'expense'),
+              );
+            },
           ),
-        );
-      },
+          const SizedBox(height: 16),
+          _buildAccountDropdown(
+            context,
+            accounts,
+            state.account,
+            'Account (Optional)',
+            onAccountChanged,
+          ),
+          const SizedBox(height: 16),
+          _buildNoteField(context, state.note, onNoteChanged),
+          const SizedBox(height: 16),
+          _buildReceiptAttachment(context),
+        ],
+      ),
     );
   }
 
   Widget _buildReceiptAttachment(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Toggle receipt attachment
         if (onAttachReceiptChanged != null) {
           onAttachReceiptChanged!(true);
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Receipt attachment feature coming soon')),
+          const SnackBar(
+            content: Text('Receipt attachment feature coming soon'),
+          ),
         );
       },
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -124,11 +135,15 @@ class SmartEntryFormFields extends ConsumerWidget {
     );
   }
 
-  Widget _buildIncomeFields(BuildContext context, WidgetRef ref) {
+  Widget _buildIncomeFields(BuildContext context) {
     final suggestionService = SmartSuggestionServiceHolder.service;
-    final sources = suggestionService?.getFrequentIncomeSources() ?? ['Salary', 'Freelance', 'Investment', 'Gift', 'Others'];
-    final accounts = suggestionService?.getAllAccounts() ?? ['Cash', 'Bank', 'UPI', 'Wallet'];
-    
+    final sources =
+        suggestionService?.getFrequentIncomeSources() ??
+        ['Salary', 'Freelance', 'Investment', 'Gift', 'Others'];
+    final accounts =
+        suggestionService?.getAllAccounts() ??
+        ['Cash', 'Bank', 'UPI', 'Wallet'];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -138,7 +153,13 @@ class SmartEntryFormFields extends ConsumerWidget {
           const SizedBox(height: 16),
           _buildSourceDropdown(context, sources, state.source, onSourceChanged),
           const SizedBox(height: 16),
-          _buildAccountDropdown(context, accounts, state.account, 'Account (Optional)', onAccountChanged),
+          _buildAccountDropdown(
+            context,
+            accounts,
+            state.account,
+            'Account (Optional)',
+            onAccountChanged,
+          ),
           const SizedBox(height: 16),
           _buildNoteField(context, state.note, onNoteChanged),
         ],
@@ -148,8 +169,10 @@ class SmartEntryFormFields extends ConsumerWidget {
 
   Widget _buildTransferFields(BuildContext context) {
     final suggestionService = SmartSuggestionServiceHolder.service;
-    final accounts = suggestionService?.getAllAccounts() ?? ['Cash', 'Bank', 'UPI', 'Wallet'];
-    
+    final accounts =
+        suggestionService?.getAllAccounts() ??
+        ['Cash', 'Bank', 'UPI', 'Wallet'];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -157,9 +180,21 @@ class SmartEntryFormFields extends ConsumerWidget {
         children: [
           _buildDateTimeRow(context),
           const SizedBox(height: 16),
-          _buildAccountDropdown(context, accounts, state.fromAccount, 'From Account', onFromAccountChanged),
+          _buildAccountDropdown(
+            context,
+            accounts,
+            state.fromAccount,
+            'From Account',
+            onFromAccountChanged,
+          ),
           const SizedBox(height: 16),
-          _buildAccountDropdown(context, accounts, state.toAccount, 'To Account', onToAccountChanged),
+          _buildAccountDropdown(
+            context,
+            accounts,
+            state.toAccount,
+            'To Account',
+            onToAccountChanged,
+          ),
           const SizedBox(height: 16),
           _buildFeeField(context, state.transferFee, onFeeChanged),
           const SizedBox(height: 16),
@@ -177,7 +212,9 @@ class SmartEntryFormFields extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -197,9 +234,9 @@ class SmartEntryFormFields extends ConsumerWidget {
               ),
               child: Text(
                 state.time.format(context),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ),
             const Spacer(),
@@ -215,7 +252,13 @@ class SmartEntryFormFields extends ConsumerWidget {
                   children: [
                     Icon(Icons.repeat, size: 14, color: Colors.amber.shade800),
                     const SizedBox(width: 4),
-                    Text('Recurring', style: TextStyle(fontSize: 12, color: Colors.amber.shade800)),
+                    Text(
+                      'Recurring',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.amber.shade800,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -225,20 +268,12 @@ class SmartEntryFormFields extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryDropdown(BuildContext context, List<String> categories, String? value, Function(String?) onChanged) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      decoration: const InputDecoration(
-        labelText: 'Category',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.category_outlined),
-      ),
-      items: categories.map((cat) => DropdownMenuItem(value: cat, child: Text(cat))).toList(),
-      onChanged: onChanged,
-    );
-  }
-
-  Widget _buildSourceDropdown(BuildContext context, List<String> sources, String? value, Function(String?) onChanged) {
+  Widget _buildSourceDropdown(
+    BuildContext context,
+    List<String> sources,
+    String? value,
+    Function(String?) onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: const InputDecoration(
@@ -246,12 +281,20 @@ class SmartEntryFormFields extends ConsumerWidget {
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.attach_money),
       ),
-      items: sources.map((src) => DropdownMenuItem(value: src, child: Text(src))).toList(),
+      items: sources
+          .map((src) => DropdownMenuItem(value: src, child: Text(src)))
+          .toList(),
       onChanged: onChanged,
     );
   }
 
-  Widget _buildAccountDropdown(BuildContext context, List<String> accounts, String? value, String label, Function(String?) onChanged) {
+  Widget _buildAccountDropdown(
+    BuildContext context,
+    List<String> accounts,
+    String? value,
+    String label,
+    Function(String?) onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(
@@ -259,12 +302,18 @@ class SmartEntryFormFields extends ConsumerWidget {
         border: const OutlineInputBorder(),
         prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
       ),
-      items: accounts.map((acc) => DropdownMenuItem(value: acc, child: Text(acc))).toList(),
+      items: accounts
+          .map((acc) => DropdownMenuItem(value: acc, child: Text(acc)))
+          .toList(),
       onChanged: onChanged,
     );
   }
 
-  Widget _buildFeeField(BuildContext context, double? fee, Function(double?) onChanged) {
+  Widget _buildFeeField(
+    BuildContext context,
+    double? fee,
+    Function(double?) onChanged,
+  ) {
     return TextFormField(
       initialValue: fee?.toString() ?? '',
       decoration: const InputDecoration(
@@ -278,7 +327,11 @@ class SmartEntryFormFields extends ConsumerWidget {
     );
   }
 
-  Widget _buildNoteField(BuildContext context, String? note, Function(String?) onChanged) {
+  Widget _buildNoteField(
+    BuildContext context,
+    String? note,
+    Function(String?) onChanged,
+  ) {
     return TextFormField(
       initialValue: note ?? '',
       decoration: const InputDecoration(
@@ -292,23 +345,21 @@ class SmartEntryFormFields extends ConsumerWidget {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    // First select date
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: state.date,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    
+
     if (pickedDate != null) {
       onDateChanged(pickedDate);
-      
-      // Then select time
+
       final pickedTime = await showTimePicker(
         context: context,
         initialTime: state.time,
       );
-      
+
       if (pickedTime != null) {
         onTimeChanged(pickedTime);
       }
@@ -316,97 +367,17 @@ class SmartEntryFormFields extends ConsumerWidget {
   }
 
   void _copyPreviousDate(BuildContext context) {
-    // Copy previous date functionality - shows a snackbar for now
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Long press to copy previous transaction date')),
+      const SnackBar(
+        content: Text('Long press to copy previous transaction date'),
+      ),
     );
   }
 
   List<String> _getAccounts() {
     final suggestionService = SmartSuggestionServiceHolder.service;
-    return suggestionService?.getAllAccounts() ?? ['Cash', 'Bank', 'UPI', 'Wallet'];
-  }
-
-  Future<void> _showAddCategorySheet(BuildContext context, WidgetRef ref) async {
-    final TextEditingController nameController = TextEditingController();
-    int selectedIcon = 0xe5cc; // Default icon
-    int selectedColor = 0xFF2196F3; // Default blue color
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Add New Category',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Category Name',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final normalizedName = nameController.text.trim();
-                      if (normalizedName.isNotEmpty) {
-                        final existingCategories = await ref
-                            .read(getCategoriesUseCaseProvider)
-                            .call(type: 'expense');
-                        final alreadyExists = existingCategories.any(
-                          (category) =>
-                              category.name.trim().toLowerCase() ==
-                              normalizedName.toLowerCase(),
-                        );
-                        if (alreadyExists) {
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Category already exists'),
-                            ),
-                          );
-                          return;
-                        }
-
-                        // Get the category controller from the provider
-                        final controller = ref.read(
-                          categoryControllerProvider.notifier,
-                        );
-                        await controller.addCategory(
-                          name: normalizedName,
-                          type: 'expense',
-                          iconCodePoint: selectedIcon,
-                          colorValue: selectedColor,
-                        );
-                        if (!context.mounted) return;
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: const Text('Add Category'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+    return suggestionService?.getAllAccounts() ??
+        ['Cash', 'Bank', 'UPI', 'Wallet'];
   }
 }
 

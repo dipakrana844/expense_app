@@ -1,10 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../../domain/entities/transaction_summary.dart';
 import '../../domain/enums/transaction_type.dart';
-import '../../data/repositories/transaction_repository.dart';
 import '../../shared/utils/transaction_utils.dart';
 import '../../../income/presentation/providers/income_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
+import 'transaction_infrastructure_providers.dart';
+
+// ---------------------------------------------------------------------------
+// Filter State
+// ---------------------------------------------------------------------------
 
 /// State for transaction filtering
 class TransactionFilterState {
@@ -12,18 +17,10 @@ class TransactionFilterState {
   final DateTime? selectedDate;
   final String? searchTerm;
 
-  TransactionFilterState({
-    this.type,
-    this.selectedDate,
-    this.searchTerm,
-  });
+  const TransactionFilterState({this.type, this.selectedDate, this.searchTerm});
 
-  /// Create initial state (show all transactions)
-  factory TransactionFilterState.initial() {
-    return TransactionFilterState();
-  }
+  factory TransactionFilterState.initial() => const TransactionFilterState();
 
-  /// Copy with new values
   TransactionFilterState copyWith({
     TransactionType? type,
     DateTime? selectedDate,
@@ -36,211 +33,242 @@ class TransactionFilterState {
     );
   }
 
-  /// Check if any filters are applied
-  bool get hasFilters {
-    return type != null || selectedDate != null || searchTerm?.isNotEmpty == true;
-  }
+  bool get hasFilters =>
+      type != null || selectedDate != null || searchTerm?.isNotEmpty == true;
 }
 
-/// Provider for current transaction filter state
+// ---------------------------------------------------------------------------
+// Transaction Filter — NotifierProvider (replaces StateNotifierProvider)
+// ---------------------------------------------------------------------------
+
 final transactionFilterProvider =
-    StateNotifierProvider<TransactionFilterNotifier, TransactionFilterState>(
-        (ref) {
-  return TransactionFilterNotifier();
-});
+    NotifierProvider<TransactionFilterNotifier, TransactionFilterState>(
+      TransactionFilterNotifier.new,
+    );
 
-/// State notifier for managing transaction filters
-class TransactionFilterNotifier extends StateNotifier<TransactionFilterState> {
-  TransactionFilterNotifier() : super(TransactionFilterState.initial());
+class TransactionFilterNotifier extends Notifier<TransactionFilterState> {
+  @override
+  TransactionFilterState build() => TransactionFilterState.initial();
 
-  /// Set transaction type filter
-  void setType(TransactionType? type) {
-    state = state.copyWith(type: type);
-  }
+  void setType(TransactionType? type) => state = state.copyWith(type: type);
 
-  /// Set selected date for navigation
-  void setSelectedDate(DateTime date) {
-    state = state.copyWith(selectedDate: date);
-  }
+  void setSelectedDate(DateTime date) =>
+      state = state.copyWith(selectedDate: date);
 
-  /// Set search term
-  void setSearchTerm(String term) {
-    state = state.copyWith(searchTerm: term);
-  }
+  void setSearchTerm(String term) => state = state.copyWith(searchTerm: term);
 
-  /// Clear all filters
-  void clearFilters() {
-    state = TransactionFilterState.initial();
-  }
+  void clearFilters() => state = TransactionFilterState.initial();
 
-  /// Toggle between transaction types
   void toggleType(TransactionType type) {
-    if (state.type == type) {
-      setType(null); // Clear filter if same type clicked
-    } else {
-      setType(type);
-    }
+    state.type == type ? setType(null) : setType(type);
   }
 }
 
-/// Provider for current displayed month
-final currentMonthProvider = StateProvider<DateTime>((ref) {
-  return DateTime.now();
-});
+// ---------------------------------------------------------------------------
+// Current displayed month — StateProvider (simple scalar, fine as-is)
+// ---------------------------------------------------------------------------
 
-/// Provider for all transactions (unfiltered)
+final currentMonthProvider = StateProvider<DateTime>((ref) => DateTime.now());
+
+// ---------------------------------------------------------------------------
+// All transactions — AsyncNotifierProvider (replaces FutureProvider)
+// ---------------------------------------------------------------------------
+
 final allTransactionsProvider =
-    FutureProvider<List<TransactionEntity>>((ref) async {
-  final repository = ref.watch(transactionRepositoryProvider);
-  // Watch income and expense providers to trigger refresh when they change
-  ref.watch(incomesProvider);
-  ref.watch(expensesProvider);
-  return await repository.getAllTransactions();
-});
+    AsyncNotifierProvider<AllTransactionsNotifier, List<TransactionEntity>>(
+      AllTransactionsNotifier.new,
+    );
 
-/// Provider for filtered transactions
+class AllTransactionsNotifier extends AsyncNotifier<List<TransactionEntity>> {
+  @override
+  Future<List<TransactionEntity>> build() async {
+    // Re-run whenever either data source changes.
+    ref.watch(incomesProvider);
+    ref.watch(expensesProvider);
+    final repository = ref.watch(transactionRepositoryProvider);
+    return repository.getAllTransactions();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Filtered transactions — AsyncNotifierProvider
+// ---------------------------------------------------------------------------
+
 final filteredTransactionsProvider =
-    FutureProvider<List<TransactionEntity>>((ref) async {
-  final repository = ref.watch(transactionRepositoryProvider);
-  final filterState = ref.watch(transactionFilterProvider);
-  final currentMonth = ref.watch(currentMonthProvider);
+    AsyncNotifierProvider<
+      FilteredTransactionsNotifier,
+      List<TransactionEntity>
+    >(FilteredTransactionsNotifier.new);
 
-  // Watch income and expense providers to trigger refresh when they change
-  ref.watch(incomesProvider);
-  ref.watch(expensesProvider);
+class FilteredTransactionsNotifier
+    extends AsyncNotifier<List<TransactionEntity>> {
+  @override
+  Future<List<TransactionEntity>> build() async {
+    final repository = ref.watch(transactionRepositoryProvider);
+    final filterState = ref.watch(transactionFilterProvider);
+    final currentMonth = ref.watch(currentMonthProvider);
 
-  List<TransactionEntity> transactions;
+    // Re-run on underlying data changes.
+    ref.watch(incomesProvider);
+    ref.watch(expensesProvider);
 
-  // Apply type filter
-  if (filterState.type != null) {
-    transactions = await repository.getTransactionsByType(filterState.type);
-  } else {
-    transactions = await repository.getMonthlyTransactions(currentMonth);
+    List<TransactionEntity> transactions;
+
+    if (filterState.type != null) {
+      transactions = await repository.getTransactionsByType(filterState.type);
+    } else {
+      transactions = await repository.getMonthlyTransactions(currentMonth);
+    }
+
+    // Apply search filter
+    if (filterState.searchTerm?.isNotEmpty == true) {
+      final lowerSearch = filterState.searchTerm!.toLowerCase();
+      transactions = transactions.where((t) {
+        return t.categoryOrSource.toLowerCase().contains(lowerSearch) ||
+            (t.note != null && t.note!.toLowerCase().contains(lowerSearch));
+      }).toList();
+    }
+
+    return transactions;
   }
+}
 
-  // Apply search filter
-  if (filterState.searchTerm?.isNotEmpty == true) {
-    final lowerSearch = filterState.searchTerm!.toLowerCase();
-    transactions = transactions.where((transaction) {
-      return transaction.categoryOrSource.toLowerCase().contains(lowerSearch) ||
-          (transaction.note != null &&
-              transaction.note!.toLowerCase().contains(lowerSearch));
-    }).toList();
-  }
+// ---------------------------------------------------------------------------
+// Grouped transactions — derived async provider
+// ---------------------------------------------------------------------------
 
-  return transactions;
-});
-
-/// Provider for grouped transactions (by date)
 final groupedTransactionsProvider =
-    FutureProvider<Map<String, List<TransactionEntity>>>((ref) async {
-  final transactionsAsync = ref.watch(filteredTransactionsProvider);
+    AsyncNotifierProvider<
+      GroupedTransactionsNotifier,
+      Map<String, List<TransactionEntity>>
+    >(GroupedTransactionsNotifier.new);
 
-  return transactionsAsync.when(
-    data: (transactions) {
-      return TransactionUtils.groupByDate(transactions);
-    },
-    loading: () => {},
-    error: (_, __) => {},
-  );
-});
+class GroupedTransactionsNotifier
+    extends AsyncNotifier<Map<String, List<TransactionEntity>>> {
+  @override
+  Future<Map<String, List<TransactionEntity>>> build() async {
+    final transactionsAsync = await ref.watch(
+      filteredTransactionsProvider.future,
+    );
+    return TransactionUtils.groupByDate(transactionsAsync);
+  }
+}
 
-/// Provider for transaction summary statistics
+// ---------------------------------------------------------------------------
+// Transaction summary — AsyncNotifierProvider
+// ---------------------------------------------------------------------------
+
 final transactionSummaryProvider =
-    FutureProvider<TransactionSummary>((ref) async {
-  final repository = ref.watch(transactionRepositoryProvider);
-  final currentMonth = ref.watch(currentMonthProvider);
-  
-  // Watch income and expense providers to trigger refresh when they change
-  ref.watch(incomesProvider);
-  ref.watch(expensesProvider);
-  
-  return await repository.getMonthSummary(currentMonth);
-});
+    AsyncNotifierProvider<TransactionSummaryNotifier, TransactionSummary>(
+      TransactionSummaryNotifier.new,
+    );
 
-/// Provider for quick transaction actions
-class TransactionActionsNotifier extends StateNotifier<bool> {
-  final Ref _ref;
+class TransactionSummaryNotifier extends AsyncNotifier<TransactionSummary> {
+  @override
+  Future<TransactionSummary> build() async {
+    final repository = ref.watch(transactionRepositoryProvider);
+    final currentMonth = ref.watch(currentMonthProvider);
 
-  TransactionActionsNotifier(this._ref) : super(false);
+    ref.watch(incomesProvider);
+    ref.watch(expensesProvider);
 
-  /// Refresh all transaction data
-  Future<void> refresh() async {
-    // Invalidate dependent providers to trigger refresh
-    _ref.invalidate(allTransactionsProvider);
-    _ref.invalidate(filteredTransactionsProvider);
-    _ref.invalidate(groupedTransactionsProvider);
-    _ref.invalidate(transactionSummaryProvider);
+    return repository.getMonthSummary(currentMonth);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Transaction Actions — Notifier<void> (replaces dummy StateNotifier<bool>)
+// ---------------------------------------------------------------------------
+
+final transactionActionsProvider =
+    NotifierProvider<TransactionActionsNotifier, void>(
+      TransactionActionsNotifier.new,
+    );
+
+class TransactionActionsNotifier extends Notifier<void> {
+  @override
+  void build() {
+    // No state — this notifier only exposes imperative actions.
+  }
+
+  /// Invalidate all transaction data providers to trigger re-fetch.
+  void refresh() {
+    ref.invalidate(allTransactionsProvider);
+    ref.invalidate(filteredTransactionsProvider);
+    ref.invalidate(groupedTransactionsProvider);
+    ref.invalidate(transactionSummaryProvider);
   }
 
   /// Navigate to previous month
   void goToPreviousMonth() {
-    final currentMonth = _ref.read(currentMonthProvider);
-    final previousMonth = DateTime(currentMonth.year, currentMonth.month - 1);
-    _ref.read(currentMonthProvider.notifier).state = previousMonth;
-    
-    // Refresh data for new month
+    final current = ref.read(currentMonthProvider);
+    ref.read(currentMonthProvider.notifier).state = DateTime(
+      current.year,
+      current.month - 1,
+    );
     refresh();
   }
 
   /// Navigate to next month
   void goToNextMonth() {
-    final currentMonth = _ref.read(currentMonthProvider);
-    final nextMonth = DateTime(currentMonth.year, currentMonth.month + 1);
-    _ref.read(currentMonthProvider.notifier).state = nextMonth;
-    
-    // Refresh data for new month
+    final current = ref.read(currentMonthProvider);
+    ref.read(currentMonthProvider.notifier).state = DateTime(
+      current.year,
+      current.month + 1,
+    );
     refresh();
   }
 
   /// Navigate to today
   void goToToday() {
-    _ref.read(currentMonthProvider.notifier).state = DateTime.now();
+    ref.read(currentMonthProvider.notifier).state = DateTime.now();
     refresh();
   }
 }
 
-/// Provider for transaction actions
-final transactionActionsProvider =
-    StateNotifierProvider<TransactionActionsNotifier, bool>((ref) {
-  return TransactionActionsNotifier(ref);
-});
+// ---------------------------------------------------------------------------
+// Derived selector providers
+// ---------------------------------------------------------------------------
 
-/// Selector provider for income transactions only
+/// Income-only transactions
 final incomeTransactionsProvider =
-    FutureProvider<List<TransactionEntity>>((ref) async {
-  final transactionsAsync = ref.watch(filteredTransactionsProvider);
-  
-  return transactionsAsync.when(
-    data: (transactions) {
-      return transactions.where((t) => t.isIncome).toList();
-    },
-    loading: () => [],
-    error: (_, __) => [],
-  );
-});
+    AsyncNotifierProvider<IncomeTransactionsNotifier, List<TransactionEntity>>(
+      IncomeTransactionsNotifier.new,
+    );
 
-/// Selector provider for expense transactions only
+class IncomeTransactionsNotifier
+    extends AsyncNotifier<List<TransactionEntity>> {
+  @override
+  Future<List<TransactionEntity>> build() async {
+    final transactions = await ref.watch(filteredTransactionsProvider.future);
+    return transactions.where((t) => t.isIncome).toList();
+  }
+}
+
+/// Expense-only transactions
 final expenseTransactionsProvider =
-    FutureProvider<List<TransactionEntity>>((ref) async {
-  final transactionsAsync = ref.watch(filteredTransactionsProvider);
-  
-  return transactionsAsync.when(
-    data: (transactions) {
-      return transactions.where((t) => t.isExpense).toList();
-    },
-    loading: () => [],
-    error: (_, __) => [],
-  );
-});
+    AsyncNotifierProvider<ExpenseTransactionsNotifier, List<TransactionEntity>>(
+      ExpenseTransactionsNotifier.new,
+    );
 
-/// Selector provider for net balance
-final netBalanceProvider = FutureProvider<double>((ref) async {
-  final summaryAsync = ref.watch(transactionSummaryProvider);
-  
-  return summaryAsync.when(
-    data: (summary) => summary.netBalance,
-    loading: () => 0.0,
-    error: (_, __) => 0.0,
-  );
-});
+class ExpenseTransactionsNotifier
+    extends AsyncNotifier<List<TransactionEntity>> {
+  @override
+  Future<List<TransactionEntity>> build() async {
+    final transactions = await ref.watch(filteredTransactionsProvider.future);
+    return transactions.where((t) => t.isExpense).toList();
+  }
+}
+
+/// Net balance for current month
+final netBalanceProvider = AsyncNotifierProvider<NetBalanceNotifier, double>(
+  NetBalanceNotifier.new,
+);
+
+class NetBalanceNotifier extends AsyncNotifier<double> {
+  @override
+  Future<double> build() async {
+    final summary = await ref.watch(transactionSummaryProvider.future);
+    return summary.netBalance;
+  }
+}

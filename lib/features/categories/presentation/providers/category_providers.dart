@@ -4,20 +4,12 @@ import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/add_category_usecase.dart';
 import '../../domain/usecases/update_category_usecase.dart';
 import '../../domain/usecases/delete_category_usecase.dart';
-import '../../data/datasource/category_local_data_source.dart';
-import '../../data/repository_impl.dart';
 import '../../domain/entities/category_entity.dart';
-import '../../domain/repository.dart';
+import '../../data/category_infrastructure_provider.dart';
 
-final categoryLocalDataSourceProvider = Provider<CategoryLocalDataSource>((ref) {
-  // Data source is expected to be initialized elsewhere (e.g., in main.dart)
-  return CategoryLocalDataSource();
-});
-
-final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
-  final dataSource = ref.watch(categoryLocalDataSourceProvider);
-  return CategoryRepositoryImpl(dataSource);
-});
+// ---------------------------------------------------------------------------
+// Use-case providers (depend only on abstract CategoryRepository)
+// ---------------------------------------------------------------------------
 
 final getCategoriesUseCaseProvider = Provider<GetCategoriesUseCase>((ref) {
   final repository = ref.watch(categoryRepositoryProvider);
@@ -39,32 +31,33 @@ final deleteCategoryUseCaseProvider = Provider<DeleteCategoryUseCase>((ref) {
   return DeleteCategoryUseCase(repository);
 });
 
-final categoriesProvider = FutureProvider.autoDispose<List<CategoryEntity>>((ref) async {
+// ---------------------------------------------------------------------------
+// Read-only async providers
+// ---------------------------------------------------------------------------
+
+/// Provides all categories. Not autoDispose so the controller stays alive.
+final categoriesProvider = FutureProvider<List<CategoryEntity>>((ref) async {
   final useCase = ref.watch(getCategoriesUseCaseProvider);
-  return await useCase.call();
+  return useCase.call();
 });
 
-final categoriesByTypeProvider = FutureProvider.family<List<CategoryEntity>, String>((ref, type) async {
-  final useCase = ref.watch(getCategoriesUseCaseProvider);
-  return await useCase.call(type: type);
-});
+/// Provides categories filtered by type ('income' | 'expense').
+final categoriesByTypeProvider =
+    FutureProvider.family<List<CategoryEntity>, String>((ref, type) async {
+      final useCase = ref.watch(getCategoriesUseCaseProvider);
+      return useCase.call(type: type);
+    });
 
-final categoryControllerProvider = StateNotifierProvider<CategoryController, CategoryState>((ref) {
-  return CategoryController(
-    ref,
-    ref.watch(addCategoryUseCaseProvider),
-    ref.watch(updateCategoryUseCaseProvider),
-    ref.watch(deleteCategoryUseCaseProvider),
-    ref.watch(getCategoriesUseCaseProvider),
-  );
-});
+// ---------------------------------------------------------------------------
+// CategoryState
+// ---------------------------------------------------------------------------
 
 class CategoryState {
   final List<CategoryEntity> categories;
   final bool isLoading;
   final String? error;
 
-  CategoryState({
+  const CategoryState({
     this.categories = const [],
     this.isLoading = false,
     this.error,
@@ -83,29 +76,37 @@ class CategoryState {
   }
 }
 
-class CategoryController extends StateNotifier<CategoryState> {
-  final Ref _ref;
-  final AddCategoryUseCase _addCategoryUseCase;
-  final UpdateCategoryUseCase _updateCategoryUseCase;
-  final DeleteCategoryUseCase _deleteCategoryUseCase;
-  final GetCategoriesUseCase _getCategoriesUseCase;
+// ---------------------------------------------------------------------------
+// CategoryController — NotifierProvider (replaces StateNotifierProvider)
+// ---------------------------------------------------------------------------
 
-  CategoryController(
-    this._ref,
-    this._addCategoryUseCase,
-    this._updateCategoryUseCase,
-    this._deleteCategoryUseCase,
-    this._getCategoriesUseCase,
-  ) : super(CategoryState());
+final categoryControllerProvider =
+    NotifierProvider<CategoryController, CategoryState>(CategoryController.new);
+
+class CategoryController extends Notifier<CategoryState> {
+  // Use-cases resolved in build() — proper Notifier pattern.
+  late final AddCategoryUseCase _addCategoryUseCase;
+  late final UpdateCategoryUseCase _updateCategoryUseCase;
+  late final DeleteCategoryUseCase _deleteCategoryUseCase;
+  late final GetCategoriesUseCase _getCategoriesUseCase;
+
+  @override
+  CategoryState build() {
+    _addCategoryUseCase = ref.watch(addCategoryUseCaseProvider);
+    _updateCategoryUseCase = ref.watch(updateCategoryUseCaseProvider);
+    _deleteCategoryUseCase = ref.watch(deleteCategoryUseCaseProvider);
+    _getCategoriesUseCase = ref.watch(getCategoriesUseCaseProvider);
+    return const CategoryState();
+  }
 
   void _invalidateCategoryQueries({String? changedType}) {
-    _ref.invalidate(categoriesProvider);
+    ref.invalidate(categoriesProvider);
     if (changedType != null && changedType.isNotEmpty) {
-      _ref.invalidate(categoriesByTypeProvider(changedType));
+      ref.invalidate(categoriesByTypeProvider(changedType));
       return;
     }
-    _ref.invalidate(categoriesByTypeProvider('expense'));
-    _ref.invalidate(categoriesByTypeProvider('income'));
+    ref.invalidate(categoriesByTypeProvider('expense'));
+    ref.invalidate(categoriesByTypeProvider('income'));
   }
 
   Future<void> loadCategories({String? type}) async {
@@ -120,7 +121,7 @@ class CategoryController extends StateNotifier<CategoryState> {
 
   Future<void> addCategory({
     required String name,
-    required String type, // 'income' or 'expense'
+    required String type,
     required int iconCodePoint,
     required int colorValue,
   }) async {
@@ -132,11 +133,10 @@ class CategoryController extends StateNotifier<CategoryState> {
       colorValue: colorValue,
       createdAt: DateTime.now(),
     );
-    
+
     try {
       await _addCategoryUseCase.call(newCategory);
       _invalidateCategoryQueries(changedType: type);
-      // Reload categories
       await loadCategories();
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -147,7 +147,6 @@ class CategoryController extends StateNotifier<CategoryState> {
     try {
       await _updateCategoryUseCase.call(category);
       _invalidateCategoryQueries(changedType: category.type);
-      // Reload categories
       await loadCategories();
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -158,7 +157,6 @@ class CategoryController extends StateNotifier<CategoryState> {
     try {
       await _deleteCategoryUseCase.call(id);
       _invalidateCategoryQueries();
-      // Reload categories
       await loadCategories();
     } catch (e) {
       state = state.copyWith(error: e.toString());

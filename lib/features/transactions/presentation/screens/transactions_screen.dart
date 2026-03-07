@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../domain/enums/transaction_type.dart';
 import '../providers/transaction_providers.dart';
+import '../widgets/add_transaction_sheet.dart';
 import '../widgets/calendar_view.dart';
 import '../widgets/daily_view.dart';
 import '../widgets/modern_summary_header.dart';
@@ -15,13 +15,6 @@ import '../widgets/total_view.dart';
 /// Screen: TransactionsScreen
 ///
 /// Main screen for viewing and managing all financial transactions.
-/// Redesigned with a modern, clean architecture and improved UX.
-///
-/// Features:
-/// - NestedScrollView for collapsible header effect
-/// - Modern segmented view selector
-/// - Clean summary card
-/// - Smart Entry as primary action
 class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
 
@@ -159,7 +152,6 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            // Daily View (Needs to support NestedScrollView)
             DailyView(groupedTransactionsAsync: groupedTransactionsAsync),
             const CalendarView(),
             const MonthlyView(),
@@ -169,73 +161,14 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
         ),
       ),
 
-      // Floating Action Button - Opens Add Options Menu
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            builder: (context) => SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer,
-                        child: Icon(
-                          Icons.smart_toy_outlined,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                      title: const Text('Smart Entry'),
-                      subtitle: const Text('Add via smart form or OCR'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.push('/smart-entry');
-                      },
-                    ),
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.secondaryContainer,
-                        child: Icon(
-                          Icons.shopping_cart_outlined,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSecondaryContainer,
-                        ),
-                      ),
-                      title: const Text('Add Grocery'),
-                      subtitle: const Text('Track items in a grocery session'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.push('/grocery/add');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) => const AddTransactionSheet(),
+        ),
         tooltip: 'Add Transaction',
         icon: const Icon(Icons.add),
         label: const Text('Add Options'),

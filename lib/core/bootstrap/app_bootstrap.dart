@@ -17,9 +17,11 @@ import '../../features/income/presentation/providers/income_providers.dart';
 import '../../features/grocery/presentation/providers/grocery_notifier.dart';
 import '../../features/settings/presentation/providers/settings_providers.dart';
 import '../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
-import '../../features/categories/presentation/providers/category_providers.dart';
+import '../../features/categories/data/category_infrastructure_provider.dart';
 
-final appConfigProvider = Provider<AppConfig>((ref) => throw UnimplementedError('appConfigProvider must be overridden'));
+final appConfigProvider = Provider<AppConfig>(
+  (ref) => throw UnimplementedError('appConfigProvider must be overridden'),
+);
 
 Future<void> bootstrap(Environment env) async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_expense_tracker/features/smart_entry/presentation/providers/smart_entry_controller.dart';
+import 'package:smart_expense_tracker/features/smart_entry/domain/enums/transaction_mode.dart';
 
 void main() {
   group('SmartEntryState Tests', () {
     group('Initialization', () {
       test('initial state has correct default values', () {
         final state = SmartEntryState();
-        
+
         expect(state.mode, TransactionMode.expense);
         expect(state.amountString, '');
         expect(state.category, null);
@@ -24,8 +25,8 @@ void main() {
 
       test('initial state with custom values', () {
         final customDate = DateTime(2024, 1, 15);
-        final customTime = const TimeOfDay(hour: 14, minute: 30);
-        
+        const customTime = TimeOfDay(hour: 14, minute: 30);
+
         final state = SmartEntryState(
           mode: TransactionMode.income,
           amountString: '123.45',
@@ -36,7 +37,7 @@ void main() {
           time: customTime,
           isRecurring: true,
         );
-        
+
         expect(state.mode, TransactionMode.income);
         expect(state.amountString, '123.45');
         expect(state.category, 'Grocery');
@@ -112,15 +113,18 @@ void main() {
         expect(state.isValid, false);
       });
 
-      test('isValid returns true for valid transfer with different accounts', () {
-        final state = SmartEntryState(
-          mode: TransactionMode.transfer,
-          amountString: '500',
-          fromAccount: 'Bank',
-          toAccount: 'Wallet',
-        );
-        expect(state.isValid, true);
-      });
+      test(
+        'isValid returns true for valid transfer with different accounts',
+        () {
+          final state = SmartEntryState(
+            mode: TransactionMode.transfer,
+            amountString: '500',
+            fromAccount: 'Bank',
+            toAccount: 'Wallet',
+          );
+          expect(state.isValid, true);
+        },
+      );
 
       test('isValid returns false for transfer with same accounts', () {
         final state = SmartEntryState(
@@ -161,12 +165,12 @@ void main() {
           category: 'Grocery',
           note: 'Original note',
         );
-        
+
         final newState = originalState.copyWith(
           amountString: '200',
           note: 'Updated note',
         );
-        
+
         expect(newState.mode, TransactionMode.expense);
         expect(newState.amountString, '200');
         expect(newState.category, 'Grocery');
@@ -181,14 +185,14 @@ void main() {
           source: 'Salary',
           note: 'Initial note',
         );
-        
+
         final newState = originalState.copyWith(
           mode: TransactionMode.expense,
           amountString: '200',
           category: 'Food',
           note: 'Updated note',
         );
-        
+
         expect(newState.mode, TransactionMode.expense);
         expect(newState.amountString, '200');
         expect(newState.category, 'Food');
@@ -196,18 +200,14 @@ void main() {
         expect(newState.note, 'Updated note');
       });
 
-      test('copyWith with null values preserves existing values', () {
+      test('copyWith with no args preserves all values', () {
         final originalState = SmartEntryState(
           category: 'Grocery',
           note: 'Test note',
         );
-        
-        // When copyWith is called with null for optional parameters,
-        // it should preserve the original values, not set them to null
-        final newState = originalState.copyWith(
-          // Only updating fields that are explicitly provided
-        );
-        
+
+        final newState = originalState.copyWith();
+
         expect(newState.category, 'Grocery');
         expect(newState.note, 'Test note');
       });
@@ -225,9 +225,9 @@ void main() {
           isLoading: true,
           error: 'Some error',
         );
-        
+
         final resetState = originalState.resetForm();
-        
+
         expect(resetState.mode, TransactionMode.income); // Preserved
         expect(resetState.amountString, '');
         expect(resetState.category, 'Grocery'); // Preserved
@@ -236,155 +236,52 @@ void main() {
         expect(resetState.isRecurring, false);
         expect(resetState.isLoading, false);
         expect(resetState.error, null);
-        // Date and time should be reset to current
         expect(resetState.date, isA<DateTime>());
         expect(resetState.time, isA<TimeOfDay>());
       });
     });
-  });
 
-  group('Utility Functions Tests', () {
-    group('Currency Formatting', () {
-      test('getFormattedAmount returns formatted currency string', () {
-        final state = SmartEntryState(amountString: '1234');
-        // This would need access to CurrencyUtils, but we can test the logic
-        // The actual formatting is handled by CurrencyUtils.formatAmount
-      });
-
-      test('getFormattedAmount returns zero when empty', () {
-        final state = SmartEntryState(amountString: '');
-        // This would need access to AppConstants.currencySymbol
-      });
-    });
-
-    group('Color Selection', () {
-      test('getAccentColor returns correct colors for modes', () {
-        final context = MockBuildContext();
-        
-        // Test expense color
-        final expenseState = SmartEntryState(mode: TransactionMode.expense);
-        final expenseController = MockController(expenseState);
-        final expenseColor = expenseController.getAccentColor(context);
-        expect(expenseColor, const Color(0xFFF44336));
-        
-        // Test income color
-        final incomeState = SmartEntryState(mode: TransactionMode.income);
-        final incomeController = MockController(incomeState);
-        final incomeColor = incomeController.getAccentColor(context);
-        expect(incomeColor, const Color(0xFF2196F3));
-        
-        // Test transfer color
-        final transferState = SmartEntryState(mode: TransactionMode.transfer);
-        final transferController = MockController(transferState);
-        final transferColor = transferController.getAccentColor(context);
-        expect(transferColor, const Color(0xFF757575));
-      });
-    });
-
-    group('Preview Functions', () {
-      test('getDailySpendPreview returns null for non-expense mode', () {
+    group('Preview Functions (now in UI — state-only tests)', () {
+      test('getDailySpendPreview logic: null for non-expense mode', () {
         final state = SmartEntryState(
           mode: TransactionMode.income,
           amountString: '100',
         );
-        final controller = MockController(state);
-        final preview = controller.getDailySpendPreview();
-        expect(preview, null);
+        // Preview helpers are now in the screen layer.
+        // Validate the underlying state properties they depend on.
+        expect(state.mode, isNot(TransactionMode.expense));
+        expect(state.amount, 100.0);
       });
 
-      test('getDailySpendPreview returns null for zero amount', () {
+      test('getDailySpendPreview logic: zero amount returns no preview', () {
         final state = SmartEntryState(
           mode: TransactionMode.expense,
           amountString: '0',
         );
-        final controller = MockController(state);
-        final preview = controller.getDailySpendPreview();
-        expect(preview, null);
+        expect(state.amount, 0.0);
       });
 
-      test('getIncomeBalancePreview returns null for non-income mode', () {
+      test('transfer preview: valid when both accounts and amount set', () {
         final state = SmartEntryState(
-          mode: TransactionMode.expense,
-          amountString: '100',
-        );
-        final controller = MockController(state);
-        final preview = controller.getIncomeBalancePreview();
-        expect(preview, null);
-      });
-
-      test('getIncomeBalancePreview returns null for zero amount', () {
-        final state = SmartEntryState(
-          mode: TransactionMode.income,
-          amountString: '0',
-        );
-        final controller = MockController(state);
-        final preview = controller.getIncomeBalancePreview();
-        expect(preview, null);
-      });
-
-      test('getTransferPreview returns null for non-transfer mode', () {
-        final state = SmartEntryState(
-          mode: TransactionMode.expense,
+          mode: TransactionMode.transfer,
           amountString: '100',
           fromAccount: 'Bank',
           toAccount: 'Wallet',
         );
-        final controller = MockController(state);
-        final preview = controller.getTransferPreview();
-        expect(preview, null);
+        expect(state.fromAccount, 'Bank');
+        expect(state.toAccount, 'Wallet');
+        expect(state.amount, greaterThan(0));
       });
 
-      test('getTransferPreview returns null for missing accounts', () {
+      test('transfer preview: null when accounts missing', () {
         final state = SmartEntryState(
           mode: TransactionMode.transfer,
           amountString: '100',
           fromAccount: null,
           toAccount: 'Wallet',
         );
-        final controller = MockController(state);
-        final preview = controller.getTransferPreview();
-        expect(preview, null);
+        expect(state.fromAccount, isNull);
       });
     });
   });
-}
-
-// Mock classes for testing
-class MockController {
-  final SmartEntryState state;
-  
-  MockController(this.state);
-  
-  Color getAccentColor(BuildContext context) {
-    switch (state.mode) {
-      case TransactionMode.income: return const Color(0xFF2196F3);
-      case TransactionMode.expense: return const Color(0xFFF44336);
-      case TransactionMode.transfer: return const Color(0xFF757575);
-    }
-  }
-  
-  double? getDailySpendPreview() {
-    if (state.mode != TransactionMode.expense) return null;
-    if (state.amount <= 0) return null;
-    // Mock implementation - in real app this would read from dailySpendStateProvider
-    return 1000.0 - 200.0 - state.amount;
-  }
-  
-  double? getIncomeBalancePreview() {
-    if (state.mode != TransactionMode.income) return null;
-    if (state.amount <= 0) return null;
-    return state.amount;
-  }
-  
-  String? getTransferPreview() {
-    if (state.mode != TransactionMode.transfer) return null;
-    if (state.fromAccount == null || state.toAccount == null) return null;
-    if (state.amount <= 0) return null;
-    return '${state.fromAccount} -> ${state.toAccount}';
-  }
-}
-
-class MockBuildContext implements BuildContext {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

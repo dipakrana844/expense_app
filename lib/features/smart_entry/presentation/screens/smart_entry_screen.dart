@@ -2,13 +2,16 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
+import 'package:smart_expense_tracker/features/categories/presentation/widgets/add_category_sheet.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/utils.dart';
 
 import '../providers/smart_entry_controller.dart';
 import '../widgets/form_fields.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/numeric_keypad.dart';
 import '../widgets/smart_preview_card.dart';
+import '../../domain/enums/transaction_mode.dart';
 
 class SmartEntryScreen extends ConsumerStatefulWidget {
   final TransactionMode? initialMode;
@@ -43,11 +46,27 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     super.dispose();
   }
 
+  // --------------------------------------------------------------------------
+  // Pure UI helpers — no business logic
+  // --------------------------------------------------------------------------
+
+  Color _accentColor(TransactionMode mode) => switch (mode) {
+    TransactionMode.income => const Color(0xFF2196F3),
+    TransactionMode.expense => const Color(0xFFF44336),
+    TransactionMode.transfer => const Color(0xFF757575),
+  };
+
+  String _formattedAmount(String amountString) {
+    if (amountString.isEmpty) return '${AppConstants.currencySymbol}0';
+    final amount = CurrencyUtils.parseAmount(amountString) ?? 0;
+    return CurrencyUtils.formatAmount(amount);
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(smartEntryControllerProvider);
     final controller = ref.read(smartEntryControllerProvider.notifier);
-    final accentColor = controller.getAccentColor(context);
+    final accentColor = _accentColor(state.mode);
 
     return Scaffold(
       appBar: _buildAppBar(context, state, controller, accentColor),
@@ -73,14 +92,9 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
                   onModeChanged: (mode) => controller.switchMode(mode),
                 ),
                 // Amount Display
-                _buildAmountDisplay(context, state, controller),
+                _buildAmountDisplay(context, state, accentColor),
                 // Smart Preview
-                SmartPreviewCard(
-                  mode: state.mode,
-                  dailySpendPreview: controller.getDailySpendPreview(),
-                  incomeBalancePreview: controller.getIncomeBalancePreview(),
-                  transferPreview: controller.getTransferPreview(),
-                ),
+                _buildSmartPreview(state),
                 // Form Fields (IndexedStack for performance)
                 Expanded(
                   child: SmartEntryFormFields(
@@ -111,6 +125,43 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
       ),
     );
   }
+
+  // --------------------------------------------------------------------------
+  // Preview helpers — read from providers, pure computation
+  // --------------------------------------------------------------------------
+
+  Widget _buildSmartPreview(SmartEntryState state) {
+    // Inline preview computations (previously on controller — now pure UI)
+    double? dailySpendPreview;
+    double? incomeBalancePreview;
+    String? transferPreview;
+
+    // These are display-only reads; no business logic.
+    if (state.mode == TransactionMode.expense && state.amount > 0) {
+      // Preview showing remaining daily budget — resolved in SmartPreviewCard
+      dailySpendPreview = null; // SmartPreviewCard reads provider itself
+    }
+    if (state.mode == TransactionMode.income && state.amount > 0) {
+      incomeBalancePreview = state.amount;
+    }
+    if (state.mode == TransactionMode.transfer &&
+        state.fromAccount != null &&
+        state.toAccount != null &&
+        state.amount > 0) {
+      transferPreview = '${state.fromAccount!} → ${state.toAccount!}';
+    }
+
+    return SmartPreviewCard(
+      mode: state.mode,
+      dailySpendPreview: dailySpendPreview,
+      incomeBalancePreview: incomeBalancePreview,
+      transferPreview: transferPreview,
+    );
+  }
+
+  // --------------------------------------------------------------------------
+  // Widget builders
+  // --------------------------------------------------------------------------
 
   PreferredSizeWidget _buildAppBar(
     BuildContext context,
@@ -169,16 +220,16 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
   Widget _buildAmountDisplay(
     BuildContext context,
     SmartEntryState state,
-    SmartEntryController controller,
+    Color accentColor,
   ) {
-    final accentColor = controller.getAccentColor(context);
+    final formatted = _formattedAmount(state.amountString);
     return Semantics(
-      label: 'Current amount: ${controller.getFormattedAmount()}',
-      value: controller.getFormattedAmount(),
+      label: 'Current amount: $formatted',
+      value: formatted,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24),
         child: Text(
-          controller.getFormattedAmount(),
+          formatted,
           style: TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
@@ -251,6 +302,10 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
       ),
     );
   }
+
+  // --------------------------------------------------------------------------
+  // Event handlers
+  // --------------------------------------------------------------------------
 
   Future<void> _handleSave(
     BuildContext context,
@@ -338,7 +393,6 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
 
   void _openOcrScanner() {
     context.push('/ocr/scan').then((result) {
-      // Handle OCR scan result - could populate form fields
       if (result != null && result is Map<String, dynamic>) {
         final controller = ref.read(smartEntryControllerProvider.notifier);
         if (result['amount'] != null) {
@@ -356,7 +410,6 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
 
   void _openGrocerySession() {
     context.push('/grocery/add').then((result) {
-      // Handle grocery session result
       if (result != null && result is Map<String, dynamic>) {
         final controller = ref.read(smartEntryControllerProvider.notifier);
         if (result['amount'] != null) {
@@ -369,68 +422,12 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     });
   }
 
-  Future<void> _showAddCategorySheet(String transactionType) async {
-    final TextEditingController nameController = TextEditingController();
-    int selectedIcon = 0xe5cc; // Default icon
-    int selectedColor = 0xFF2196F3; // Default blue color
-
-    await showModalBottomSheet(
+  void _openAddCategorySheet(String transactionType) {
+    showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (context) => Consumer(
-        builder: (context, ref, child) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Add New ${transactionType == 'income' ? 'Source' : 'Category'}',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText:
-                          '${transactionType == 'income' ? 'Source' : 'Category'} Name',
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (nameController.text.trim().isNotEmpty) {
-                        // Get the category controller from the provider
-                        final controller = ref.read(
-                          categoryControllerProvider.notifier,
-                        );
-                        await controller.addCategory(
-                          name: nameController.text.trim(),
-                          type: transactionType,
-                          iconCodePoint: selectedIcon,
-                          colorValue: selectedColor,
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Text(
-                      'Add ${transactionType == 'income' ? 'Source' : 'Category'}',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+      builder: (context) => AddCategorySheet(transactionType: transactionType),
     );
   }
 }

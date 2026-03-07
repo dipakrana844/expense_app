@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/utils.dart';
-import '../../data/repositories/transaction_repository.dart';
+import '../../domain/entities/transaction_summary.dart';
 import '../providers/transaction_providers.dart';
 
 /// Widget: SummaryStrip
