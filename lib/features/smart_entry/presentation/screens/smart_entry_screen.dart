@@ -2,7 +2,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smart_expense_tracker/features/categories/presentation/widgets/add_category_sheet.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
 
@@ -11,7 +10,6 @@ import '../widgets/form_fields.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/numeric_keypad.dart';
 import '../widgets/smart_preview_card.dart';
-import '../../domain/enums/transaction_mode.dart';
 
 class SmartEntryScreen extends ConsumerStatefulWidget {
   final TransactionMode? initialMode;
@@ -422,12 +420,12 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
     });
   }
 
-  void _openAddCategorySheet(String transactionType) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (context) => AddCategorySheet(transactionType: transactionType),
-    );
-  }
+  // void _openAddCategorySheet(String transactionType) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     showDragHandle: true,
+  //     builder: (context) => AddCategorySheet(transactionType: transactionType),
+  //   );
+  // }
 }
