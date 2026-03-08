@@ -5,7 +5,7 @@ import '../providers/category_providers.dart';
 /// Widget: AddCategorySheet
 ///
 /// Reusable bottom-sheet for adding a new category or income source.
-/// Extracted from both smart_entry_screen.dart and form_fields.dart to
+/// Extracted from both smart_entry_page.dart and form_fields.dart to
 /// eliminate duplication and keep those widgets focused on layout.
 ///
 /// Usage:

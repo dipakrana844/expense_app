@@ -11,17 +11,17 @@ import '../widgets/mode_selector.dart';
 import '../widgets/numeric_keypad.dart';
 import '../widgets/smart_preview_card.dart';
 
-class SmartEntryScreen extends ConsumerStatefulWidget {
+class SmartEntryPage extends ConsumerStatefulWidget {
   final TransactionMode? initialMode;
   final Map<String, dynamic>? initialEditData;
 
-  const SmartEntryScreen({super.key, this.initialMode, this.initialEditData});
+  const SmartEntryPage({super.key, this.initialMode, this.initialEditData});
 
   @override
-  ConsumerState<SmartEntryScreen> createState() => _SmartEntryScreenState();
+  ConsumerState<SmartEntryPage> createState() => _SmartEntryPageState();
 }
 
-class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
+class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
   @override
   void initState() {
     super.initState();

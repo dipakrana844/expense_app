@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/grocery/domain/entities/grocery_item.dart';
+import 'package:smart_expense_tracker/features/grocery/domain/services/grocery_service.dart';
 import 'package:smart_expense_tracker/features/grocery/data/local/grocery_preferences_local_data_source.dart';
 import 'grocery_state.dart';
 
@@ -21,7 +22,7 @@ class GroceryNotifier extends _$GroceryNotifier {
   GrocerySessionState build() {
     // Read global settings instead of local preferences
     final settings = ref.watch(appSettingsNotifierProvider);
-    
+
     // Get grocery preferences for data, but use global settings for behavior
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
     final preferences = prefsDataSource.getPreferences();
@@ -136,41 +137,15 @@ class GroceryNotifier extends _$GroceryNotifier {
     state = state.copyWith(isSubmitting: true);
 
     try {
-      final repository = ref.read(expenseRepositoryProvider);
+      final service = ref.read(groceryServiceProvider);
 
-      final storeName =
-          (state.storeName == null || state.storeName!.trim().isEmpty)
-          ? 'Local Store'
-          : state.storeName!.trim();
-
-      // Create metadata logic
-      final metadata = {
-        'storeName': storeName, // Added storeName to metadata for detail screen
-        'numberOfItems': state.items.length,
-        'items': state.items
-            .map((e) => {'name': e.name, 'price': e.price})
-            .toList(),
-      };
-
-      if (state.mode == GrocerySessionMode.edit && state.expenseId != null) {
-        await repository.updateExpense(
-          id: state.expenseId!,
-          amount: state.totalAmount,
-          category: 'Grocery',
-          date:
-              DateTime.now(), // Or preserve original date? User said "update the SAME expense entry"
-          note: "Grocery at $storeName",
-          metadata: metadata,
-        );
-      } else {
-        await repository.createExpense(
-          amount: state.totalAmount,
-          category: 'Grocery',
-          date: DateTime.now(),
-          note: "Grocery at $storeName",
-          metadata: metadata,
-        );
-      }
+      await service.submitGrocerySession(
+        items: state.items,
+        totalAmount: state.totalAmount,
+        storeName: state.storeName ?? '',
+        expenseId: state.expenseId,
+        isEdit: state.mode == GrocerySessionMode.edit,
+      );
 
       // On success, clear state
       state = const GrocerySessionState();

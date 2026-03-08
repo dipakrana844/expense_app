@@ -12,17 +12,17 @@ import '../widgets/notes_view.dart';
 import '../widgets/segmented_view_selector.dart';
 import '../widgets/total_view.dart';
 
-/// Screen: TransactionsScreen
+/// Screen: TransactionsPage
 ///
 /// Main screen for viewing and managing all financial transactions.
-class TransactionsScreen extends ConsumerStatefulWidget {
-  const TransactionsScreen({super.key});
+class TransactionsPage extends ConsumerStatefulWidget {
+  const TransactionsPage({super.key});
 
   @override
-  ConsumerState<TransactionsScreen> createState() => _TransactionsScreenState();
+  ConsumerState<TransactionsPage> createState() => _TransactionsPageState();
 }
 
-class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
+class _TransactionsPageState extends ConsumerState<TransactionsPage>
     with TickerProviderStateMixin {
   bool _isSearching = false;
   final _searchController = TextEditingController();

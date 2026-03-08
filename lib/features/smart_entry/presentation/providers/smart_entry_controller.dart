@@ -2,14 +2,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
-import '../../../../features/expenses/presentation/providers/expense_providers.dart';
-import '../../../../features/income/presentation/providers/income_providers.dart';
-import '../../../../features/transfer/presentation/providers/transfer_providers.dart';
-import '../../../../features/transfer/domain/entities/transfer_entity.dart';
-import '../../../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../../../core/services/smart_suggestion_service.dart';
-import '../../../../features/transactions/presentation/providers/transaction_providers.dart';
 import '../../domain/enums/transaction_mode.dart';
+import '../../domain/services/smart_entry_service.dart';
 
 // Re-export so existing imports elsewhere don't break.
 export '../../domain/enums/transaction_mode.dart';
@@ -218,11 +213,8 @@ final smartEntryControllerProvider =
     );
 
 class SmartEntryController extends Notifier<SmartEntryState> {
-  late final _SmartEntryPersistenceCoordinator _persistence;
-
   @override
   SmartEntryState build() {
-    _persistence = _SmartEntryPersistenceCoordinator(ref);
     final initialState = SmartEntryState();
     // Apply smart suggestions after first build
     return _applyInitialSuggestions(initialState);
@@ -386,10 +378,24 @@ class SmartEntryController extends Notifier<SmartEntryState> {
   void setRecurring(bool value) => state = state.copyWith(isRecurring: value);
 
   Future<bool> save() async {
-    if (!state.isValid) return false;
+    if (!state.isReadyForSubmission) return false;
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _persistence.saveForState(state);
+      final service = ref.read(smartEntryServiceProvider);
+      await service.saveTransaction(
+        mode: state.mode,
+        amount: state.amount,
+        date: state.date,
+        category: state.category,
+        source: state.source,
+        fromAccount: state.fromAccount,
+        toAccount: state.toAccount,
+        transferFee: state.transferFee,
+        note: state.note,
+        isRecurring: state.isRecurring,
+        isEditing: state.isEditing,
+        editingTransactionId: state.editingTransactionId,
+      );
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
@@ -405,127 +411,5 @@ class SmartEntryController extends Notifier<SmartEntryState> {
       _initSuggestions();
     }
     return success;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Private persistence coordinator — keeps controller lean
-// ---------------------------------------------------------------------------
-
-class _SmartEntryPersistenceCoordinator {
-  final Ref _ref;
-
-  const _SmartEntryPersistenceCoordinator(this._ref);
-
-  Future<void> saveForState(SmartEntryState state) async {
-    switch (state.mode) {
-      case TransactionMode.expense:
-        await _saveExpense(state);
-        break;
-      case TransactionMode.income:
-        await _saveIncome(state);
-        break;
-      case TransactionMode.transfer:
-        await _saveTransfer(state);
-        break;
-    }
-  }
-
-  Future<void> _saveExpense(SmartEntryState state) async {
-    if (state.isEditing && state.editingTransactionId != null) {
-      final repository = _ref.read(expenseRepositoryProvider);
-      await repository.updateExpense(
-        id: state.editingTransactionId!,
-        amount: state.amount,
-        category: state.category!,
-        date: state.date,
-        note: state.note,
-      );
-      try {
-        _ref.read(transactionActionsProvider.notifier).refresh();
-      } catch (e) {
-        // ignore refresh failures — UI will eventually re-sync
-      }
-      return;
-    }
-
-    final notifier = _ref.read(expensesProvider.notifier);
-    await notifier.addExpense(
-      amount: state.amount,
-      category: state.category!,
-      date: state.date,
-      note: state.note,
-      isRecurring: state.isRecurring,
-    );
-    final dailySpendNotifier = _ref.read(dailySpendStateProvider.notifier);
-    await dailySpendNotifier.addSpending(state.amount);
-  }
-
-  Future<void> _saveIncome(SmartEntryState state) async {
-    if (state.isEditing && state.editingTransactionId != null) {
-      final updateUseCase = _ref.read(updateIncomeUseCaseProvider);
-      await updateUseCase.execute(
-        id: state.editingTransactionId!,
-        amount: state.amount,
-        source: state.source!,
-        date: state.date,
-        note: state.note,
-      );
-      _ref.invalidate(incomesProvider);
-    } else {
-      final addUseCase = _ref.read(addIncomeUseCaseProvider);
-      await addUseCase.execute(
-        amount: state.amount,
-        source: state.source!,
-        date: state.date,
-        note: state.note,
-      );
-    }
-
-    try {
-      _ref.read(transactionActionsProvider.notifier).refresh();
-    } catch (e) {
-      // ignore refresh failures
-    }
-  }
-
-  Future<void> _saveTransfer(SmartEntryState state) async {
-    final notifier = _ref.read(transfersProvider.notifier);
-    if (state.isEditing && state.editingTransactionId != null) {
-      final repository = _ref.read(transferRepositoryProvider);
-      final existing = await repository.getTransferById(
-        state.editingTransactionId!,
-      );
-      if (existing == null) {
-        throw Exception(
-          'Transfer with id ${state.editingTransactionId!} not found',
-        );
-      }
-
-      await notifier.updateTransfer(
-        TransferEntity(
-          id: existing.id,
-          amount: state.amount,
-          fromAccount: state.fromAccount!,
-          toAccount: state.toAccount!,
-          date: state.date,
-          fee: state.transferFee ?? 0.0,
-          note: state.note,
-          createdAt: existing.createdAt,
-          updatedAt: DateTime.now(),
-          metadata: existing.metadata,
-        ),
-      );
-      return;
-    }
-
-    await notifier.addTransfer(
-      amount: state.amount,
-      fromAccount: state.fromAccount!,
-      toAccount: state.toAccount!,
-      date: state.date,
-      fee: state.transferFee,
-      note: state.note,
-    );
   }
 }

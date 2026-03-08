@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
 import '../../../expenses/domain/entities/expense_entity.dart';
 
-class GroceryDetailScreen extends ConsumerWidget {
+class GroceryDetailPage extends ConsumerWidget {
   final ExpenseEntity expense;
 
-  const GroceryDetailScreen({super.key, required this.expense});
+  const GroceryDetailPage({super.key, required this.expense});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

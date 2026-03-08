@@ -5,13 +5,13 @@ import 'package:smart_expense_tracker/core/presentation/screens/main_layout.dart
 import 'package:smart_expense_tracker/features/accounts_overview/presentation/screens/accounts_overview_screen.dart';
 import 'package:smart_expense_tracker/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:smart_expense_tracker/features/budget/presentation/screens/budget_screen.dart';
-import 'package:smart_expense_tracker/features/grocery/presentation/screens/grocery_session_screen.dart';
+import 'package:smart_expense_tracker/features/grocery/presentation/pages/grocery_session_page.dart';
 import 'package:smart_expense_tracker/features/income/presentation/screens/add_edit_income_screen.dart';
 import 'package:smart_expense_tracker/features/ocr/presentation/screens/ocr_scan_screen.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:smart_expense_tracker/features/smart_entry/presentation/providers/smart_entry_controller.dart';
-import 'package:smart_expense_tracker/features/smart_entry/presentation/screens/smart_entry_screen.dart';
-import 'package:smart_expense_tracker/features/transactions/presentation/screens/transactions_screen.dart';
+import 'package:smart_expense_tracker/features/smart_entry/presentation/pages/smart_entry_page.dart';
+import 'package:smart_expense_tracker/features/transactions/presentation/pages/transactions_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorExpenseKey = GlobalKey<NavigatorState>(
@@ -51,7 +51,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/transactions',
                 name: 'transactions',
-                builder: (context, state) => const TransactionsScreen(),
+                builder: (context, state) => const TransactionsPage(),
                 routes: [
                   // GoRoute(
                   //   path: 'add',
@@ -117,7 +117,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           //     GoRoute(
           //       path: '/income',
           //       name: 'income',
-          //       builder: (context, state) => const TransactionsScreen(),
+          //       builder: (context, state) => const TransactionsPage(),
           //     ),
           //   ],
           // ),
@@ -153,7 +153,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: 'add-grocery',
         builder: (context, state) {
           final expenseId = state.extra as String?;
-          return GrocerySessionScreen(expenseId: expenseId);
+          return GrocerySessionPage(expenseId: expenseId);
         },
         routes: [
           GoRoute(
@@ -186,33 +186,33 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/smart-entry',
         name: 'smart-entry',
-        builder: (context, state) => const SmartEntryScreen(),
+        builder: (context, state) => const SmartEntryPage(),
         routes: [
           GoRoute(
             path: 'edit',
             name: 'smart-entry-edit',
             builder: (context, state) {
               final extras = state.extra as Map<String, dynamic>? ?? {};
-              return SmartEntryScreen(initialEditData: extras);
+              return SmartEntryPage(initialEditData: extras);
             },
           ),
           GoRoute(
             path: 'income',
             name: 'smart-entry-income',
             builder: (context, state) =>
-                const SmartEntryScreen(initialMode: TransactionMode.income),
+                const SmartEntryPage(initialMode: TransactionMode.income),
           ),
           GoRoute(
             path: 'expense',
             name: 'smart-entry-expense',
             builder: (context, state) =>
-                const SmartEntryScreen(initialMode: TransactionMode.expense),
+                const SmartEntryPage(initialMode: TransactionMode.expense),
           ),
           GoRoute(
             path: 'transfer',
             name: 'smart-entry-transfer',
             builder: (context, state) =>
-                const SmartEntryScreen(initialMode: TransactionMode.transfer),
+                const SmartEntryPage(initialMode: TransactionMode.transfer),
           ),
         ],
       ),

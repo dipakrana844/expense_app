@@ -7,16 +7,15 @@ import '../providers/grocery_notifier.dart';
 import '../providers/grocery_state.dart';
 import '../../domain/entities/grocery_item.dart';
 
-class GrocerySessionScreen extends ConsumerStatefulWidget {
+class GrocerySessionPage extends ConsumerStatefulWidget {
   final String? expenseId;
-  const GrocerySessionScreen({super.key, this.expenseId});
+  const GrocerySessionPage({super.key, this.expenseId});
 
   @override
-  ConsumerState<GrocerySessionScreen> createState() =>
-      _GrocerySessionScreenState();
+  ConsumerState<GrocerySessionPage> createState() => _GrocerySessionPageState();
 }
 
-class _GrocerySessionScreenState extends ConsumerState<GrocerySessionScreen> {
+class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
   final _itemNameController = TextEditingController();
   final _itemPriceController = TextEditingController();
   final _storeNameController = TextEditingController();

@@ -7,7 +7,9 @@ import '../../domain/repositories/transfer_repository.dart';
 import '../../domain/usecases/add_transfer_usecase.dart';
 import '../../../transactions/presentation/providers/transaction_providers.dart';
 
-final transferLocalDataSourceProvider = Provider<TransferLocalDataSource>((ref) {
+final transferLocalDataSourceProvider = Provider<TransferLocalDataSource>((
+  ref,
+) {
   return TransferLocalDataSource();
 });
 
@@ -22,28 +24,17 @@ final addTransferUseCaseProvider = Provider<AddTransferUseCase>((ref) {
 });
 
 final transfersProvider =
-    StateNotifierProvider<TransfersNotifier, AsyncValue<List<TransferEntity>>>
-        ((ref) {
-  final repository = ref.watch(transferRepositoryProvider);
-  return TransfersNotifier(repository, ref);
-});
+    AsyncNotifierProvider<TransfersNotifier, List<TransferEntity>>(
+      TransfersNotifier.new,
+    );
 
-class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> {
-  final TransferRepository _repository;
-  final Ref _ref;
-
-  TransfersNotifier(this._repository, this._ref) : super(const AsyncLoading()) {
-    _loadTransfers();
-  }
-
-  Future<void> _loadTransfers() async {
-    try {
-      final transfers = await _repository.getAllTransfers();
-      transfers.sort((a, b) => b.date.compareTo(a.date));
-      state = AsyncValue.data(transfers);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-    }
+class TransfersNotifier extends AsyncNotifier<List<TransferEntity>> {
+  @override
+  Future<List<TransferEntity>> build() async {
+    final repository = ref.watch(transferRepositoryProvider);
+    final transfers = await repository.getAllTransfers();
+    transfers.sort((a, b) => b.date.compareTo(a.date));
+    return transfers;
   }
 
   Future<void> addTransfer({
@@ -54,7 +45,9 @@ class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> 
     double? fee,
     String? note,
   }) async {
-    try {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(transferRepositoryProvider);
       final now = DateTime.now();
       final transfer = TransferEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -67,53 +60,72 @@ class TransfersNotifier extends StateNotifier<AsyncValue<List<TransferEntity>>> 
         createdAt: now,
       );
 
-      await _repository.addTransfer(transfer);
-      await _loadTransfers();
-      
+      await repository.addTransfer(transfer);
+
       // Refresh transaction providers to update the UI
       try {
-        _ref.read(transactionActionsProvider.notifier).refresh();
+        ref.read(transactionActionsProvider.notifier).refresh();
       } catch (e) {
-        debugPrint('Failed to refresh transaction providers after adding transfer: $e');
+        debugPrint(
+          'Failed to refresh transaction providers after adding transfer: $e',
+        );
       }
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-    }
+
+      final transfers = await repository.getAllTransfers();
+      transfers.sort((a, b) => b.date.compareTo(a.date));
+      return transfers;
+    });
   }
 
   Future<void> updateTransfer(TransferEntity transfer) async {
-    try {
-      await _repository.updateTransfer(transfer);
-      await _loadTransfers();
-      
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(transferRepositoryProvider);
+      await repository.updateTransfer(transfer);
+
       // Refresh transaction providers to update the UI
       try {
-        _ref.read(transactionActionsProvider.notifier).refresh();
+        ref.read(transactionActionsProvider.notifier).refresh();
       } catch (e) {
-        debugPrint('Failed to refresh transaction providers after updating transfer: $e');
+        debugPrint(
+          'Failed to refresh transaction providers after updating transfer: $e',
+        );
       }
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-    }
+
+      final transfers = await repository.getAllTransfers();
+      transfers.sort((a, b) => b.date.compareTo(a.date));
+      return transfers;
+    });
   }
 
   Future<void> deleteTransfer(String id) async {
-    try {
-      await _repository.deleteTransfer(id);
-      await _loadTransfers();
-      
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(transferRepositoryProvider);
+      await repository.deleteTransfer(id);
+
       // Refresh transaction providers to update the UI
       try {
-        _ref.read(transactionActionsProvider.notifier).refresh();
+        ref.read(transactionActionsProvider.notifier).refresh();
       } catch (e) {
-        debugPrint('Failed to refresh transaction providers after deleting transfer: $e');
+        debugPrint(
+          'Failed to refresh transaction providers after deleting transfer: $e',
+        );
       }
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-    }
+
+      final transfers = await repository.getAllTransfers();
+      transfers.sort((a, b) => b.date.compareTo(a.date));
+      return transfers;
+    });
   }
 
   Future<void> refresh() async {
-    await _loadTransfers();
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(transferRepositoryProvider);
+      final transfers = await repository.getAllTransfers();
+      transfers.sort((a, b) => b.date.compareTo(a.date));
+      return transfers;
+    });
   }
 }

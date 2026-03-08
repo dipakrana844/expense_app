@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 ///
 /// Bottom sheet that presents the user with options to add a new
 /// transaction — either via Smart Entry (with optional OCR) or via
-/// a Grocery session. Extracted from TransactionsScreen to keep the
+/// a Grocery session. Extracted from TransactionsPage to keep the
 /// screen's build() method lean and the sheet independently testable.
 class AddTransactionSheet extends StatelessWidget {
   const AddTransactionSheet({super.key});
