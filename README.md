@@ -166,6 +166,16 @@ flutter build ios --flavor staging --target lib/main_staging.dart --dart-define=
 flutter build ios --flavor prod --target lib/main_prod.dart --dart-define=ENV=prod
 ```
 
+## 🚀 CI/CD Pipeline
+
+This project is equipped with a robust **GitHub Actions** pipeline for Continuous Integration and Delivery:
+
+-   **Static Analysis**: Automatically runs `flutter analyze` on every push/PR to `main`.
+-   **Automated Testing**: Runs the full suite of unit and widget tests.
+-   **Android Artifacts**: Generates a debug APK on every successful build.
+
+You can view the workflow configuration in [.github/workflows/main.yml](file:///c:/Users/ADMIN/Documents/dipak/expense_app/.github/workflows/main.yml).
+
 ---
 
 ## 🤝 Contributing
