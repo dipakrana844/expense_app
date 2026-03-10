@@ -299,7 +299,7 @@ class DailySpendCard extends ConsumerWidget {
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: progress,
-          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
           color: _getStatusColor(state.status, context),
           minHeight: 8,
           borderRadius: BorderRadius.circular(4),

@@ -59,6 +59,7 @@ class ExpenseEntity with _$ExpenseEntity implements TransactionInterface {
   bool get wasModified => updatedAt != null;
 
   /// Business Logic: Get category (alias for consistent interface)
+  @override
   String get categoryOrSource => category;
 
   /// Business Logic: Check if this is an income transaction

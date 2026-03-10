@@ -10,19 +10,19 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<List<CategoryEntity>> getAllCategories() async {
-    final models = await dataSource.getAllCategories();
+    final models = dataSource.getAllCategories();
     return models.map((model) => model.toEntity()).toList();
   }
 
   @override
   Future<List<CategoryEntity>> getCategoriesByType(String type) async {
-    final models = await dataSource.getCategoriesByType(type);
+    final models = dataSource.getCategoriesByType(type);
     return models.map((model) => model.toEntity()).toList();
   }
 
   @override
   Future<CategoryEntity?> getCategoryById(String id) async {
-    final model = await dataSource.getCategoryById(id);
+    final model = dataSource.getCategoryById(id);
     return model?.toEntity();
   }
 

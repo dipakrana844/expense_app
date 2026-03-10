@@ -14,10 +14,7 @@ import 'package:smart_expense_tracker/features/income/presentation/providers/inc
 class BalanceSummaryCard extends ConsumerWidget {
   final bool showDetailedMetrics;
 
-  const BalanceSummaryCard({
-    super.key,
-    this.showDetailedMetrics = true,
-  });
+  const BalanceSummaryCard({super.key, this.showDetailedMetrics = true});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,9 +56,11 @@ class BalanceSummaryCard extends ConsumerWidget {
     NumberFormat formatter,
   ) {
     final balanceService = BalanceService();
-    
+
     final totalIncome = balanceService.getTotalIncome(incomes: incomes.cast());
-    final totalExpenses = balanceService.getTotalExpenses(expenses: expenses.cast());
+    final totalExpenses = balanceService.getTotalExpenses(
+      expenses: expenses.cast(),
+    );
     final currentBalance = balanceService.getCurrentBalance(
       incomes: incomes.cast(),
       expenses: expenses.cast(),
@@ -156,7 +155,7 @@ class BalanceSummaryCard extends ConsumerWidget {
 
         if (showDetailedMetrics) ...[
           const SizedBox(height: 16),
-          
+
           // Savings Rate and Health
           Row(
             children: [
@@ -180,12 +179,14 @@ class BalanceSummaryCard extends ConsumerWidget {
         ],
 
         const SizedBox(height: 8),
-        
+
         // Status Message
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.5,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -208,7 +209,7 @@ class BalanceSummaryCard extends ConsumerWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -245,10 +246,7 @@ class BalanceSummaryCard extends ConsumerWidget {
         children: [
           const CircularProgressIndicator(),
           const SizedBox(height: 16),
-          Text(
-            'Calculating balance...',
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text('Calculating balance...', style: theme.textTheme.bodyMedium),
         ],
       ),
     );
@@ -258,11 +256,7 @@ class BalanceSummaryCard extends ConsumerWidget {
     return Center(
       child: Column(
         children: [
-          Icon(
-            Icons.error_outline,
-            color: theme.colorScheme.error,
-            size: 48,
-          ),
+          Icon(Icons.error_outline, color: theme.colorScheme.error, size: 48),
           const SizedBox(height: 16),
           Text(
             'Unable to load financial data',
@@ -285,7 +279,7 @@ class BalanceSummaryCard extends ConsumerWidget {
 
   Color _getBalanceColor(double balance, ThemeData theme) {
     if (balance < 0) return theme.colorScheme.errorContainer;
-    if (balance == 0) return theme.colorScheme.surfaceVariant;
+    if (balance == 0) return theme.colorScheme.surfaceContainerHighest;
     return theme.colorScheme.primaryContainer;
   }
 
@@ -362,23 +356,23 @@ class BalanceSummaryCard extends ConsumerWidget {
     if (balance < 0) {
       return '⚠️ You\'re spending more than you earn. Consider reviewing your expenses.';
     }
-    
+
     if (savingsRate >= 50) {
       return '🎉 Great job! You\'re saving more than half of your income.';
     }
-    
+
     if (savingsRate >= 20) {
       return '👍 Good savings rate. Keep up the financial discipline!';
     }
-    
+
     if (savingsRate >= 5) {
       return 'ℹ️ Moderate savings. Look for opportunities to increase income or reduce expenses.';
     }
-    
+
     if (savingsRate > 0) {
       return '⚠️ Low savings rate. Focus on building better financial habits.';
     }
-    
+
     return '🚨 Critical situation. Immediate action needed to improve your financial health.';
   }
 }

@@ -13,11 +13,8 @@ import '../providers/financial_trend_providers.dart';
 /// - Professional and clean visualization
 class NetBalanceTrendChart extends ConsumerWidget {
   final double height;
-  
-  const NetBalanceTrendChart({
-    super.key,
-    this.height = 200,
-  });
+
+  const NetBalanceTrendChart({super.key, this.height = 200});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,9 +34,9 @@ class NetBalanceTrendChart extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3) 
-                : Colors.grey.withOpacity(0.1),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -63,12 +60,10 @@ class NetBalanceTrendChart extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Chart
           Expanded(
-            child: LineChart(
-              _buildChartData(trendSpots, theme, isDark),
-            ),
+            child: LineChart(_buildChartData(trendSpots, theme, isDark)),
           ),
         ],
       ),
@@ -78,7 +73,7 @@ class NetBalanceTrendChart extends ConsumerWidget {
   /// Build empty state when no data is available
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       height: height,
       padding: const EdgeInsets.all(16),
@@ -124,23 +119,25 @@ class NetBalanceTrendChart extends ConsumerWidget {
   Widget _buildCurrentBalanceIndicator(WidgetRef ref, ThemeData theme) {
     final trendAsync = ref.watch(financialTrendProvider);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return trendAsync.maybeWhen(
       data: (trend) {
         if (trend.netBalanceTrend.isEmpty) return const SizedBox.shrink();
-        
+
         final currentBalance = trend.netBalanceTrend.last.cumulativeBalance;
-        final previousBalance = trend.netBalanceTrend.length > 1 
-            ? trend.netBalanceTrend[trend.netBalanceTrend.length - 2].cumulativeBalance 
+        final previousBalance = trend.netBalanceTrend.length > 1
+            ? trend
+                  .netBalanceTrend[trend.netBalanceTrend.length - 2]
+                  .cumulativeBalance
             : currentBalance;
-        
+
         final change = currentBalance - previousBalance;
         final isPositive = change >= 0;
-        
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isPositive 
+            color: isPositive
                 ? (isDark ? Colors.green[900] : Colors.green[100])
                 : (isDark ? Colors.red[900] : Colors.red[100]),
             borderRadius: BorderRadius.circular(20),
@@ -151,7 +148,7 @@ class NetBalanceTrendChart extends ConsumerWidget {
               Icon(
                 isPositive ? Icons.trending_up : Icons.trending_down,
                 size: 16,
-                color: isPositive 
+                color: isPositive
                     ? (isDark ? Colors.green[300] : Colors.green[700])
                     : (isDark ? Colors.red[300] : Colors.red[700]),
               ),
@@ -160,7 +157,7 @@ class NetBalanceTrendChart extends ConsumerWidget {
                 '${change >= 0 ? '+' : ''}${NumberFormat.currency(symbol: '\$').format(change)}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isPositive 
+                  color: isPositive
                       ? (isDark ? Colors.green[300] : Colors.green[700])
                       : (isDark ? Colors.red[300] : Colors.red[700]),
                 ),
@@ -174,7 +171,11 @@ class NetBalanceTrendChart extends ConsumerWidget {
   }
 
   /// Build chart data configuration
-  LineChartData _buildChartData(List<FlSpot> spots, ThemeData theme, bool isDark) {
+  LineChartData _buildChartData(
+    List<FlSpot> spots,
+    ThemeData theme,
+    bool isDark,
+  ) {
     if (spots.isEmpty) {
       return _buildEmptyChartData(theme, isDark);
     }
@@ -194,7 +195,7 @@ class NetBalanceTrendChart extends ConsumerWidget {
               final isLastPoint = index == spots.length - 1;
               return FlDotCirclePainter(
                 radius: isLastPoint ? 6 : 4,
-                color: isLastPoint 
+                color: isLastPoint
                     ? (isDark ? Colors.blue[200]! : Colors.blue[700]!)
                     : (isDark ? Colors.blue[400]! : Colors.blue[500]!),
                 strokeWidth: isLastPoint ? 3 : 0,
@@ -208,8 +209,12 @@ class NetBalanceTrendChart extends ConsumerWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                (isDark ? Colors.blue[400]! : Colors.blue[200]!).withOpacity(0.3),
-                (isDark ? Colors.blue[600]! : Colors.blue[100]!).withOpacity(0.0),
+                (isDark ? Colors.blue[400]! : Colors.blue[200]!).withValues(
+                  alpha: 0.3,
+                ),
+                (isDark ? Colors.blue[600]! : Colors.blue[100]!).withValues(
+                  alpha: 0.0,
+                ),
               ],
             ),
           ),
@@ -224,7 +229,8 @@ class NetBalanceTrendChart extends ConsumerWidget {
             showTitles: true,
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
-              if (value.toInt() >= 0 && value.toInt() < _getMonthLabels().length) {
+              if (value.toInt() >= 0 &&
+                  value.toInt() < _getMonthLabels().length) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
@@ -287,12 +293,12 @@ class NetBalanceTrendChart extends ConsumerWidget {
   List<String> _getMonthLabels() {
     final now = DateTime.now();
     final labels = <String>[];
-    
+
     for (int i = 11; i >= 0; i--) {
       final monthDate = DateTime(now.year, now.month - i, 1);
       labels.add(DateFormat('MMM').format(monthDate));
     }
-    
+
     return labels;
   }
 

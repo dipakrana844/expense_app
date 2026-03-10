@@ -59,6 +59,7 @@ class IncomeEntity with _$IncomeEntity implements TransactionInterface {
   bool get wasModified => updatedAt != null;
 
   /// Business Logic: Get source (alias for consistent interface)
+  @override
   String get categoryOrSource => source;
 
   /// Business Logic: Check if this is an income transaction

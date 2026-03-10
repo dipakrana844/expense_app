@@ -275,7 +275,7 @@ class SmartEntryFormFields extends ConsumerWidget {
     Function(String?) onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: const InputDecoration(
         labelText: 'Source',
         border: OutlineInputBorder(),
@@ -296,7 +296,7 @@ class SmartEntryFormFields extends ConsumerWidget {
     Function(String?) onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),

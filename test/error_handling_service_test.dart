@@ -1,30 +1,28 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:smart_expense_tracker/core/services/error_handling_service.dart';
 
 void main() {
   group('ErrorHandlingService Tests', () {
-    late ErrorHandlingService service;
-    
+    // service is handled through the singleton pattern
     setUp(() {
-      service = ErrorHandlingService();
+      ErrorHandlingService();
     });
 
     group('User-friendly Messages', () {
       test('formats timeout exception correctly', () {
-        final error = TimeoutException('Request timed out', Duration(seconds: 30));
+        TimeoutException('Request timed out', const Duration(seconds: 30));
         // We can't directly test private method, but we can test the behavior
         // through the public handleError method in integration tests
       });
 
       test('formats format exception correctly', () {
-        final error = FormatException('Invalid format');
+        const FormatException('Invalid format');
         // Testing through integration approach
       });
 
       test('formats generic exception correctly', () {
-        final error = Exception('Something went wrong');
+        Exception('Something went wrong');
         // Testing through integration approach
       });
     });
@@ -42,10 +40,12 @@ void main() {
     group('Error Categories', () {
       test('transaction errors are handled appropriately', () {
         // Test the categorization logic
-        final insufficientFundsError = Exception('Insufficient balance for transfer');
+        final insufficientFundsError = Exception(
+          'Insufficient balance for transfer',
+        );
         final duplicateError = Exception('Transaction already exists');
         final validationError = Exception('Transaction validation failed');
-        
+
         // These would be tested through the actual error handling methods
         expect(insufficientFundsError.toString(), contains('balance'));
         expect(duplicateError.toString(), contains('exists'));
@@ -55,7 +55,7 @@ void main() {
       test('account errors are categorized correctly', () {
         final notFoundError = Exception('Account not found');
         final existsError = Exception('Account already exists');
-        
+
         expect(notFoundError.toString(), contains('not found'));
         expect(existsError.toString(), contains('already exists'));
       });
@@ -77,7 +77,7 @@ void main() {
   group('Integration Tests', () {
     test('service handles multiple error types', () {
       final service = ErrorHandlingService();
-      
+
       // Test that the service can be instantiated and is a singleton
       final service2 = ErrorHandlingService();
       expect(identical(service, service2), true);
@@ -95,7 +95,8 @@ void main() {
         expect(
           scenario['error']!.toString().toLowerCase(),
           contains(scenario['category']!),
-          reason: 'Error "${scenario['error']}" should contain category "${scenario['category']}"',
+          reason:
+              'Error "${scenario['error']}" should contain category "${scenario['category']}"',
         );
       }
     });

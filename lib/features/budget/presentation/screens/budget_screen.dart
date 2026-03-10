@@ -61,7 +61,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               ),
               color: Theme.of(
                 context,
-              ).colorScheme.surfaceVariant.withOpacity(0.3),
+              ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(

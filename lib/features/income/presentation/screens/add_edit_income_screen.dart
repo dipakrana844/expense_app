@@ -146,7 +146,7 @@ class AddEditIncomeScreen extends ConsumerWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           key: ValueKey(state.source), // Force rebuild when source changes
-          value: state.source.trim().isEmpty ? null : state.source,
+          initialValue: state.source.trim().isEmpty ? null : state.source,
           onChanged: (String? newValue) {
             if (newValue != null) {
               notifier.setSource(newValue);

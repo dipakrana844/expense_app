@@ -11,12 +11,12 @@ import '../domain/interfaces/transaction_interface.dart';
 extension DateUtilsExtension on DateTime {
   /// Get formatted date key for grouping (YYYY-MM-DD)
   String get dateKey {
-    return '${year}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+    return '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
   }
 
   /// Get month key for analytics (YYYY-MM)
   String get monthKey {
-    return '${year}-${month.toString().padLeft(2, '0')}';
+    return '$year-${month.toString().padLeft(2, '0')}';
   }
 
   /// Check if this date is in the current month

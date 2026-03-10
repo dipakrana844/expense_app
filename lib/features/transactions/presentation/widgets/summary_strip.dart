@@ -42,7 +42,7 @@ class SummaryStrip extends ConsumerWidget {
         boxShadow: isSticky
             ? [
                 BoxShadow(
-                  color: theme.colorScheme.shadow.withOpacity(0.1),
+                  color: theme.colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -127,9 +127,9 @@ class SummaryStrip extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
         ),
         child: Column(
           children: [
@@ -170,9 +170,9 @@ class SummaryStrip extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Column(
         children: [
@@ -211,7 +211,7 @@ class SummaryStrip extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -278,7 +278,7 @@ class SummaryStrip extends ConsumerWidget {
         boxShadow: isSticky
             ? [
                 BoxShadow(
-                  color: theme.colorScheme.shadow.withOpacity(0.1),
+                  color: theme.colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -298,7 +298,7 @@ class SummaryStrip extends ConsumerWidget {
         boxShadow: isSticky
             ? [
                 BoxShadow(
-                  color: theme.colorScheme.shadow.withOpacity(0.1),
+                  color: theme.colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

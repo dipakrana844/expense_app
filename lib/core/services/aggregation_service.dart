@@ -31,7 +31,7 @@ class AggregationService {
     if (predicate != null) {
       filtered = filtered.where(predicate);
     }
-    
+
     return filtered.fold(0.0, (sum, transaction) => sum + transaction.amount);
   }
 
@@ -45,8 +45,8 @@ class AggregationService {
     required List<T> transactions,
   }) {
     return transactions.fold(0.0, (sum, transaction) {
-      return transaction.isIncome 
-          ? sum + transaction.amount 
+      return transaction.isIncome
+          ? sum + transaction.amount
           : sum - transaction.amount;
     });
   }
@@ -61,15 +61,15 @@ class AggregationService {
     required List<T> transactions,
   }) {
     if (transactions.isEmpty) return 0.0;
-    
+
     final now = DateTime.now();
     final daysPassed = now.day;
-    
+
     final monthTotal = calculateTotal(
       transactions: transactions,
       predicate: (t) => t.date.year == now.year && t.date.month == now.month,
     );
-    
+
     return daysPassed > 0 ? monthTotal / daysPassed : 0.0;
   }
 
@@ -81,15 +81,13 @@ class AggregationService {
   ///
   /// Returns: Map of category to {amount, percentage} breakdown
   static Map<String, CategoryBreakdown> calculateCategoryBreakdown<
-      T extends TransactionInterface>({
-    required List<T> transactions,
-    bool includePercentages = true,
-  }) {
+    T extends TransactionInterface
+  >({required List<T> transactions, bool includePercentages = true}) {
     if (transactions.isEmpty) return {};
-    
+
     final breakdown = <String, CategoryBreakdown>{};
     double totalAmount = 0.0;
-    
+
     // Calculate totals per category
     for (final transaction in transactions) {
       final category = transaction.categoryOrSource;
@@ -100,19 +98,21 @@ class AggregationService {
       );
       totalAmount += transaction.amount;
     }
-    
+
     // Add percentages if requested
     if (includePercentages && totalAmount > 0) {
-      return breakdown.map((category, data) => MapEntry(
-            category,
-            CategoryBreakdown(
-              amount: data.amount,
-              count: data.count,
-              percentage: (data.amount / totalAmount) * 100,
-            ),
-          ));
+      return breakdown.map(
+        (category, data) => MapEntry(
+          category,
+          CategoryBreakdown(
+            amount: data.amount,
+            count: data.count,
+            percentage: (data.amount / totalAmount) * 100,
+          ),
+        ),
+      );
     }
-    
+
     return breakdown;
   }
 
@@ -128,15 +128,15 @@ class AggregationService {
     bool sortByDate = true,
   }) {
     final grouped = groupBy(transactions, (transaction) => transaction.dateKey);
-    
+
     if (sortByDate) {
       // Sort by date descending (newest first)
       final sortedEntries = grouped.entries.toList()
         ..sort((a, b) => b.key.compareTo(a.key));
-      
+
       return Map.fromEntries(sortedEntries);
     }
-    
+
     return grouped;
   }
 
@@ -172,7 +172,8 @@ class AggregationService {
     required DateTime end,
   }) {
     return transactions.where((transaction) {
-      return !transaction.date.isBefore(start) && !transaction.date.isAfter(end);
+      return !transaction.date.isBefore(start) &&
+          !transaction.date.isAfter(end);
     }).toList();
   }
 
@@ -183,19 +184,20 @@ class AggregationService {
   /// - limit: Maximum number of categories to return
   ///
   /// Returns: List of top categories sorted by amount descending
-  static List<CategorySummary> getTopCategories<T extends TransactionInterface>({
-    required List<T> transactions,
-    int limit = 5,
-  }) {
+  static List<CategorySummary> getTopCategories<
+    T extends TransactionInterface
+  >({required List<T> transactions, int limit = 5}) {
     final breakdown = calculateCategoryBreakdown(transactions: transactions);
-    
+
     return breakdown.entries
-        .map((entry) => CategorySummary(
-              category: entry.key,
-              amount: entry.value.amount,
-              count: entry.value.count,
-              percentage: entry.value.percentage,
-            ))
+        .map(
+          (entry) => CategorySummary(
+            category: entry.key,
+            amount: entry.value.amount,
+            count: entry.value.count,
+            percentage: entry.value.percentage,
+          ),
+        )
         .sorted((a, b) => b.amount.compareTo(a.amount))
         .take(limit)
         .toList();
@@ -212,7 +214,7 @@ class AggregationService {
   }) {
     double totalIncome = 0.0;
     double totalExpenses = 0.0;
-    
+
     for (final transaction in transactions) {
       if (transaction.isIncome) {
         totalIncome += transaction.amount;
@@ -220,9 +222,9 @@ class AggregationService {
         totalExpenses += transaction.amount;
       }
     }
-    
+
     if (totalIncome <= 0) return 0.0;
-    
+
     final savings = totalIncome - totalExpenses;
     return (savings / totalIncome) * 100;
   }
@@ -239,10 +241,12 @@ class AggregationService {
     required List<T> previousMonthTransactions,
   }) {
     final currentTotal = calculateTotal(transactions: currentMonthTransactions);
-    final previousTotal = calculateTotal(transactions: previousMonthTransactions);
-    
+    final previousTotal = calculateTotal(
+      transactions: previousMonthTransactions,
+    );
+
     if (previousTotal <= 0) return 0.0;
-    
+
     return ((currentTotal - previousTotal) / previousTotal) * 100;
   }
 }
@@ -260,7 +264,8 @@ class CategoryBreakdown {
   });
 
   @override
-  String toString() => 'CategoryBreakdown(amount: $amount, count: $count, percentage: $percentage)';
+  String toString() =>
+      'CategoryBreakdown(amount: $amount, count: $count, percentage: $percentage)';
 }
 
 /// Data class for category summary with ranking
@@ -278,5 +283,6 @@ class CategorySummary {
   });
 
   @override
-  String toString() => 'CategorySummary(category: $category, amount: $amount, count: $count, percentage: $percentage)';
+  String toString() =>
+      'CategorySummary(category: $category, amount: $amount, count: $count, percentage: $percentage)';
 }

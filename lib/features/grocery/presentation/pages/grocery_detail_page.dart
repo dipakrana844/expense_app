@@ -208,7 +208,7 @@ class GroceryDetailPage extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(24),

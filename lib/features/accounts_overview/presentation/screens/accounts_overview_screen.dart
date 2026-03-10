@@ -94,7 +94,7 @@ class AccountsOverviewScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...insights.map((insight) => _buildInsightCard(insight, theme, isDark)).toList(),
+          ...insights.map((insight) => _buildInsightCard(insight, theme, isDark)),
         ],
       ),
     );

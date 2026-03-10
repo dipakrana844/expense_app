@@ -144,13 +144,15 @@ class SpendingAlgorithms {
     List<ExpenseEntity> currentMonthExpenses,
     List<ExpenseEntity> previousMonthExpenses,
   ) {
-    if (currentMonthExpenses.isEmpty || previousMonthExpenses.isEmpty)
+    if (currentMonthExpenses.isEmpty || previousMonthExpenses.isEmpty) {
       return null;
+    }
 
     String getTopCategory(List<ExpenseEntity> expenses) {
       final totals = <String, double>{};
-      for (var e in expenses)
+      for (var e in expenses) {
         totals[e.category] = (totals[e.category] ?? 0) + e.amount;
+      }
       if (totals.isEmpty) return '';
       final sorted = totals.entries.toList()
         ..sort((a, b) => b.value.compareTo(a.value));

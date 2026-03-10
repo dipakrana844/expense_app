@@ -57,7 +57,7 @@ class AnalyticsScreen extends ConsumerWidget {
             // Daily Spend Guard Card - Always visible at top
             const DailySpendCard(showFullDetails: false),
             const SizedBox(height: 24),
-            
+
             // 1. Daily Snapshot
             _buildDailySnapshot(context, snapshot),
             const SizedBox(height: 24),
@@ -124,7 +124,7 @@ class AnalyticsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -195,9 +195,9 @@ class AnalyticsScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withOpacity(0.3)),
+        side: BorderSide(color: color.withValues(alpha: 0.3)),
       ),
-      color: color.withOpacity(0.05),
+      color: color.withValues(alpha: 0.05),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -271,7 +271,7 @@ class AnalyticsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     return Card(
       elevation: 0,
-      color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -296,7 +296,7 @@ class AnalyticsScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -357,7 +357,9 @@ class AnalyticsScreen extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.2),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.2,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -473,8 +475,8 @@ class AnalyticsScreen extends ConsumerWidget {
         barRods: [
           BarChartRodData(
             toY: entry.value,
-            color: theme.colorScheme.primary.withOpacity(
-              x == data.length ? 1.0 : 0.6,
+            color: theme.colorScheme.primary.withValues(
+              alpha: x == data.length ? 1.0 : 0.6,
             ),
             width: 16,
             borderRadius: BorderRadius.circular(4),

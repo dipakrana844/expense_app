@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -34,11 +35,11 @@ class SecurityService {
       );
     } on PlatformException catch (e) {
       // Log the specific error for debugging
-      print('Authentication failed: ${e.message}');
+      debugPrint('Authentication failed: ${e.message}');
       return false;
     } catch (e) {
       // Handle any other exceptions
-      print('Unexpected authentication error: $e');
+      debugPrint('Unexpected authentication error: $e');
       return false;
     }
   }

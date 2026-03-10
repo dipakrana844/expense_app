@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_expense_tracker/features/smart_entry/presentation/providers/smart_entry_controller.dart';
-import 'package:smart_expense_tracker/features/smart_entry/domain/enums/transaction_mode.dart';
 
 void main() {
   group('SmartEntryState Tests', () {

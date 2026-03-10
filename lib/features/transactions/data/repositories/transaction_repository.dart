@@ -28,7 +28,7 @@ class TransactionRepository {
   Future<List<TransactionEntity>> getAllTransactions() async {
     try {
       final incomes = await _incomeDataSource.getAllIncomes();
-      final expenses = await _expenseDataSource.getAllExpenses();
+      final expenses = _expenseDataSource.getAllExpenses();
       return TransactionUtils.mergeTransactions(incomes, expenses);
     } catch (e) {
       return [];

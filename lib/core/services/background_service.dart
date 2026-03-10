@@ -31,8 +31,9 @@ Future<void> _handleDailyCheck() async {
   await Hive.initFlutter();
 
   if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(ExpenseModelAdapter());
-  if (!Hive.isAdapterRegistered(1))
+  if (!Hive.isAdapterRegistered(1)) {
     Hive.registerAdapter(ScheduledExpenseModelAdapter());
+  }
 
   // 2. Open boxes
   final scheduledBox = await Hive.openBox<ScheduledExpenseModel>(

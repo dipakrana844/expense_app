@@ -35,7 +35,7 @@ class IncomeListScreen extends ConsumerWidget {
           if (incomes.isEmpty) {
             return _buildEmptyState(context, theme);
           }
-          
+
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(incomesProvider);
@@ -49,11 +49,17 @@ class IncomeListScreen extends ConsumerWidget {
                   income: income,
                   onTap: () {
                     // Navigate to edit screen
-                    context.pushNamed('edit-income', pathParameters: {'id': income.id});
+                    context.pushNamed(
+                      'edit-income',
+                      pathParameters: {'id': income.id},
+                    );
                   },
                   onEdit: () {
                     // Navigate to edit screen
-                    context.pushNamed('edit-income', pathParameters: {'id': income.id});
+                    context.pushNamed(
+                      'edit-income',
+                      pathParameters: {'id': income.id},
+                    );
                   },
                   onDelete: () {
                     _confirmDelete(context, ref, income);
@@ -64,12 +70,13 @@ class IncomeListScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => _buildErrorState(context, theme, error.toString()),
+        error: (error, stackTrace) =>
+            _buildErrorState(context, theme, error.toString()),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/smart-entry/income'),
-        child: const Icon(Icons.add),
         tooltip: 'Add Income',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -110,11 +117,7 @@ class IncomeListScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: theme.colorScheme.error,
-          ),
+          Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
           const SizedBox(height: 16),
           const Text(
             'Failed to load income records',
@@ -142,7 +145,11 @@ class IncomeListScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, IncomeEntity income) {
+  void _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    IncomeEntity income,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -160,11 +167,9 @@ class IncomeListScreen extends ConsumerWidget {
             FilledButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _performDelete(ref, income);
+                _performDelete(context, ref, income);
               },
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
               child: const Text('Delete'),
             ),
           ],
@@ -173,24 +178,28 @@ class IncomeListScreen extends ConsumerWidget {
     );
   }
 
-  void _performDelete(WidgetRef ref, IncomeEntity income) async {
+  void _performDelete(
+    BuildContext context,
+    WidgetRef ref,
+    IncomeEntity income,
+  ) async {
     try {
       final deleteUseCase = ref.read(deleteIncomeUseCaseProvider);
       await deleteUseCase.execute(income.id);
-      
+
+      if (!context.mounted) return;
+
       // Show success snackbar
-      if (ScaffoldMessenger.maybeOf(ref.context) != null) {
-        ScaffoldMessenger.of(ref.context).showSnackBar(
-          const SnackBar(content: Text('Income deleted successfully')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Income deleted successfully')),
+      );
     } catch (e) {
+      if (!context.mounted) return;
+
       // Show error snackbar
-      if (ScaffoldMessenger.maybeOf(ref.context) != null) {
-        ScaffoldMessenger.of(ref.context).showSnackBar(
-          SnackBar(content: Text('Error deleting income: $e')),
-        );
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error deleting income: $e')));
     }
   }
 }
