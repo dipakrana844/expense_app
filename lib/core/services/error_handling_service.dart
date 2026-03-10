@@ -130,7 +130,7 @@ class ErrorHandlingService {
       debugPrint('STACK TRACE: $stackTrace');
     }
     
-    // TODO: Integrate with error reporting service like Sentry/Firebase Crashlytics
+    // Integrate with error reporting service like Sentry/Firebase Crashlytics
     // Example: FirebaseCrashlytics.instance.recordError(error, stackTrace);
   }
 
