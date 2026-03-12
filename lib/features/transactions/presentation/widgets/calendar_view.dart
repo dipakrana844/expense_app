@@ -182,12 +182,12 @@ class CalendarDayCell extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           color: !isCurrentMonth
-              ? theme.cardColor.withOpacity(0.3)
+              ? theme.cardColor.withValues(alpha: 0.3)
               : index % 7 == 0 || index % 7 == 6
-              ? theme.cardColor.withOpacity(0.6) // Weekend highlight
+              ? theme.cardColor.withValues(alpha: 0.6) // Weekend highlight
               : theme.cardColor,
           border: Border.all(
-            color: theme.dividerColor.withOpacity(0.3),
+            color: theme.dividerColor.withValues(alpha: 0.3),
             width: 0.5,
           ),
         ),
@@ -200,7 +200,7 @@ class CalendarDayCell extends ConsumerWidget {
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: !isCurrentMonth
-                    ? theme.colorScheme.onSurface.withOpacity(0.4)
+                    ? theme.colorScheme.onSurface.withValues(alpha: 0.4)
                     : day == DateTime.now().day &&
                           month.month == DateTime.now().month &&
                           month.year == DateTime.now().year

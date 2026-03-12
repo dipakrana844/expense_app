@@ -199,7 +199,7 @@ class WeeklyBreakdown extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.cardColor.withOpacity(0.6),
+              color: theme.cardColor.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(

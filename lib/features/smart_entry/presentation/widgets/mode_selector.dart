@@ -22,15 +22,35 @@ class ModeSelector extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       child: Row(
         children: [
-          _buildSegment(TransactionMode.income, 'Income', const Color(0xFF2196F3), context),
-          _buildSegment(TransactionMode.expense, 'Expense', const Color(0xFFF44336), context),
-          _buildSegment(TransactionMode.transfer, 'Transfer', const Color(0xFF757575), context),
+          _buildSegment(
+            TransactionMode.income,
+            'Income',
+            const Color(0xFF2196F3),
+            context,
+          ),
+          _buildSegment(
+            TransactionMode.expense,
+            'Expense',
+            const Color(0xFFF44336),
+            context,
+          ),
+          _buildSegment(
+            TransactionMode.transfer,
+            'Transfer',
+            const Color(0xFF757575),
+            context,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSegment(TransactionMode mode, String label, Color color, BuildContext context) {
+  Widget _buildSegment(
+    TransactionMode mode,
+    String label,
+    Color color,
+    BuildContext context,
+  ) {
     final isSelected = currentMode == mode;
     return Expanded(
       child: GestureDetector(
@@ -46,7 +66,11 @@ class ModeSelector extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               fontSize: 14,
             ),

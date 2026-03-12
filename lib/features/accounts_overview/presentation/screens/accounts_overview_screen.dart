@@ -20,7 +20,7 @@ class AccountsOverviewScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Net Worth Dashboard'),
@@ -43,15 +43,15 @@ class AccountsOverviewScreen extends ConsumerWidget {
             // Section 1: Net Balance Trend Chart
             const NetBalanceTrendChart(height: 220),
             const SizedBox(height: 20),
-            
+
             // Section 2: Income vs Expense Comparison
             const IncomeExpenseComparisonChart(height: 280),
             const SizedBox(height: 20),
-            
+
             // Section 3: Financial Health Summary
             const FinancialHealthSummary(),
             const SizedBox(height: 20),
-            
+
             // Section 4: Financial Insights (if any)
             _buildInsightsSection(ref, theme, isDark),
           ],
@@ -63,7 +63,7 @@ class AccountsOverviewScreen extends ConsumerWidget {
   /// Build financial insights section
   Widget _buildInsightsSection(WidgetRef ref, ThemeData theme, bool isDark) {
     final insights = ref.watch(financialInsightsProvider);
-    
+
     if (insights.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -75,9 +75,9 @@ class AccountsOverviewScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3) 
-                : Colors.grey.withOpacity(0.1),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -94,7 +94,9 @@ class AccountsOverviewScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...insights.map((insight) => _buildInsightCard(insight, theme, isDark)),
+          ...insights.map(
+            (insight) => _buildInsightCard(insight, theme, isDark),
+          ),
         ],
       ),
     );
@@ -105,7 +107,7 @@ class AccountsOverviewScreen extends ConsumerWidget {
     final IconData icon;
     final Color iconColor;
     final Color backgroundColor;
-    
+
     switch (insight.severity) {
       case InsightSeverity.critical:
         icon = Icons.error_outline;
@@ -129,21 +131,14 @@ class AccountsOverviewScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: backgroundColor.withOpacity(0.3),
+        color: backgroundColor.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: iconColor.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: iconColor.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: iconColor,
-            size: 20,
-          ),
+          Icon(icon, color: iconColor, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

@@ -177,7 +177,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
           bottom: BorderSide(
             color: Theme.of(
               context,
-            ).colorScheme.outlineVariant.withOpacity(0.5),
+            ).colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -272,7 +272,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.6),
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(height: 12),
@@ -281,7 +281,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.4),
+                  ).colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -385,7 +385,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
                       visualDensity: VisualDensity.compact,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.4),
+                      ).colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                   ],
                 ),
@@ -406,7 +406,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
           top: BorderSide(
             color: Theme.of(
               context,
-            ).colorScheme.outlineVariant.withOpacity(0.5),
+            ).colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -426,7 +426,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
@@ -445,7 +445,7 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(

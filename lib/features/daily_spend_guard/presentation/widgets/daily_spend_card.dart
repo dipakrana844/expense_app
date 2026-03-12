@@ -19,11 +19,8 @@ import 'package:smart_expense_tracker/features/daily_spend_guard/presentation/pr
 
 class DailySpendCard extends ConsumerWidget {
   final bool showFullDetails; // Whether to show all details or compact view
-  
-  const DailySpendCard({
-    super.key,
-    this.showFullDetails = true,
-  });
+
+  const DailySpendCard({super.key, this.showFullDetails = true});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -96,10 +93,7 @@ class DailySpendCard extends ConsumerWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: statusColor.withOpacity(0.3),
-          width: 2,
-        ),
+        side: BorderSide(color: statusColor.withValues(alpha: 0.3), width: 2),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -108,8 +102,8 @@ class DailySpendCard extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              statusColor.withOpacity(0.1),
-              statusColor.withOpacity(0.05),
+              statusColor.withValues(alpha: 0.1),
+              statusColor.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -135,17 +129,13 @@ class DailySpendCard extends ConsumerWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.2),
+                      color: statusColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          statusIcon,
-                          size: 16,
-                          color: statusColor,
-                        ),
+                        Icon(statusIcon, size: 16, color: statusColor),
                         const SizedBox(width: 6),
                         Text(
                           statusText,
@@ -160,7 +150,7 @@ class DailySpendCard extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
 
               // Main spending information
@@ -171,27 +161,27 @@ class DailySpendCard extends ConsumerWidget {
                   state.todaySpent,
                   Theme.of(context).colorScheme.onSurface,
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 _buildSpendingRow(
                   context,
                   'Daily Limit',
                   state.dailyLimit,
                   Theme.of(context).colorScheme.primary,
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 _buildSpendingRow(
                   context,
                   'Remaining',
                   state.remaining,
                   _getRemainingTextColor(state.remaining, context),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Progress visualization
                 _buildProgressIndicator(context, state),
               ] else ...[
@@ -282,11 +272,14 @@ class DailySpendCard extends ConsumerWidget {
   }
 
   /// Build progress visualization bar
-  Widget _buildProgressIndicator(BuildContext context, DailySpendStateEntity state) {
-    final progress = state.dailyLimit > 0 
+  Widget _buildProgressIndicator(
+    BuildContext context,
+    DailySpendStateEntity state,
+  ) {
+    final progress = state.dailyLimit > 0
         ? (state.todaySpent / state.dailyLimit).clamp(0.0, 1.0)
         : 0.0;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -299,7 +292,9 @@ class DailySpendCard extends ConsumerWidget {
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: progress,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.surfaceContainerHighest,
           color: _getStatusColor(state.status, context),
           minHeight: 8,
           borderRadius: BorderRadius.circular(4),

@@ -217,10 +217,7 @@ class DailyView extends ConsumerWidget {
                   FilledButton.icon(
                     onPressed: () async {
                       Navigator.pop(context);
-                      await TransactionActions.handleEdit(
-                        context,
-                        transaction,
-                      );
+                      await TransactionActions.handleEdit(context, transaction);
                     },
                     icon: const Icon(Icons.edit),
                     label: const Text('Edit'),
@@ -263,20 +260,20 @@ class _EmptyTransactionsView extends StatelessWidget {
             Icon(
               Icons.receipt_long_outlined,
               size: 80,
-              color: theme.colorScheme.primary.withOpacity(0.3),
+              color: theme.colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
               'No transactions yet',
               style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 12),
             Text(
               'Tap the + button to add your first transaction',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
             ),

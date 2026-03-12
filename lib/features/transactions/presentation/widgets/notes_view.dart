@@ -193,10 +193,7 @@ class NotesView extends ConsumerWidget {
                   FilledButton.icon(
                     onPressed: () async {
                       Navigator.pop(context);
-                      await TransactionActions.handleEdit(
-                        context,
-                        transaction,
-                      );
+                      await TransactionActions.handleEdit(context, transaction);
                     },
                     icon: const Icon(Icons.edit),
                     label: const Text('Edit'),
@@ -242,20 +239,20 @@ class EmptyNotesView extends StatelessWidget {
             Icon(
               Icons.notes_outlined,
               size: 80,
-              color: theme.colorScheme.primary.withOpacity(0.3),
+              color: theme.colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
               'No notes yet',
               style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 12),
             Text(
               'Transactions with notes will appear here',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
             ),

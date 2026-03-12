@@ -55,7 +55,7 @@ class InsightCard extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: baseColor.withOpacity(0.2),
+          color: baseColor.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(Icons.check_circle_outline, color: baseColor),
@@ -69,12 +69,12 @@ class InsightCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: baseColor.withOpacity(0.1),
+              color: baseColor.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: baseColor.withOpacity(0.3), width: 1),
+          border: Border.all(color: baseColor.withValues(alpha: 0.3), width: 1),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
@@ -88,7 +88,7 @@ class InsightCard extends ConsumerWidget {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: baseColor.withOpacity(0.05),
+                    color: baseColor.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(50),
                   ),
                 ),
@@ -101,7 +101,7 @@ class InsightCard extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: baseColor.withOpacity(0.1),
+                        color: baseColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(iconData, color: baseColor, size: 24),

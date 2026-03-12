@@ -61,7 +61,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               ),
               color: Theme.of(
                 context,
-              ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -154,7 +154,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -168,9 +168,9 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

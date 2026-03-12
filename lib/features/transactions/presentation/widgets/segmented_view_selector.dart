@@ -43,7 +43,7 @@ class SegmentedViewSelector extends StatelessWidget {
                     border: isSelected
                         ? null
                         : Border.all(
-                            color: colorScheme.outline.withOpacity(0.2),
+                            color: colorScheme.outline.withValues(alpha: 0.2),
                           ),
                   ),
                   alignment: Alignment.center,

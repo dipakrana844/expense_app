@@ -28,8 +28,8 @@ class ModernSummaryHeader extends ConsumerWidget {
               // Month Selector (Compact)
               Container(
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withOpacity(
-                    0.5,
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.5,
                   ),
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -82,15 +82,19 @@ class ModernSummaryHeader extends ConsumerWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      theme.colorScheme.primaryContainer.withOpacity(0.3),
-                      theme.colorScheme.secondaryContainer.withOpacity(0.1),
+                      theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      theme.colorScheme.secondaryContainer.withValues(
+                        alpha: 0.1,
+                      ),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                    color: theme.colorScheme.outlineVariant.withValues(
+                      alpha: 0.5,
+                    ),
                   ),
                 ),
                 child: Row(
@@ -129,7 +133,9 @@ class ModernSummaryHeader extends ConsumerWidget {
                     Container(
                       height: 50,
                       width: 1,
-                      color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                      color: theme.colorScheme.outlineVariant.withValues(
+                        alpha: 0.5,
+                      ),
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                     ),
 
@@ -181,7 +187,7 @@ class ModernSummaryHeader extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 14, color: color),

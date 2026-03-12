@@ -32,14 +32,16 @@ class NumericKeypad extends StatelessWidget {
 
   Widget _buildRow(List<String> keys, BuildContext context) {
     return Row(
-      children: keys.map((key) => Expanded(child: _buildKey(key, context))).toList(),
+      children: keys
+          .map((key) => Expanded(child: _buildKey(key, context)))
+          .toList(),
     );
   }
 
   Widget _buildKey(String key, BuildContext context) {
     final isBackspace = key == 'BACK';
     final isDot = key == '.';
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Material(
@@ -53,14 +55,18 @@ class NumericKeypad extends StatelessWidget {
           child: Container(
             height: 56,
             decoration: BoxDecoration(
-              color: isBackspace 
-                  ? (accentColor ?? Theme.of(context).colorScheme.primary).withOpacity(0.1)
+              color: isBackspace
+                  ? (accentColor ?? Theme.of(context).colorScheme.primary)
+                        .withValues(alpha: 0.1)
                   : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
             child: isBackspace
-                ? Icon(Icons.backspace_outlined, color: accentColor ?? Theme.of(context).colorScheme.primary)
+                ? Icon(
+                    Icons.backspace_outlined,
+                    color: accentColor ?? Theme.of(context).colorScheme.primary,
+                  )
                 : Text(
                     isDot ? '.' : key,
                     style: TextStyle(

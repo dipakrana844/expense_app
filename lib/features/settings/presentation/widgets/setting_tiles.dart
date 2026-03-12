@@ -39,7 +39,7 @@ class SettingSwitchTile extends StatelessWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : Switch(
-              value: value, 
+              value: value,
               onChanged: isLoading || onChanged == null ? null : onChanged,
             ),
       onTap: isLoading || onChanged == null ? null : () => onChanged!(!value),
@@ -231,7 +231,7 @@ class SettingGroup extends StatelessWidget {
               endIndent: 16,
               color: Theme.of(
                 context,
-              ).colorScheme.outlineVariant.withOpacity(0.5),
+              ).colorScheme.outlineVariant.withValues(alpha: 0.5),
             ),
         ],
       ],

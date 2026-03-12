@@ -32,9 +32,9 @@ class FinancialHealthSummary extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3) 
-                : Colors.grey.withOpacity(0.1),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -52,12 +52,12 @@ class FinancialHealthSummary extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Metrics Grid
           _buildMetricsGrid(healthMetrics, theme, isDark),
-          
+
           const SizedBox(height: 16),
-          
+
           // Performance Summary
           _buildPerformanceSummary(healthMetrics, theme, isDark),
         ],
@@ -68,7 +68,7 @@ class FinancialHealthSummary extends ConsumerWidget {
   /// Build loading state
   Widget _buildLoadingState(BuildContext context, ThemeData theme) {
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -89,8 +89,9 @@ class FinancialHealthSummary extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            children: List.generate(4, (_) => 
-              Expanded(
+            children: List.generate(
+              4,
+              (_) => Expanded(
                 child: Container(
                   height: 80,
                   margin: const EdgeInsets.only(right: 8),
@@ -105,7 +106,11 @@ class FinancialHealthSummary extends ConsumerWidget {
   }
 
   /// Build metrics grid with key financial indicators
-  Widget _buildMetricsGrid(FinancialHealthMetrics metrics, ThemeData theme, bool isDark) {
+  Widget _buildMetricsGrid(
+    FinancialHealthMetrics metrics,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return Column(
       children: [
         // First row: Income, Expense, Savings Rate
@@ -113,7 +118,9 @@ class FinancialHealthSummary extends ConsumerWidget {
           children: [
             _buildMetricCard(
               title: 'Avg. Monthly Income',
-              value: NumberFormat.currency(symbol: '\$').format(metrics.averageMonthlyIncome),
+              value: NumberFormat.currency(
+                symbol: '\$',
+              ).format(metrics.averageMonthlyIncome),
               subtitle: 'Consistent earnings',
               color: Colors.green,
               theme: theme,
@@ -122,7 +129,9 @@ class FinancialHealthSummary extends ConsumerWidget {
             const SizedBox(width: 12),
             _buildMetricCard(
               title: 'Avg. Monthly Expenses',
-              value: NumberFormat.currency(symbol: '\$').format(metrics.averageMonthlyExpense),
+              value: NumberFormat.currency(
+                symbol: '\$',
+              ).format(metrics.averageMonthlyExpense),
               subtitle: 'Regular spending',
               color: Colors.orange,
               theme: theme,
@@ -210,7 +219,11 @@ class FinancialHealthSummary extends ConsumerWidget {
   }
 
   /// Build performance summary section
-  Widget _buildPerformanceSummary(FinancialHealthMetrics metrics, ThemeData theme, bool isDark) {
+  Widget _buildPerformanceSummary(
+    FinancialHealthMetrics metrics,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -288,7 +301,7 @@ class FinancialHealthSummary extends ConsumerWidget {
           Text(
             '${isPositive ? '+' : ''}${NumberFormat.currency(symbol: '\$').format(amount)}',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: isPositive 
+              color: isPositive
                   ? (isDark ? Colors.green[400] : Colors.green[700])
                   : (isDark ? Colors.red[400] : Colors.red[700]),
               fontWeight: FontWeight.w600,
@@ -336,11 +349,11 @@ class FinancialHealthSummary extends ConsumerWidget {
     try {
       final parts = monthKey.split('-');
       if (parts.length != 2) return monthKey;
-      
+
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
       final date = DateTime(year, month, 1);
-      
+
       return DateFormat('MMM yyyy').format(date);
     } catch (e) {
       return monthKey;
