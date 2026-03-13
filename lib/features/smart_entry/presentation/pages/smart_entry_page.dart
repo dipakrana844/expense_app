@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +22,9 @@ class SmartEntryPage extends ConsumerStatefulWidget {
 }
 
 class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
+  bool _isMagicEntryVisible = false;
+  final TextEditingController _magicTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -89,6 +92,8 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
                   currentMode: state.mode,
                   onModeChanged: (mode) => controller.switchMode(mode),
                 ),
+                // Magic Entry Field
+                if (_isMagicEntryVisible) _buildMagicEntryField(context, controller, accentColor),
                 // Amount Display
                 _buildAmountDisplay(context, state, accentColor),
                 // Smart Preview
@@ -154,6 +159,41 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
       dailySpendPreview: dailySpendPreview,
       incomeBalancePreview: incomeBalancePreview,
       transferPreview: transferPreview,
+      isDuplicateWarning: state.isDuplicateWarning,
+    );
+  }
+
+  Widget _buildMagicEntryField(
+    BuildContext context,
+    SmartEntryController controller,
+    Color accentColor,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: TextField(
+        controller: _magicTextController,
+        decoration: InputDecoration(
+          hintText: 'Try "Pizza 20" or "Salary 1000"',
+          prefixIcon: const Icon(Icons.auto_awesome, size: 20),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.mic_none),
+            onPressed: () => _startVoiceEntry(),
+            tooltip: 'Voice entry (coming soon)',
+          ),
+          filled: true,
+          fillColor: accentColor.withValues(alpha: 0.05),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        onChanged: (text) => controller.handleMagicInput(text),
+        onSubmitted: (text) {
+          controller.handleMagicInput(text);
+          setState(() => _isMagicEntryVisible = false);
+        },
+      ),
     );
   }
 
@@ -178,6 +218,22 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
         ),
       ),
       actions: [
+        // Magic Entry Toggle
+        Semantics(
+          label: 'Toggle magic entry',
+          hint: 'Enter transaction using natural language',
+          child: IconButton(
+            icon: Icon(
+              _isMagicEntryVisible ? Icons.auto_awesome : Icons.auto_awesome_outlined,
+              color: _isMagicEntryVisible ? accentColor : null,
+            ),
+            onPressed: () {
+              setState(() => _isMagicEntryVisible = !_isMagicEntryVisible);
+              if (!_isMagicEntryVisible) _magicTextController.clear();
+            },
+            tooltip: 'Magic Entry',
+          ),
+        ),
         // OCR Scan
         Semantics(
           label: 'Scan receipt with OCR',
@@ -428,4 +484,13 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
   //     builder: (context) => AddCategorySheet(transactionType: transactionType),
   //   );
   // }
+
+  void _startVoiceEntry() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Voice entry is coming soon! Keep an eye on updates.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 }

@@ -149,6 +149,25 @@ class SmartSuggestionService {
     );
   }
 
+  /// Get suggested category based on current time of day
+  String? getSuggestedCategoryForTime() {
+    final now = DateTime.now();
+    final hour = now.hour;
+
+    if (hour >= 5 && hour < 11) {
+      return 'Breakfast';
+    } else if (hour >= 11 && hour < 15) {
+      return 'Lunch';
+    } else if (hour >= 15 && hour < 19) {
+      return 'Snacks';
+    } else if (hour >= 19 && hour < 23) {
+      return 'Dinner';
+    } else if (hour >= 23 || hour < 5) {
+      return 'Leisure';
+    }
+    return null;
+  }
+
   /// Get suggested recurring schedule if pattern detected
   String? getRecurringSuggestion({
     required String category,

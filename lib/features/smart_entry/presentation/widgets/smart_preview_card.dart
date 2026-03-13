@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../../core/utils/utils.dart';
 import '../providers/smart_entry_controller.dart';
 
@@ -7,6 +7,7 @@ class SmartPreviewCard extends StatelessWidget {
   final double? dailySpendPreview;
   final double? incomeBalancePreview;
   final String? transferPreview;
+  final bool isDuplicateWarning;
 
   const SmartPreviewCard({
     super.key,
@@ -14,10 +15,14 @@ class SmartPreviewCard extends StatelessWidget {
     this.dailySpendPreview,
     this.incomeBalancePreview,
     this.transferPreview,
+    this.isDuplicateWarning = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (isDuplicateWarning) {
+      return _buildDuplicateWarning(context);
+    }
     if (mode == TransactionMode.expense && dailySpendPreview != null) {
       return _buildDailySpendPreview(context);
     }
@@ -31,6 +36,34 @@ class SmartPreviewCard extends StatelessWidget {
       return _buildIncomePreview(context);
     }
     return const SizedBox.shrink();
+  }
+
+  Widget _buildDuplicateWarning(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange.shade200),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Possible duplicate! A similar transaction was logged recently.',
+              style: TextStyle(
+                color: Colors.orange.shade900,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDailySpendPreview(BuildContext context) {

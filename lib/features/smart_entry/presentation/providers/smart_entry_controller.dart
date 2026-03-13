@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart' show TimeOfDay;
+import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
+import '../../../../core/utils/smart_parser.dart';
 import '../../../../core/services/smart_suggestion_service.dart';
+import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../domain/enums/transaction_mode.dart';
 import '../../domain/services/smart_entry_service.dart';
 
@@ -26,6 +28,7 @@ class SmartEntryState {
   final bool isEditing;
   final String? editingTransactionId;
   final String? error;
+  final bool isDuplicateWarning;
 
   SmartEntryState({
     this.mode = TransactionMode.expense,
@@ -44,6 +47,7 @@ class SmartEntryState {
     this.isEditing = false,
     this.editingTransactionId,
     this.error,
+    this.isDuplicateWarning = false,
   }) : date = date ?? DateTime.now(),
        time = time ?? TimeOfDay.now();
 
@@ -160,6 +164,7 @@ class SmartEntryState {
     bool? isEditing,
     String? editingTransactionId,
     String? error,
+    bool? isDuplicateWarning,
   }) {
     return SmartEntryState(
       mode: mode ?? this.mode,
@@ -178,6 +183,7 @@ class SmartEntryState {
       isEditing: isEditing ?? this.isEditing,
       editingTransactionId: editingTransactionId ?? this.editingTransactionId,
       error: error,
+      isDuplicateWarning: isDuplicateWarning ?? this.isDuplicateWarning,
     );
   }
 
@@ -224,8 +230,13 @@ class SmartEntryController extends Notifier<SmartEntryState> {
     final suggestionService = ref.read(smartSuggestionServiceProvider);
     switch (s.mode) {
       case TransactionMode.expense:
-        final category = suggestionService.getLastExpenseCategory();
-        if (category != null) return s.copyWith(category: category);
+        final timeSuggested = suggestionService.getSuggestedCategoryForTime();
+        final lastCategory = suggestionService.getLastExpenseCategory();
+        if (timeSuggested != null) {
+          return s.copyWith(category: timeSuggested);
+        } else if (lastCategory != null) {
+          return s.copyWith(category: lastCategory);
+        }
         break;
       case TransactionMode.income:
         final source = suggestionService.getLastIncomeSource();
@@ -325,11 +336,46 @@ class SmartEntryController extends Notifier<SmartEntryState> {
       isEditing: true,
       editingTransactionId: id,
     );
+    _checkDuplicate();
+  }
+
+  void handleMagicInput(String text) {
+    if (text.isEmpty) return;
+    final result = SmartParser.parse(text);
+    
+    state = state.copyWith(
+      amountString: result.amount != null ? result.amount!.toStringAsFixed(2) : state.amountString,
+      category: result.categoryOrSource ?? state.category,
+      source: result.categoryOrSource ?? state.source,
+      note: result.note ?? state.note,
+    );
+    _checkDuplicate();
+  }
+
+  void _checkDuplicate() {
+    if (state.amount <= 0 || state.category == null) {
+      state = state.copyWith(isDuplicateWarning: false);
+      return;
+    }
+
+    final expensesState = ref.read(expensesProvider);
+    expensesState.whenData((expenses) {
+      final isDuplicate = expenses.any((e) {
+        // Check if same amount and category in the last 2 hours
+        final timeDiff = DateTime.now().difference(e.date).inHours.abs();
+        return e.amount == state.amount && 
+               e.category == state.category && 
+               timeDiff < 2 &&
+               e.id != state.editingTransactionId;
+      });
+      state = state.copyWith(isDuplicateWarning: isDuplicate);
+    });
   }
 
   void updateAmount(String digits) {
     if (digits.isEmpty) {
       state = state.copyWith(amountString: '');
+      _checkDuplicate();
       return;
     }
     if (digits == 'BACK') {
@@ -341,6 +387,7 @@ class SmartEntryController extends Notifier<SmartEntryState> {
           ),
         );
       }
+      _checkDuplicate();
       return;
     }
     if (digits == '.') {
@@ -357,12 +404,18 @@ class SmartEntryController extends Notifier<SmartEntryState> {
     final parsed = CurrencyUtils.parseAmount(newAmount);
     if (parsed != null && parsed > AppConstants.maxExpenseAmount) return;
     state = state.copyWith(amountString: newAmount);
+    _checkDuplicate();
   }
 
-  void setAmount(double amount) =>
-      state = state.copyWith(amountString: amount.toStringAsFixed(2));
-  void setCategory(String? category) =>
-      state = state.copyWith(category: category);
+  void setAmount(double amount) {
+    state = state.copyWith(amountString: amount.toStringAsFixed(2));
+    _checkDuplicate();
+  }
+
+  void setCategory(String? category) {
+    state = state.copyWith(category: category);
+    _checkDuplicate();
+  }
   void setSource(String? source) => state = state.copyWith(source: source);
   void setAccount(String? account) => state = state.copyWith(account: account);
   void setFromAccount(String? account) =>

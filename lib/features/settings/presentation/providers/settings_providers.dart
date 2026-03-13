@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/local/settings_local_data_source.dart';
@@ -11,7 +12,7 @@ final settingsLocalDataSourceProvider = Provider((ref) {
   // Initialize asynchronously and handle errors
   dataSource.init().catchError((error) {
     // Log error but don't rethrow to prevent app crash
-    print('Settings data source initialization failed: $error');
+    debugPrint('Settings data source initialization failed: $error');
   });
   ref.onDispose(() => dataSource.close());
   return dataSource;
