@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show TimeOfDay;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart';
@@ -464,5 +464,40 @@ class SmartEntryController extends Notifier<SmartEntryState> {
       _initSuggestions();
     }
     return success;
+  }
+
+  // --- UI Helpers ---
+
+  Color getAccentColor(BuildContext context) {
+    switch (state.mode) {
+      case TransactionMode.expense:
+        return Theme.of(context).primaryColor;
+      case TransactionMode.income:
+        return Colors.green;
+      case TransactionMode.transfer:
+        return Colors.orange;
+    }
+  }
+
+  String getFormattedAmount() {
+    return CurrencyUtils.formatAmount(state.amount);
+  }
+
+  double? getDailySpendPreview() {
+    if (state.mode != TransactionMode.expense || state.amount <= 0) return null;
+    // Placeholder logic: 1000 is a hypothetical daily budget
+    return 1000.0 - state.amount;
+  }
+
+  double? getIncomeBalancePreview() {
+    if (state.mode != TransactionMode.income || state.amount <= 0) return null;
+    // Placeholder logic: 5000 is a hypothetical current balance
+    return 5000.0 + state.amount;
+  }
+
+  String? getTransferPreview() {
+    if (state.mode != TransactionMode.transfer || state.amount <= 0) return null;
+    if (state.fromAccount == null || state.toAccount == null) return null;
+    return 'Moving ${CurrencyUtils.formatAmount(state.amount)} from ${state.fromAccount} to ${state.toAccount}';
   }
 }

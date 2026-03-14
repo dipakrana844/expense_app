@@ -38,15 +38,16 @@ class CategoryPicker extends ConsumerWidget {
           if (selectedCategory != null) selectedCategory!.trim(),
         }.where((name) => name.isNotEmpty).toList();
         final selectedValue =
-            selectedCategory != null && categoryNames.contains(selectedCategory)
-            ? selectedCategory
-            : null;
+            selectedCategory != null &&
+                    categoryNames.contains(selectedCategory?.trim())
+                ? selectedCategory?.trim()
+                : null;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<String>(
-              initialValue: selectedValue,
+              value: selectedValue,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
@@ -74,11 +75,11 @@ class CategoryPicker extends ConsumerWidget {
                 // Add category option at the bottom
                 DropdownMenuItem(
                   value: AppCategories.addCategoryActionValue,
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Icon(Icons.add, size: 20),
+                      Icon(Icons.add, size: 20),
                       const SizedBox(width: 12),
-                      const Text('Add Category'),
+                      Text('Add Category'),
                     ],
                   ),
                 ),

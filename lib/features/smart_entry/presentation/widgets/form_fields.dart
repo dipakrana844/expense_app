@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart' hide DateUtils;
+import 'package:flutter/material.dart' hide DateUtils;
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/utils.dart' as app_utils;
 import '../../../../core/services/smart_suggestion_service.dart';
@@ -278,14 +278,25 @@ class SmartEntryFormFields extends ConsumerWidget {
     String? value,
     Function(String?) onChanged,
   ) {
+    // Ensure the current value is in the items list to avoid Crash
+    final effectiveSources = <String>{
+      ...sources,
+      if (value != null && value.trim().isNotEmpty) value.trim(),
+    }.toList();
+
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value:
+          value != null &&
+                  value.trim().isNotEmpty &&
+                  effectiveSources.contains(value.trim())
+              ? value.trim()
+              : null,
       decoration: const InputDecoration(
         labelText: 'Source',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.attach_money),
       ),
-      items: sources
+      items: effectiveSources
           .map((src) => DropdownMenuItem(value: src, child: Text(src)))
           .toList(),
       onChanged: onChanged,
@@ -299,14 +310,25 @@ class SmartEntryFormFields extends ConsumerWidget {
     String label,
     Function(String?) onChanged,
   ) {
+    // Ensure the current value is in the items list to avoid Crash
+    final effectiveAccounts = <String>{
+      ...accounts,
+      if (value != null && value.trim().isNotEmpty) value.trim(),
+    }.toList();
+
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value:
+          value != null &&
+                  value.trim().isNotEmpty &&
+                  effectiveAccounts.contains(value.trim())
+              ? value.trim()
+              : null,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
         prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
       ),
-      items: accounts
+      items: effectiveAccounts
           .map((acc) => DropdownMenuItem(value: acc, child: Text(acc)))
           .toList(),
       onChanged: onChanged,
@@ -359,6 +381,7 @@ class SmartEntryFormFields extends ConsumerWidget {
     if (pickedDate != null) {
       onDateChanged(pickedDate);
 
+      if (!context.mounted) return;
       final pickedTime = await showTimePicker(
         context: context,
         initialTime: state.time,
