@@ -163,6 +163,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      // OCR Scan Route
+      GoRoute(
+        path: '/ocr/scan',
+        name: 'ocr-scan',
+        builder: (context, state) => const OCRScanScreen(),
+      ),
       // Income Routes
       GoRoute(
         path: '/income/add',

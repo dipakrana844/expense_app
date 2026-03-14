@@ -183,81 +183,37 @@ class SettingsLocalDataSource {
   Future<int> calculateActualStorageUsage() async {
     int totalBytes = 0;
     
-    try {
-      // Calculate settings box size
-      if (_isInitialized) {
-        final settingsBytes = _estimateBoxSize(_settingsBox);
-        totalBytes += settingsBytes;
-      }
-      
-      // Calculate expenses box size (if accessible)
+    final boxNames = [
+      AppConstants.expensesBoxName,
+      'incomes', // IncomeLocalDataSource._boxName is private
+      'grocery_preferences_box',
+      AppConstants.insightsBoxName,
+      AppConstants.budgetBoxName,
+      AppConstants.scheduledExpensesBoxName,
+      AppConstants.settingsBoxName,
+      'daily_spend_box',
+      'categories_box',
+    ];
+
+    for (final name in boxNames) {
       try {
-        final expensesBox = await Hive.openBox('expenses_box');
-        final expensesBytes = _estimateBoxSize(expensesBox);
-        totalBytes += expensesBytes;
-        await expensesBox.close();
+        final isAlreadyOpen = Hive.isBoxOpen(name);
+        Box box;
+        if (isAlreadyOpen) {
+          box = Hive.box(name);
+        } else {
+          box = await Hive.openBox(name);
+        }
+        
+        totalBytes += _estimateBoxSize(box);
+        
+        // Only close if we opened it specifically for this calculation
+        if (!isAlreadyOpen) {
+          await box.close();
+        }
       } catch (e) {
-        // Expenses box might not be accessible, skip
-        debugPrint('Could not access expenses box for storage calculation: $e');
+        debugPrint('Could not access box $name for storage calculation: $e');
       }
-      
-      // Calculate income box size (if accessible)
-      try {
-        final incomeBox = await Hive.openBox('incomes');
-        final incomeBytes = _estimateBoxSize(incomeBox);
-        totalBytes += incomeBytes;
-        await incomeBox.close();
-      } catch (e) {
-        // Income box might not be accessible, skip
-        debugPrint('Could not access income box for storage calculation: $e');
-      }
-      
-      // Calculate grocery preferences box size (if accessible)
-      try {
-        final groceryBox = await Hive.openBox('grocery_preferences_box');
-        final groceryBytes = _estimateBoxSize(groceryBox);
-        totalBytes += groceryBytes;
-        await groceryBox.close();
-      } catch (e) {
-        // Grocery box might not be accessible, skip
-        debugPrint('Could not access grocery preferences box for storage calculation: $e');
-      }
-      
-      // Calculate insights box size (if accessible)
-      try {
-        final insightsBox = await Hive.openBox('insights_box');
-        final insightsBytes = _estimateBoxSize(insightsBox);
-        totalBytes += insightsBytes;
-        await insightsBox.close();
-      } catch (e) {
-        // Insights box might not be accessible, skip
-        debugPrint('Could not access insights box for storage calculation: $e');
-      }
-      
-      // Calculate budget box size (if accessible)
-      try {
-        final budgetBox = await Hive.openBox('budget_box');
-        final budgetBytes = _estimateBoxSize(budgetBox);
-        totalBytes += budgetBytes;
-        await budgetBox.close();
-      } catch (e) {
-        // Budget box might not be accessible, skip
-        debugPrint('Could not access budget box for storage calculation: $e');
-      }
-      
-      // Calculate scheduled expenses box size (if accessible)
-      try {
-        final scheduledBox = await Hive.openBox('scheduled_expenses_box');
-        final scheduledBytes = _estimateBoxSize(scheduledBox);
-        totalBytes += scheduledBytes;
-        await scheduledBox.close();
-      } catch (e) {
-        // Scheduled expenses box might not be accessible, skip
-        debugPrint('Could not access scheduled expenses box for storage calculation: $e');
-      }
-      
-    } catch (e) {
-      debugPrint('Error calculating storage usage: $e');
     }
     
     return totalBytes;

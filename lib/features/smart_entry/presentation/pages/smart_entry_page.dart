@@ -43,7 +43,7 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
 
   @override
   void dispose() {
-    ref.read(smartEntryControllerProvider.notifier).resetForCreate();
+    _magicTextController.dispose();
     super.dispose();
   }
 
@@ -447,13 +447,15 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
 
   void _openOcrScanner() {
     context.push('/ocr/scan').then((result) {
+      if (!mounted) return;
       if (result != null && result is Map<String, dynamic>) {
         final controller = ref.read(smartEntryControllerProvider.notifier);
         if (result['amount'] != null) {
           controller.setAmount(result['amount'] as double);
         }
         if (result['category'] != null) {
-          controller.setCategory(result['category'] as String);
+          final category = result['category'] as String;
+          controller.setCategory(category);
         }
         if (result['note'] != null) {
           controller.setNote(result['note'] as String);
@@ -464,6 +466,7 @@ class _SmartEntryPageState extends ConsumerState<SmartEntryPage> {
 
   void _openGrocerySession() {
     context.push('/grocery/add').then((result) {
+      if (!mounted) return;
       if (result != null && result is Map<String, dynamic>) {
         final controller = ref.read(smartEntryControllerProvider.notifier);
         if (result['amount'] != null) {

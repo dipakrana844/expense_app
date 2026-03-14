@@ -38,7 +38,6 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
 
   @override
   void dispose() {
-    ref.read(smartEntryControllerProvider.notifier).resetForCreate();
     super.dispose();
   }
 
@@ -338,6 +337,7 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
 
   void _openOcrScanner() {
     context.push('/ocr/scan').then((result) {
+      if (!context.mounted) return;
       // Handle OCR scan result - could populate form fields
       if (result != null && result is Map<String, dynamic>) {
         final controller = ref.read(smartEntryControllerProvider.notifier);
@@ -356,6 +356,7 @@ class _SmartEntryScreenState extends ConsumerState<SmartEntryScreen> {
 
   void _openGrocerySession() {
     context.push('/grocery/add').then((result) {
+      if (!context.mounted) return;
       // Handle grocery session result
       if (result != null && result is Map<String, dynamic>) {
         final controller = ref.read(smartEntryControllerProvider.notifier);

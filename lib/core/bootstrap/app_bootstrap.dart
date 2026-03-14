@@ -18,6 +18,8 @@ import '../../features/grocery/presentation/providers/grocery_notifier.dart';
 import '../../features/settings/presentation/providers/settings_providers.dart';
 import '../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../features/categories/data/category_infrastructure_provider.dart';
+import '../../features/spending_intelligence/data/datasources/spending_intelligence_local_data_source.dart';
+import '../../features/spending_intelligence/presentation/providers/spending_intelligence_provider.dart';
 
 final appConfigProvider = Provider<AppConfig>(
   (ref) => throw UnimplementedError('appConfigProvider must be overridden'),
@@ -43,6 +45,9 @@ Future<void> bootstrap(Environment env) async {
           _dailySpendDataSource,
         ),
         categoryLocalDataSourceProvider.overrideWithValue(_categoryDataSource),
+        spendingIntelligenceLocalDataSourceProvider.overrideWithValue(
+          _spendingIntelligenceDataSource,
+        ),
         appConfigProvider.overrideWithValue(config),
       ],
       observers: const [LoggerObserver()],
@@ -58,6 +63,7 @@ late GroceryPreferencesLocalDataSource _groceryPreferencesDataSource;
 late SettingsLocalDataSource _settingsDataSource;
 late DailySpendLocalDataSource _dailySpendDataSource;
 late CategoryLocalDataSource _categoryDataSource;
+late SpendingIntelligenceLocalDataSource _spendingIntelligenceDataSource;
 
 Future<void> setupDependencies(AppConfig config) async {
   // Initialize Background Service
@@ -89,6 +95,11 @@ Future<void> setupDependencies(AppConfig config) async {
   _categoryDataSource = CategoryLocalDataSource();
   await _categoryDataSource.init();
 
-  // Open Budget Box
+  // Initialize Spending Intelligence Data Source
+  _spendingIntelligenceDataSource = SpendingIntelligenceLocalDataSource();
+  await _spendingIntelligenceDataSource.init();
+
+  // Open any remaining boxes from AppConstants to ensure they're ready
   await Hive.openBox(AppConstants.budgetBoxName);
+  await Hive.openBox(AppConstants.scheduledExpensesBoxName);
 }
