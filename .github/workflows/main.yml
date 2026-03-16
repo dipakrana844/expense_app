@@ -1,66 +1,42 @@
-# name: Flutter CI/CD
+name: Flutter CI
 
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-# jobs:
-#   analyze_and_test:
-#     name: Static Analysis and Testing
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-      
-#       - name: Setup Flutter
-#         uses: subosito/flutter-action@v2
-#         with:
-#           channel: 'stable'
-#           cache: true
+jobs:
+  flutter_ci:
+    runs-on: ubuntu-latest
 
-#       - name: Install Dependencies
-#         run: flutter pub get
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-#       - name: Run Build Runner
-#         run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
 
-#       # - name: Static Analysis
-#       #   run: flutter analyze
+      - name: Install Dependencies
+        run: flutter pub get
 
-#       - name: Run Tests
-#         run: flutter test
+      - name: Generate Files
+        run: dart run build_runner build --delete-conflicting-outputs
 
-#   build_android:
-#     name: Build Android APK
-#     needs: analyze_and_test
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
+      # - name: Analyze Project
+      #   run: flutter analyze
 
-#       - name: Setup Java
-#         uses: actions/setup-java@v3
-#         with:
-#           distribution: 'zulu'
-#           java-version: '17'
+      - name: Run Tests
+        run: flutter test
 
-#       - name: Setup Flutter
-#         uses: subosito/flutter-action@v2
-#         with:
-#           channel: 'stable'
-#           cache: true
+      - name: Build Debug APK
+        run: flutter build apk --debug
 
-#       - name: Install Dependencies
-#         run: flutter pub get
-
-#       - name: Run Build Runner
-#         run: flutter pub run build_runner build --delete-conflicting-outputs
-
-#       - name: Build APK
-#         run: flutter build apk --debug
-
-#       - name: Upload APK
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: debug-apk
-#           path: build/app/outputs/flutter-apk/app-debug.apk
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
