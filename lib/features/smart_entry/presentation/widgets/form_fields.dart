@@ -285,7 +285,7 @@ class SmartEntryFormFields extends ConsumerWidget {
     }.toList();
 
     return DropdownButtonFormField<String>(
-      value:
+      initialValue:
           value != null &&
                   value.trim().isNotEmpty &&
                   effectiveSources.contains(value.trim())
@@ -317,7 +317,7 @@ class SmartEntryFormFields extends ConsumerWidget {
     }.toList();
 
     return DropdownButtonFormField<String>(
-      value:
+      initialValue:
           value != null &&
                   value.trim().isNotEmpty &&
                   effectiveAccounts.contains(value.trim())

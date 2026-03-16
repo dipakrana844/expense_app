@@ -47,7 +47,7 @@ class CategoryPicker extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<String>(
-              value: selectedValue,
+              initialValue: selectedValue,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
@@ -78,7 +78,7 @@ class CategoryPicker extends ConsumerWidget {
                   child: const Row(
                     children: [
                       Icon(Icons.add, size: 20),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Text('Add Category'),
                     ],
                   ),
