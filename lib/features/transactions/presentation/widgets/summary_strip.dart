@@ -225,14 +225,14 @@ class SummaryStrip extends ConsumerWidget {
           ),
           _buildStatItem(
             context,
-            '${summary.expenseCount}',
-            'Expense Entries',
-            theme.colorScheme.error,
+            '${summary.transferCount}',
+            'Transfers',
+            theme.colorScheme.tertiary,
           ),
           _buildStatItem(
             context,
             '${summary.transactionCount}',
-            'Total',
+            'Total Items',
             theme.colorScheme.secondary,
           ),
         ],

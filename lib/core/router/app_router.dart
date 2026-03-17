@@ -52,36 +52,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: '/transactions',
                 name: 'transactions',
                 builder: (context, state) => const TransactionsPage(),
-                routes: [
-                  // GoRoute(
-                  //   path: 'add',
-                  //   name: 'add-expense',
-                  //   parentNavigatorKey: _rootNavigatorKey,
-                  //   builder: (context, state) => const AddEditExpenseScreen(),
-                  // ),
-                  // GoRoute(
-                  //   path: 'edit/:id',
-                  //   name: 'edit-expense',
-                  //   parentNavigatorKey: _rootNavigatorKey,
-                  //   builder: (context, state) {
-                  //     final id = state.pathParameters['id']!;
-                  //     final extras = state.extra as Map<String, dynamic>? ?? {};
-                  //     return AddEditExpenseScreen(
-                  //       expenseId: id,
-                  //       initialAmount: extras['amount'] as double?,
-                  //       initialCategory: extras['category'] as String?,
-                  //       initialDate: extras['date'] != null
-                  //           ? DateTime.fromMillisecondsSinceEpoch(
-                  //               extras['date'] as int,
-                  //             )
-                  //           : null,
-                  //       initialNote: extras['note'] as String?,
-                  //       initialMetadata:
-                  //           extras['metadata'] as Map<String, dynamic>?,
-                  //     );
-                  //   },
-                  // ),
-                ],
               ),
             ],
           ),
@@ -110,17 +80,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
 
-          // Branch Income
-          // StatefulShellBranch(
-          //   navigatorKey: _shellNavigatorIncomeKey,
-          //   routes: [
-          //     GoRoute(
-          //       path: '/income',
-          //       name: 'income',
-          //       builder: (context, state) => const TransactionsPage(),
-          //     ),
-          //   ],
-          // ),
 
           // Branch Budget
           StatefulShellBranch(

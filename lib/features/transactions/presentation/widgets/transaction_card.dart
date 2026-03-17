@@ -13,6 +13,11 @@ class TransactionCard extends ConsumerWidget {
   final TransactionEntity transaction;
   final VoidCallback? onTap;
 
+  static String getColorIndicator(TransactionEntity transaction) {
+    if (transaction.isIncome) return '🟢';
+    if (transaction.isExpense) return '🔴';
+    return '🔵';
+  }
   const TransactionCard({super.key, required this.transaction, this.onTap});
 
   @override
@@ -49,10 +54,11 @@ class TransactionCard extends ConsumerWidget {
 
   /// Build category/source icon with appropriate styling
   Widget _buildCategoryIcon(ThemeData theme) {
-    final isIncome = transaction.isIncome;
-    final color = isIncome
+    final color = transaction.isIncome
         ? theme.colorScheme.primary
-        : theme.colorScheme.error;
+        : transaction.isExpense
+            ? theme.colorScheme.error
+            : theme.colorScheme.tertiary;
 
     return Container(
       width: 48,
@@ -63,7 +69,9 @@ class TransactionCard extends ConsumerWidget {
         border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Icon(
-        TransactionUtils.getCategoryIcon(transaction.categoryOrSource),
+        transaction.isTransfer
+            ? Icons.sync_alt
+            : TransactionUtils.getCategoryIcon(transaction.categoryOrSource),
         color: color,
         size: 24,
       ),
@@ -117,10 +125,11 @@ class TransactionCard extends ConsumerWidget {
     ThemeData theme,
     WidgetRef ref,
   ) {
-    final isIncome = transaction.isIncome;
-    final color = isIncome
+    final color = transaction.isIncome
         ? theme.colorScheme.primary
-        : theme.colorScheme.error;
+        : transaction.isExpense
+            ? theme.colorScheme.error
+            : theme.colorScheme.onSurface;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,

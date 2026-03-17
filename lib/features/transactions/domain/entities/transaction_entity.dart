@@ -73,6 +73,10 @@ class TransactionEntity with _$TransactionEntity implements TransactionInterface
   @override
   bool get isExpense => type == TransactionType.expense;
 
+  /// Business Logic: Check if this is a transfer transaction
+  @override
+  bool get isTransfer => type == TransactionType.transfer;
+
   /// Business Logic: Get amount as positive value for display
   @override
   double get displayAmount => amount.abs();
@@ -82,7 +86,8 @@ class TransactionEntity with _$TransactionEntity implements TransactionInterface
   @override
   String? validate() {
     if (id.isEmpty) return 'ID cannot be empty';
-    if (amount <= 0) return 'Amount must be greater than 0';
+    if (amount <= 0 && type != TransactionType.transfer) return 'Amount must be greater than 0';
+    if (amount < 0) return 'Amount cannot be negative';
     if (categoryOrSource.isEmpty) return 'Category/Source is required';
     if (date.isAfter(DateTime.now().add(const Duration(days: 1)))) {
       return 'Date cannot be too far in the future';

@@ -72,73 +72,80 @@ class CalendarGridView extends StatelessWidget {
     // Calculate total days to show (6 weeks = 42 days)
     final totalDays = ((lastDayOfMonth.day + firstDayWeekday) ~/ 7 + 1) * 7;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Day headers
-          Container(
-            height: 40,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              children: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-                  .map(
-                    (day) => Expanded(
-                      child: Center(
-                        child: Text(
-                          day,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w600,
+    return CustomScrollView(
+      slivers: [
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              // Day headers
+              Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  children: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+                      .map(
+                        (day) => Expanded(
+                          child: Center(
+                            child: Text(
+                              day,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-          // Calendar grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              childAspectRatio: 1.0,
-              mainAxisSpacing: 1,
-              crossAxisSpacing: 1,
-            ),
-            itemCount: totalDays,
-            itemBuilder: (context, index) {
-              final day = index - firstDayWeekday + 1;
-              final isCurrentMonth = day >= 1 && day <= lastDayOfMonth.day;
-              final dayTransactions = isCurrentMonth
-                  ? (transactionsByDay[day] ?? [])
-                  : [];
+                      )
+                      .toList(),
+                ),
+              ),
+              // Calendar grid
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  childAspectRatio: 1.0,
+                  mainAxisSpacing: 1,
+                  crossAxisSpacing: 1,
+                ),
+                itemCount: totalDays,
+                itemBuilder: (context, index) {
+                  final day = index - firstDayWeekday + 1;
+                  final isCurrentMonth = day >= 1 && day <= lastDayOfMonth.day;
+                  final dayTransactions = isCurrentMonth
+                      ? (transactionsByDay[day] ?? [])
+                      : [];
 
-              // Calculate income and expenses for this day
-              double dayIncome = 0;
-              double dayExpense = 0;
-              for (final transaction in dayTransactions) {
-                if (transaction.isIncome) {
-                  dayIncome += transaction.amount;
-                } else {
-                  dayExpense += transaction.amount;
-                }
-              }
+                  // Calculate income and expenses for this day
+                  double dayIncome = 0;
+                  double dayExpense = 0;
+                  for (final transaction in dayTransactions) {
+                    if (transaction.isIncome) {
+                      dayIncome += transaction.amount;
+                    } else {
+                      dayExpense += transaction.amount;
+                    }
+                  }
 
-              return CalendarDayCell(
-                day: day,
-                isCurrentMonth: isCurrentMonth,
-                dayIncome: dayIncome,
-                dayExpense: dayExpense,
-                month: month,
-                theme: theme,
-                index: index,
-              );
-            },
+                  return CalendarDayCell(
+                    day: day,
+                    isCurrentMonth: isCurrentMonth,
+                    dayIncome: dayIncome,
+                    dayExpense: dayExpense,
+                    month: month,
+                    theme: theme,
+                    index: index,
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

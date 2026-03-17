@@ -27,24 +27,46 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage>
   bool _isSearching = false;
   final _searchController = TextEditingController();
   late TabController _tabController;
+  int _tabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+    _tabController.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    if (_tabController.indexIsChanging) return;
+    if (_tabIndex != _tabController.index) {
+      setState(() {
+        _tabIndex = _tabController.index;
+      });
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _searchController.dispose();
     _tabController.dispose();
     super.dispose();
+  }
+
+  double _getExpandedHeight() {
+    // Daily and Monthly tabs show the full summary header
+    if (_tabIndex == 0 || _tabIndex == 2) {
+      return 280;
+    }
+    // Other tabs (Calendar, Total, Notes) show a more compact header
+    return 120;
   }
 
   @override
   Widget build(BuildContext context) {
     final groupedTransactionsAsync = ref.watch(groupedTransactionsProvider);
     final theme = Theme.of(context);
+    final showSummary = _tabIndex == 0 || _tabIndex == 2;
 
     return Scaffold(
       body: NestedScrollView(
@@ -75,9 +97,11 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage>
                 foregroundColor: theme.colorScheme.onSurface,
                 floating: true,
                 pinned: true,
-                expandedHeight: 280,
-                flexibleSpace: const FlexibleSpaceBar(
-                  background: ModernSummaryHeader(),
+                expandedHeight: _getExpandedHeight(),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: showSummary
+                      ? const ModernSummaryHeader()
+                      : const SizedBox.shrink(),
                   collapseMode: CollapseMode.pin,
                 ),
                 bottom: PreferredSize(

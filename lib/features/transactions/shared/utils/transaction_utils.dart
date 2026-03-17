@@ -18,8 +18,10 @@ class TransactionUtils {
     
     if (transaction.isIncome) {
       return '+${AppConstants.currencySymbol}$amount';
-    } else {
+    } else if (transaction.isExpense) {
       return '-${AppConstants.currencySymbol}$amount';
+    } else {
+      return '${AppConstants.currencySymbol}$amount';
     }
   }
 
@@ -27,7 +29,9 @@ class TransactionUtils {
   ///
   /// Returns appropriate color based on transaction type for UI display
   static String getColorIndicator(TransactionEntity transaction) {
-    return transaction.isIncome ? '🟢' : '🔴';
+    if (transaction.isIncome) return '🟢';
+    if (transaction.isExpense) return '🔴';
+    return '🔵';
   }
 
   /// Calculate net balance from list of transactions
@@ -142,9 +146,24 @@ class TransactionUtils {
     );
   }
 
+  /// Convert transfer entity to transaction entity
+  static TransactionEntity fromTransfer(dynamic transfer) {
+    return TransactionEntity(
+      id: transfer.id,
+      amount: transfer.amount,
+      type: TransactionType.transfer,
+      categoryOrSource: '${transfer.fromAccount} → ${transfer.toAccount}',
+      date: transfer.date,
+      note: transfer.note,
+      createdAt: transfer.createdAt ?? transfer.date,
+      updatedAt: transfer.updatedAt,
+      metadata: transfer.metadata,
+    );
+  }
+
   /// Merge and sort transactions from both sources
   static List<TransactionEntity> mergeTransactions(
-      List<dynamic> incomes, List<dynamic> expenses) {
+      List<dynamic> incomes, List<dynamic> expenses, [List<dynamic>? transfers]) {
     final transactionList = <TransactionEntity>[];
     
     // Convert incomes
@@ -155,6 +174,13 @@ class TransactionUtils {
     // Convert expenses
     for (final expense in expenses) {
       transactionList.add(fromExpense(expense));
+    }
+
+    // Convert transfers
+    if (transfers != null) {
+      for (final transfer in transfers) {
+        transactionList.add(fromTransfer(transfer));
+      }
     }
     
     // Sort by date descending (newest first)

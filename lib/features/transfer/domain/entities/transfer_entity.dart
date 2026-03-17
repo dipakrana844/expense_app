@@ -72,6 +72,10 @@ class TransferEntity with _$TransferEntity implements TransactionInterface {
   @override
   bool get isExpense => false;
 
+  /// Business Logic: Check if this is a transfer transaction
+  @override
+  bool get isTransfer => true;
+
   /// Business Logic: Get amount as positive value for display
   @override
   double get displayAmount => amount.abs();

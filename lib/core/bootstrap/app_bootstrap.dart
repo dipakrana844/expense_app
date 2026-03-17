@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/app_config.dart';
 import '../enums/environment.dart';
 import '../../app.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../constants/app_constants.dart';
 import '../../features/expenses/data/local/expense_local_data_source.dart';
 import '../../features/income/data/local/income_local_data_source.dart';
 import '../../features/grocery/data/local/grocery_preferences_local_data_source.dart';
@@ -20,6 +18,10 @@ import '../../features/daily_spend_guard/presentation/providers/daily_spend_prov
 import '../../features/categories/data/category_infrastructure_provider.dart';
 import '../../features/spending_intelligence/data/datasources/spending_intelligence_local_data_source.dart';
 import '../../features/spending_intelligence/presentation/providers/spending_intelligence_provider.dart';
+import '../../features/budget/data/local/budget_local_data_source.dart';
+import '../../features/budget/data/budget_infrastructure_provider.dart';
+import '../../features/transfer/data/local/transfer_local_data_source.dart';
+import '../../features/transfer/presentation/providers/transfer_providers.dart';
 
 final appConfigProvider = Provider<AppConfig>(
   (ref) => throw UnimplementedError('appConfigProvider must be overridden'),
@@ -48,6 +50,8 @@ Future<void> bootstrap(Environment env) async {
         spendingIntelligenceLocalDataSourceProvider.overrideWithValue(
           _spendingIntelligenceDataSource,
         ),
+        budgetLocalDataSourceProvider.overrideWithValue(_budgetDataSource),
+        transferLocalDataSourceProvider.overrideWithValue(_transferDataSource),
         appConfigProvider.overrideWithValue(config),
       ],
       observers: const [LoggerObserver()],
@@ -64,6 +68,8 @@ late SettingsLocalDataSource _settingsDataSource;
 late DailySpendLocalDataSource _dailySpendDataSource;
 late CategoryLocalDataSource _categoryDataSource;
 late SpendingIntelligenceLocalDataSource _spendingIntelligenceDataSource;
+late BudgetLocalDataSource _budgetDataSource;
+late TransferLocalDataSource _transferDataSource;
 
 Future<void> setupDependencies(AppConfig config) async {
   // Initialize Background Service
@@ -99,7 +105,11 @@ Future<void> setupDependencies(AppConfig config) async {
   _spendingIntelligenceDataSource = SpendingIntelligenceLocalDataSource();
   await _spendingIntelligenceDataSource.init();
 
-  // Open any remaining boxes from AppConstants to ensure they're ready
-  await Hive.openBox(AppConstants.budgetBoxName);
-  await Hive.openBox(AppConstants.scheduledExpensesBoxName);
+  // Initialize Budget Data Source
+  _budgetDataSource = BudgetLocalDataSource();
+  await _budgetDataSource.init();
+
+  // Initialize Transfer Data Source
+  _transferDataSource = TransferLocalDataSource();
+  await _transferDataSource.init();
 }

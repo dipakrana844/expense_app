@@ -70,6 +70,10 @@ class ExpenseEntity with _$ExpenseEntity implements TransactionInterface {
   @override
   bool get isExpense => true;
 
+  /// Business Logic: Check if this is a transfer transaction
+  @override
+  bool get isTransfer => false;
+
   /// Business Logic: Get amount as positive value for display
   @override
   double get displayAmount => amount.abs();

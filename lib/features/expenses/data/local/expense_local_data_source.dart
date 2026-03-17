@@ -18,9 +18,10 @@ import '../models/scheduled_expense_model.dart';
 /// - Repository coordinates business logic and error handling
 class ExpenseLocalDataSource {
   late Box<ExpenseModel> _expenseBox;
+  late Box<ScheduledExpenseModel> _scheduledBox;
   bool _isInitialized = false;
 
-  /// Initialize Hive and open expense box
+  /// Initialize Hive and open boxes
   ///
   /// CRITICAL: Must be called before any other operations
   /// Throws exception if initialization fails - app cannot function without storage
@@ -40,17 +41,16 @@ class ExpenseLocalDataSource {
       }
 
       if (!Hive.isAdapterRegistered(1)) {
-        try {
-          // Register ScheduledExpenseModelAdapter if generated
-          Hive.registerAdapter(ScheduledExpenseModelAdapter());
-        } catch (e) {
-          debugPrint('ScheduledExpenseModelAdapter not registered: $e');
-        }
+        Hive.registerAdapter(ScheduledExpenseModelAdapter());
       }
 
       // Open boxes
       _expenseBox = await Hive.openBox<ExpenseModel>(
         AppConstants.expensesBoxName,
+      );
+
+      _scheduledBox = await Hive.openBox<ScheduledExpenseModel>(
+        AppConstants.scheduledExpensesBoxName,
       );
 
       _isInitialized = true;
@@ -59,6 +59,7 @@ class ExpenseLocalDataSource {
       rethrow;
     }
   }
+
 
   /// Create a new expense
   ///
@@ -169,6 +170,18 @@ class ExpenseLocalDataSource {
   int getExpenseCount() {
     _ensureInitialized();
     return _expenseBox.length;
+  }
+
+  /// Get all scheduled expenses
+  List<ScheduledExpenseModel> getAllScheduledExpenses() {
+    _ensureInitialized();
+    return _scheduledBox.values.toList();
+  }
+
+  /// Clear all scheduled expenses
+  Future<void> clearAllScheduledExpenses() async {
+    _ensureInitialized();
+    await _scheduledBox.clear();
   }
 
   /// Close the Hive box

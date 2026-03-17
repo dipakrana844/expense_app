@@ -54,71 +54,77 @@ class MonthlyListView extends StatelessWidget {
         (a, b) => DateTime.parse('$b-01').compareTo(DateTime.parse('$a-01')),
       );
 
-    return ListView.builder(
-      itemCount: sortedMonths.length,
-      itemBuilder: (context, index) {
-        final monthKey = sortedMonths[index];
-        final monthTransactions = transactionsByMonth[monthKey]!;
+    return CustomScrollView(
+      slivers: [
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final monthKey = sortedMonths[index];
+            final monthTransactions = transactionsByMonth[monthKey]!;
 
-        // Calculate totals for this month
-        double monthIncome = 0;
-        double monthExpense = 0;
-        for (final transaction in monthTransactions) {
-          if (transaction.isIncome) {
-            monthIncome += transaction.amount;
-          } else {
-            monthExpense += transaction.amount;
-          }
-        }
-        final net = monthIncome - monthExpense;
+            // Calculate totals for this month
+            double monthIncome = 0;
+            double monthExpense = 0;
+            for (final transaction in monthTransactions) {
+              if (transaction.isIncome) {
+                monthIncome += transaction.amount;
+              } else {
+                monthExpense += transaction.amount;
+              }
+            }
+            final net = monthIncome - monthExpense;
 
-        return ExpansionTile(
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _formatMonthYear(monthKey),
-                  style: theme.textTheme.titleMedium,
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+            return ExpansionTile(
+              title: Row(
                 children: [
-                  Text(
-                    '+${CurrencyUtils.formatAmountWithoutSymbol(monthIncome)}',
-                    style: TextStyle(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Text(
+                      _formatMonthYear(monthKey),
+                      style: theme.textTheme.titleMedium,
                     ),
                   ),
-                  Text(
-                    '-${CurrencyUtils.formatAmountWithoutSymbol(monthExpense)}',
-                    style: TextStyle(
-                      color: theme.colorScheme.error,
-                      fontSize: 12,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '+${CurrencyUtils.formatAmountWithoutSymbol(monthIncome)}',
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '-${CurrencyUtils.formatAmountWithoutSymbol(monthExpense)}',
+                        style: TextStyle(
+                          color: theme.colorScheme.error,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-          subtitle: Text(
-            'Net: ${net >= 0 ? '+' : ''}${CurrencyUtils.formatAmountWithoutSymbol(net)}',
-            style: TextStyle(
-              color: net >= 0
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.error,
-            ),
-          ),
-          children: [
-            // Weekly breakdown
-            WeeklyBreakdown(
-              transactions: monthTransactions,
-              monthKey: monthKey,
-            ),
-          ],
-        );
-      },
+              subtitle: Text(
+                'Net: ${net >= 0 ? '+' : ''}${CurrencyUtils.formatAmountWithoutSymbol(net)}',
+                style: TextStyle(
+                  color: net >= 0
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.error,
+                ),
+              ),
+              children: [
+                // Weekly breakdown
+                WeeklyBreakdown(
+                  transactions: monthTransactions,
+                  monthKey: monthKey,
+                ),
+              ],
+            );
+          }, childCount: sortedMonths.length),
+        ),
+      ],
     );
   }
 

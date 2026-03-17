@@ -38,153 +38,160 @@ class TotalViewContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Budget Status Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Budget Status',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    LinearProgressIndicator(
-                      value:
-                          summary.totalExpenses /
-                          1000, // Assuming budget of 1000 for demo
-                      backgroundColor:
-                          theme.colorScheme.surfaceContainerHighest,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        summary.totalExpenses / 1000 > 0.8
-                            ? theme.colorScheme.error
-                            : summary.totalExpenses / 1000 > 0.6
-                            ? theme.colorScheme.secondary
-                            : theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Used: ${CurrencyUtils.formatAmount(summary.totalExpenses)}',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        Text(
-                          'Budget: ${CurrencyUtils.formatAmount(1000)}', // Placeholder
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Comparison Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Compared to Last Month',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ComparisonItem(
-                          label: 'Income',
-                          currentValue: summary.totalIncome,
-                          previousValue:
-                              summary.totalIncome * 0.95, // Placeholder
-                          theme: theme,
-                        ),
-                        ComparisonItem(
-                          label: 'Expenses',
-                          currentValue: summary.totalExpenses,
-                          previousValue:
-                              summary.totalExpenses * 1.1, // Placeholder
-                          theme: theme,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Account Totals
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Account Totals',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    AccountTotalItem(
-                      label: 'Total Income',
-                      amount: summary.totalIncome,
-                      color: theme.colorScheme.primary,
-                    ),
-                    AccountTotalItem(
-                      label: 'Total Expenses',
-                      amount: summary.totalExpenses,
-                      color: theme.colorScheme.error,
-                    ),
-                    AccountTotalItem(
-                      label: 'Net Balance',
-                      amount: summary.netBalance,
-                      color: summary.netBalance >= 0
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.error,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Export Option
-            FilledButton.icon(
-              onPressed: () {
-                // Handle export
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Export feature coming soon')),
-                );
-              },
-              icon: const Icon(Icons.download),
-              label: const Text('Export Data'),
-            ),
-          ],
+    return CustomScrollView(
+      slivers: [
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         ),
-      ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Budget Status Card
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Budget Status',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        LinearProgressIndicator(
+                          value:
+                              summary.totalExpenses /
+                              1000, // Assuming budget of 1000 for demo
+                          backgroundColor:
+                              theme.colorScheme.surfaceContainerHighest,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            summary.totalExpenses / 1000 > 0.8
+                                ? theme.colorScheme.error
+                                : summary.totalExpenses / 1000 > 0.6
+                                ? theme.colorScheme.secondary
+                                : theme.colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Used: ${CurrencyUtils.formatAmount(summary.totalExpenses)}',
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            Text(
+                              'Budget: ${CurrencyUtils.formatAmount(1000)}', // Placeholder
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Comparison Card
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Compared to Last Month',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ComparisonItem(
+                              label: 'Income',
+                              currentValue: summary.totalIncome,
+                              previousValue:
+                                  summary.totalIncome * 0.95, // Placeholder
+                              theme: theme,
+                            ),
+                            ComparisonItem(
+                              label: 'Expenses',
+                              currentValue: summary.totalExpenses,
+                              previousValue:
+                                  summary.totalExpenses * 1.1, // Placeholder
+                              theme: theme,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Account Totals
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Account Totals',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        AccountTotalItem(
+                          label: 'Total Income',
+                          amount: summary.totalIncome,
+                          color: theme.colorScheme.primary,
+                        ),
+                        AccountTotalItem(
+                          label: 'Total Expenses',
+                          amount: summary.totalExpenses,
+                          color: theme.colorScheme.error,
+                        ),
+                        AccountTotalItem(
+                          label: 'Net Balance',
+                          amount: summary.netBalance,
+                          color: summary.netBalance >= 0
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.error,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Export Option
+                FilledButton.icon(
+                  onPressed: () {
+                    // Handle export
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Export feature coming soon')),
+                    );
+                  },
+                  icon: const Icon(Icons.download),
+                  label: const Text('Export Data'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

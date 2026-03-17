@@ -39,6 +39,9 @@ class NotesView extends ConsumerWidget {
 
         return CustomScrollView(
           slivers: [
+            SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
             SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final dateKey = transactionsWithNotes.keys.elementAt(index);

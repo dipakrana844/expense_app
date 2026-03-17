@@ -66,9 +66,13 @@ class IncomeEntity with _$IncomeEntity implements TransactionInterface {
   @override
   bool get isIncome => true;
 
-  /// Business Logic: Check if this is an expense transaction
+  /// Business Logic: Check if this is an expense transaction (false for transfer)
   @override
   bool get isExpense => false;
+
+  /// Business Logic: Check if this is a transfer transaction
+  @override
+  bool get isTransfer => false;
 
   /// Business Logic: Get amount as positive value for display
   @override

@@ -141,6 +141,9 @@ class _MockTransaction implements TransactionInterface {
   
   @override
   bool get isExpense => !_isIncome;
+
+  @override
+  bool get isTransfer => false;
   
   @override
   String get dateKey => DateTime.now().toString();

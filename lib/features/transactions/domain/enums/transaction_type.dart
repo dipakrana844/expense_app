@@ -5,4 +5,7 @@ enum TransactionType {
 
   /// Expense transaction (money spent)
   expense,
+
+  /// Transfer transaction (money moved between accounts)
+  transfer,
 }

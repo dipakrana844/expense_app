@@ -40,6 +40,9 @@ abstract class TransactionInterface {
   /// Check if this is an expense transaction
   bool get isExpense;
 
+  /// Check if this is a transfer transaction
+  bool get isTransfer;
+
   /// Get formatted date key for grouping (YYYY-MM-DD)
   String get dateKey;
 

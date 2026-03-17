@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import '../../../income/data/local/income_local_data_source.dart';
 import '../../../expenses/data/local/expense_local_data_source.dart';
+import '../../../transfer/data/local/transfer_local_data_source.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/entities/transaction_summary.dart';
 import '../../domain/enums/transaction_type.dart';
@@ -17,20 +19,25 @@ import '../../shared/utils/transaction_utils.dart';
 class TransactionRepository {
   final IncomeLocalDataSource _incomeDataSource;
   final ExpenseLocalDataSource _expenseDataSource;
+  final TransferLocalDataSource _transferDataSource;
 
   TransactionRepository({
     required IncomeLocalDataSource incomeDataSource,
     required ExpenseLocalDataSource expenseDataSource,
+    required TransferLocalDataSource transferDataSource,
   }) : _incomeDataSource = incomeDataSource,
-       _expenseDataSource = expenseDataSource;
+       _expenseDataSource = expenseDataSource,
+       _transferDataSource = transferDataSource;
 
   /// Get all transactions (both income and expenses) sorted by date
   Future<List<TransactionEntity>> getAllTransactions() async {
     try {
       final incomes = await _incomeDataSource.getAllIncomes();
       final expenses = _expenseDataSource.getAllExpenses();
-      return TransactionUtils.mergeTransactions(incomes, expenses);
+      final transfers = await _transferDataSource.getAllTransfers();
+      return TransactionUtils.mergeTransactions(incomes, expenses, transfers);
     } catch (e) {
+      debugPrint('Error fetching all transactions: $e');
       return [];
     }
   }
@@ -39,17 +46,27 @@ class TransactionRepository {
   Future<List<TransactionEntity>> getTransactionsByType(
     TransactionType? type,
   ) async {
-    final allTransactions = await getAllTransactions();
-    return TransactionUtils.filterByType(allTransactions, type);
+    try {
+      final allTransactions = await getAllTransactions();
+      return TransactionUtils.filterByType(allTransactions, type);
+    } catch (e) {
+      debugPrint('Error filtering transactions by type: $e');
+      return [];
+    }
   }
 
   /// Get transactions for a specific month
   Future<List<TransactionEntity>> getMonthlyTransactions(DateTime month) async {
-    final allTransactions = await getAllTransactions();
-    return allTransactions.where((transaction) {
-      return transaction.date.year == month.year &&
-          transaction.date.month == month.month;
-    }).toList();
+    try {
+      final allTransactions = await getAllTransactions();
+      return allTransactions.where((transaction) {
+        return transaction.date.year == month.year &&
+            transaction.date.month == month.month;
+      }).toList();
+    } catch (e) {
+      debugPrint('Error fetching monthly transactions: $e');
+      return [];
+    }
   }
 
   /// Get transactions within a date range
