@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../domain/entities/financial_trend_dto.dart';
-import '../widgets/net_balance_chart.dart';
-import '../widgets/income_expense_comparison_chart.dart';
-import '../widgets/financial_health_summary.dart';
 import '../providers/financial_trend_providers.dart';
+import '../widgets/financial_health_summary.dart';
+import '../widgets/income_expense_comparison_chart.dart';
+import '../widgets/net_balance_chart.dart';
 
 /// Screen: Accounts Overview
 ///
@@ -103,7 +104,11 @@ class AccountsOverviewScreen extends ConsumerWidget {
   }
 
   /// Build individual insight card
-  Widget _buildInsightCard(dynamic insight, ThemeData theme, bool isDark) {
+  Widget _buildInsightCard(
+    FinancialInsight insight,
+    ThemeData theme,
+    bool isDark,
+  ) {
     final IconData icon;
     final Color iconColor;
     final Color backgroundColor;
