@@ -1,11 +1,21 @@
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../data/ocr_data_source.dart';
+import '../../domain/usecases/process_receipt_usecase.dart';
 import '../../domain/usecases/scan_receipt_usecase.dart';
+import '../../data/repositories/ocr_repository_impl.dart';
 import '../../../grocery/domain/entities/grocery_item.dart';
 import 'ocr_state.dart';
 
 part 'ocr_provider.g.dart';
+
+@riverpod
+ProcessReceiptUseCase processReceiptUseCase(Ref ref) {
+  return ProcessReceiptUseCase(
+    ref.watch(ocrRepositoryProvider),
+    ref.watch(scanReceiptUseCaseProvider),
+  );
+}
 
 /// OCR Provider with robust error handling and fallback strategies
 ///
@@ -50,9 +60,11 @@ class GroceryOCRNotifier extends _$GroceryOCRNotifier {
       // Step 3: Start loading state AFTER image is picked
       state = state.copyWith(isScanning: true);
 
-      // Step 4: Perform OCR with timeout and error handling
-      final dataSource = ref.read(ocrDataSourceProvider);
-      final ocrResult = await dataSource.scanReceipt(image);
+      // Step 4: Perform OCR and Parse via UseCase
+      final useCase = ref.read(processReceiptUseCaseProvider);
+      final result = await useCase.execute(image);
+      final ocrResult = result.ocrResult;
+      final items = result.items;
 
       // Step 5: Handle OCR failure
       if (!ocrResult.success) {
@@ -63,41 +75,26 @@ class GroceryOCRNotifier extends _$GroceryOCRNotifier {
         return;
       }
 
-      // Step 6: Handle empty OCR result
-      if (ocrResult.text.isEmpty) {
-        state = state.copyWith(
-          isScanning: false,
-          errorMessage:
-              'No text detected in the image. Try a clearer photo or add items manually.',
-          noItemsDetected: true,
-        );
-        return;
-      }
-
-      // Step 7: Parse OCR text into grocery items
-      final useCase = ref.read(scanReceiptUseCaseProvider);
-      final items = useCase.execute(ocrResult.text);
-
-      // Step 8: Update state with results
+      // Step 6: Handle empty results
       if (items.isEmpty) {
-        // OCR worked but parsing failed - show raw text for manual editing
         state = state.copyWith(
           isScanning: false,
           extractedRawText: ocrResult.text,
-          errorMessage:
-              'Could not parse items automatically. You can add them manually.',
+          errorMessage: ocrResult.text.isEmpty
+              ? 'No text detected in the image.'
+              : 'Could not parse items automatically. You can add them manually.',
           noItemsDetected: true,
         );
       } else {
-        // Success! Show parsed items
+        // Step 7: Success! update state with results
         state = state.copyWith(
           isScanning: false,
-          extractedRawText: ocrResult.text, // Keep for reference
+          extractedRawText: ocrResult.text,
           scannedItems: items,
         );
       }
     } catch (e) {
-      // Step 9: Handle unexpected errors - NEVER leave user stuck
+      // Step 8: Handle unexpected errors
       state = state.copyWith(
         isScanning: false,
         errorMessage: 'Unexpected error: ${e.toString()}. Please try again.',

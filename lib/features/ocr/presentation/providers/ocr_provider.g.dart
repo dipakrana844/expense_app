@@ -6,8 +6,26 @@ part of 'ocr_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$processReceiptUseCaseHash() =>
+    r'315d9646757175540073e5507a23ebeb3f54ad88';
+
+/// See also [processReceiptUseCase].
+@ProviderFor(processReceiptUseCase)
+final processReceiptUseCaseProvider =
+    AutoDisposeProvider<ProcessReceiptUseCase>.internal(
+  processReceiptUseCase,
+  name: r'processReceiptUseCaseProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$processReceiptUseCaseHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef ProcessReceiptUseCaseRef
+    = AutoDisposeProviderRef<ProcessReceiptUseCase>;
 String _$groceryOCRNotifierHash() =>
-    r'158f661698dac3e166161550661512a06262f7ff';
+    r'37dd6084c976b454984f0ea473b6a3c7bb9d8522';
 
 /// OCR Provider with robust error handling and fallback strategies
 ///
