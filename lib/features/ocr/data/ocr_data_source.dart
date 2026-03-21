@@ -1,36 +1,11 @@
 import 'dart:io';
-
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../domain/entities/ocr_result.dart';
 
 part 'ocr_data_source.g.dart';
-
-/// Result class for OCR scanning
-class OCRResult {
-  final String text;
-  final bool success;
-  final String? errorMessage;
-
-  const OCRResult({
-    required this.text,
-    required this.success,
-    this.errorMessage,
-  });
-
-  factory OCRResult.success(String text) =>
-      OCRResult(text: text, success: true);
-
-  factory OCRResult.failure(String error) =>
-      OCRResult(text: '', success: false, errorMessage: error);
-
-  factory OCRResult.empty() => const OCRResult(
-    text: '',
-    success: true,
-    errorMessage: 'No text detected in image',
-  );
-}
 
 abstract class OCRDataSource {
   Future<OCRResult> scanReceipt(XFile image);

@@ -125,7 +125,6 @@ class AccountsOverviewScreen extends ConsumerWidget {
         backgroundColor = isDark ? Colors.orange[900]! : Colors.orange[50]!;
         break;
       case InsightSeverity.info:
-      default:
         icon = Icons.info_outline;
         iconColor = isDark ? Colors.blue[300]! : Colors.blue[700]!;
         backgroundColor = isDark ? Colors.blue[900]! : Colors.blue[50]!;

@@ -189,7 +189,9 @@ class ErrorHandlingService {
         await retryFunction();
         return true;
       } catch (e, s) {
-        await handleError(e, s, context: context);
+        if (context.mounted) {
+          await handleError(e, s, context: context);
+        }
         return false;
       }
     }
