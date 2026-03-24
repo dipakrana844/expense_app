@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/analytics/presentation/providers/analytics_providers.dart';
+import 'package:smart_expense_tracker/features/analytics/domain/entities/analytics_entity.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/presentation/widgets/daily_spend_card.dart';
 
@@ -117,7 +118,10 @@ class AnalyticsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDailySnapshot(BuildContext context, DailySnapshot snapshot) {
+  Widget _buildDailySnapshot(
+    BuildContext context,
+    DailySnapshotEntity snapshot,
+  ) {
     final theme = Theme.of(context);
     final isHigher = snapshot.percentChangeVsAverage > 0;
 
@@ -386,7 +390,7 @@ class AnalyticsScreen extends ConsumerWidget {
     String category,
     double amount,
     double total,
-    CategoryInsight? insight,
+    CategoryInsightEntity? insight,
     ThemeData theme,
   ) {
     final percentage = (amount / total * 100).toStringAsFixed(1);
