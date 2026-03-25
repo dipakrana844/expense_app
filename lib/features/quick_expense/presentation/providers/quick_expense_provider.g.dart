@@ -26,12 +26,12 @@ final quickExpenseSuccessProvider = AutoDisposeProvider<bool>.internal(
 
 typedef QuickExpenseSuccessRef = AutoDisposeProviderRef<bool>;
 String _$quickExpenseNotifierHash() =>
-    r'e0863005c6be7963cf66b1d8d42eea51b8096169';
+    r'8277b00719af09856bb409bbfaa12b2c4a003ad2';
 
 /// Provider for quick expense functionality
 ///
-/// Manages quick expense state and integrates with the existing
-/// expense repository for persistence.
+/// Manages quick expense state using clean architecture with
+/// proper separation of concerns through use cases.
 ///
 /// Copied from [QuickExpenseNotifier].
 @ProviderFor(QuickExpenseNotifier)

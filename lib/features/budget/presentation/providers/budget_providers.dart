@@ -1,27 +1,94 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/usecases/get_budget_usecase.dart';
+import '../../domain/usecases/update_budget_usecase.dart';
+import '../../domain/entities/budget_entity.dart';
 import '../../data/budget_infrastructure_provider.dart';
-import '../../data/local/budget_local_data_source.dart';
+import 'package:smart_expense_tracker/core/domain/usecases/base_usecase.dart';
+import 'package:smart_expense_tracker/core/error/failures.dart';
+import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
 
-class MonthlyBudgetNotifier extends StateNotifier<AsyncValue<double>> {
-  final BudgetLocalDataSource _dataSource;
+// ---------------------------------------------------------------------------
+// Use-case providers (depend only on abstract BudgetRepository)
+// ---------------------------------------------------------------------------
 
-  MonthlyBudgetNotifier(this._dataSource) : super(const AsyncValue.loading()) {
-    _loadBudget();
+final getBudgetUseCaseProvider = Provider<GetBudgetUseCase>((ref) {
+  final repository = ref.watch(budgetRepositoryProvider);
+  return GetBudgetUseCase(repository);
+});
+
+final updateBudgetUseCaseProvider = Provider<UpdateBudgetUseCase>((ref) {
+  final repository = ref.watch(budgetRepositoryProvider);
+  return UpdateBudgetUseCase(repository);
+});
+
+// ---------------------------------------------------------------------------
+// BudgetController — AsyncNotifierProvider
+// ---------------------------------------------------------------------------
+
+final budgetControllerProvider =
+    AsyncNotifierProvider<BudgetController, BudgetEntity?>(
+      BudgetController.new,
+    );
+
+class BudgetController extends AsyncNotifier<BudgetEntity?> {
+  late final GetBudgetUseCase _getBudgetUseCase;
+  late final UpdateBudgetUseCase _updateBudgetUseCase;
+
+  @override
+  Future<BudgetEntity?> build() async {
+    _getBudgetUseCase = ref.watch(getBudgetUseCaseProvider);
+    _updateBudgetUseCase = ref.watch(updateBudgetUseCaseProvider);
+    await _loadBudget();
+    return null; // placeholder, will be overridden by _loadBudget
   }
 
-  void _loadBudget() {
-    final budget = _dataSource.getMonthlyBudget();
+  Future<void> _loadBudget() async {
+    state = const AsyncValue.loading();
+    final (budget, failure) = await _getBudgetUseCase.call(NoParams());
+    if (failure != null) {
+      state = AsyncValue.error(
+        FailureX(failure).userMessage,
+        StackTrace.current,
+      );
+      return;
+    }
     state = AsyncValue.data(budget);
   }
 
   Future<void> updateBudget(double amount) async {
-    await _dataSource.updateMonthlyBudget(amount);
-    state = AsyncValue.data(amount);
+    final currency = ref.watch(defaultCurrencyProvider);
+    final newBudget = BudgetEntity(
+      amount: amount,
+      currency: currency,
+      isActive: true,
+      createdAt: state.value?.createdAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    final failure = await _updateBudgetUseCase.call(newBudget);
+    if (failure != null) {
+      state = AsyncValue.error(
+        FailureX(failure).userMessage,
+        StackTrace.current,
+      );
+      return;
+    }
+    state = AsyncValue.data(newBudget);
+  }
+
+  Future<void> clearBudget() async {
+    await updateBudget(0.0);
   }
 }
 
-final monthlyBudgetProvider =
-    StateNotifierProvider<MonthlyBudgetNotifier, AsyncValue<double>>((ref) {
-      final dataSource = ref.watch(budgetLocalDataSourceProvider);
-      return MonthlyBudgetNotifier(dataSource);
-    });
+// ---------------------------------------------------------------------------
+// Legacy provider for backward compatibility (returns double)
+// ---------------------------------------------------------------------------
+
+final monthlyBudgetProvider = Provider<AsyncValue<double>>((ref) {
+  final asyncValue = ref.watch(budgetControllerProvider);
+  return asyncValue.when(
+    data: (budget) => AsyncValue.data(budget?.amount ?? 0.0),
+    loading: () => const AsyncValue.loading(),
+    error: (error, stackTrace) => AsyncValue.error(error, stackTrace),
+  );
+});
