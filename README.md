@@ -1,187 +1,257 @@
-# Smart Expense Tracker Pro 🚀
+<p align="center">
+  <img src="assets/icon.png" width="128" alt="Smart Expense Tracker Icon" />
+</p>
 
-A production-grade, offline-first, and intelligence-driven Flutter application for comprehensive personal finance management.
+<h1 align="center">Smart Expense Tracker</h1>
 
-## 🌐 Multi-Environment Support
+<p align="center">
+  A production-ready, offline-first Flutter application for comprehensive personal finance management with clean architecture and intelligent features.
+</p>
 
-This application supports multiple deployment environments:
-- **Development** (`dev`) - For active development and testing
-- **Staging** (`staging`) - For pre-production validation
-- **Production** (`prod`) - For live releases
+## 🚀 Overview
+Smart Expense Tracker is a feature-rich mobile application that helps users track income, expenses, transfers, and analyze spending patterns. Built with Flutter and following clean architecture principles, it offers a unified transaction view, real-time spending protection, AI-powered insights, and receipt scanning capabilities.
 
-Each environment has distinct configurations for API endpoints, app naming, logging, and UI banners.
+## ✨ Features
 
----
-
-## ✨ Key Features
-
-### 📱 Modern Unified Transactions (NEW)
-- **Seamless Integration**: Single chronological view combining income and expenses naturally
-- **Multi-View Interface**: Five comprehensive views for different financial perspectives:
+### 📱 Core Transaction Management
+- **Unified Transactions**: Single chronological view combining income, expenses, and transfers
+- **Multiple Views**: Five comprehensive perspectives:
   - **Daily View**: Chronological transactions grouped by date
-  - **Calendar View**: Month grid with income/expense indicators per day
+  - **Calendar View**: Month grid with income/expense indicators
   - **Monthly View**: Year summary with expandable monthly breakdowns
-  - **Total View**: Overall financial overview with budget status and comparisons
+  - **Total View**: Overall financial overview with budget status
   - **Notes View**: Transactions with notes only, grouped by date
-- **Power User Controls**: Instant filtering between All/Income/Expenses with segmented controls
-- **Smart Navigation**: Month-by-month browsing with Previous/Next controls
-- **Real-time Summary**: Sticky financial overview showing Income/Expenses/Net balance
-- **Premium Design**: Dark-first fintech aesthetic with clear visual hierarchy
+- **Smart Filtering**: Instant filtering between All/Income/Expenses with segmented controls
 - **Advanced Search**: Real-time search across categories, sources, and notes
-- **Daily Usage Optimized**: Designed for heavy, real-world money tracking
 
-### 🛡️ Daily Spend Guard (NEW)
-- **Real-time Protection**: Know exactly how much you can spend TODAY with instant updates
+### 🛡️ Daily Spend Guard
+- **Real-time Protection**: Track daily spending against calculated limits
 - **Smart Daily Limits**: Automatically calculated from monthly budget or 30-day average
-- **Emotional Clarity**: Color-coded status (🟢 Safe / 🟡 Caution / 🔴 Exceeded) for instant understanding
-- **Zero Setup**: Works automatically with your existing budget and expenses
+- **Visual Status Indicators**: Color-coded status (Safe/Caution/Exceeded) for instant understanding
+- **Automatic Updates**: Works automatically with existing budget and expenses
 
 ### 🧠 AI Spending Intelligence
-
-- **Anomaly Detection**: Automatically identifies unusual spending patterns using statistical Z-Score analysis.
-- **Budget Burn Prediction**: Predicts when you will reach your budget limit based on current velocity.
-- **Category Dominance**: Real-time insights into which categories are consuming your wealth.
+- **Anomaly Detection**: Identifies unusual spending patterns using statistical Z-Score analysis
+- **Budget Burn Prediction**: Predicts when budget limits will be reached based on current velocity
+- **Category Dominance Insights**: Real-time insights into spending distribution
+- **Daily AI Insights**: Background-generated personalized financial recommendations
 
 ### 🔍 OCR & Quick Entry
+- **Receipt Scanning**: High-accuracy OCR powered by Google ML Kit to extract amounts and details
+- **Quick Expense**: One-tap expense entry with last-used category memory
+- **Grocery Sessions**: Dedicated mode for bulk-adding grocery items with real-time budget tracking
+- **Smart Entry**: Unified transaction entry for expenses, income, and transfers
 
-- **One-Tap Scanning**: High-accuracy OCR powered by Google ML Kit to extract amounts and tax from receipts.
-- **Grocery Sessions**: A dedicated mode for bulk-adding grocery items with real-time budget tracking.
+### 📊 Analytics & Visualization
+- **Financial Analytics**: Comprehensive spending and income analytics
+- **Interactive Charts**: Dynamic visualizations powered by `fl_chart`
+- **Net Worth Tracking**: Account balance and financial trend monitoring
+- **Budget Monitoring**: Real-time budget tracking with visual progress indicators
 
-### 📊 Elite Analytics
+### ⚙️ Management & Security
+- **Category Management**: Customizable expense and income categories
+- **Budget Management**: Set and monitor monthly spending limits
+- **Biometric Security**: FaceID/Fingerprint authentication for app protection
+- **App Settings**: Customizable themes, currency, and notification preferences
 
-- **Dynamic Visualizations**: Interactive charts powered by `fl_chart` with smooth transitions.
-- **Spending Trends**: Compare current spending against historical data.
+### 🔄 Automation
+- **Recurring Expenses**: Automated scheduled expense processing via background tasks
+- **Daily Resets**: Automatic daily spending limit resets
+- **Background Insights**: Automated AI insight generation in background
 
-### 🛡️ Privacy & Reliability
+## 🧱 Architecture
+The application follows **Clean Architecture** with clear separation of concerns:
+- **Presentation Layer**: Widgets, Providers (Riverpod), Screens
+- **Domain Layer**: Entities, Use Cases, Repository Interfaces
+- **Data Layer**: Repository Implementations, Data Sources, Models
 
-- **Offline-First**: Powered by Hive for instantaneous data access without internet.
-- **Biometric Security**: Secure your financial data with FaceID/Fingerprint.
-- **Automated Backups**: Background tasks handle recurring expenses and data integrity.
+**Feature-based organization** with each feature containing its own presentation, domain, and data layers for maintainability and scalability.
 
----
+## 📦 Tech Stack
 
-## 🛠 Tech Stack
+### Core Framework
+- **Flutter** (^3.10.4) - Cross-platform UI framework
+- **Dart** - Programming language
 
-- **Core**: [Flutter](https://flutter.dev) (Latest Stable)
-- **Architecture**: Clean Architecture (Feature-driven)
-- **State Management**: [Riverpod 3.x](https://riverpod.dev) with Code Generation
-- **Local Storage**: [Hive](https://pub.dev/packages/hive) (Fast NoSQL)
-- **Navigation**: [GoRouter](https://pub.dev/packages/go_router) (Declarative Routing)
-- **AI/ML**: Google ML Kit (Text Recognition)
-- **Visuals**: `fl_chart`, `google_fonts`, `flutter_animate`
+### State Management & Architecture
+- **Riverpod 3.x** - Reactive state management with code generation
+- **Clean Architecture** - Layered architecture pattern
+- **Freezed** - Immutable data classes with union types
 
----
+### Data Persistence
+- **Hive** - Fast NoSQL database for offline-first storage
+- **Shared Preferences** - Lightweight key-value storage for settings
 
-## 🚀 Getting Started
+### Navigation & Routing
+- **GoRouter** - Declarative routing with nested navigation
+- **Stateful Shell** - Bottom navigation with persistent state
 
-### Prerequisites
+### UI & Design
+- **Material Design 3** - Modern design system
+- **fl_chart** - Interactive charting library
+- **Google Fonts** - Typography customization
+- **Flutter Animate** - Smooth animations and transitions
 
-- Flutter SDK (^3.10.4)
-- Dart SDK
+### AI & Machine Learning
+- **Google ML Kit** - Text recognition for receipt scanning
+- **Custom Algorithms** - Statistical analysis for spending intelligence
 
-### Setup Instructions
+### Utilities & Services
+- **Workmanager** - Background task scheduling
+- **Local Auth** - Biometric authentication
+- **Image Picker** - Camera and gallery access
+- **Intl** - Internationalization and formatting
+- **UUID** - Unique identifier generation
 
-1.  **Clone & Fetch Dependencies**:
-
-    ```bash
-    git clone https://github.com/dipakrana844/expense_app.git
-    cd expense_app
-    flutter pub get
-    ```
-
-2.  **Generate Core Logic (Crucial)**:
-    This project uses `freezed`, `hive`, and `riverpod_generator`. You MUST run the build runner to generate models and adapters.
-
-    ```bash
-    flutter pub run build_runner build --delete-conflicting-outputs
-    ```
-
-3.  **Run Application**:
-    
-    By default, the app runs in development mode:
-    ```bash
-    flutter run
-    ```
-    
-    To run with specific flavors:
-    ```bash
-    # Development flavor
-    flutter run --flavor dev -t lib/main_dev.dart --dart-define=ENV=dev
-    
-    # Staging flavor
-    flutter run --flavor staging -t lib/main_staging.dart --dart-define=ENV=staging
-    
-    # Production flavor
-    flutter run --flavor prod -t lib/main_prod.dart --dart-define=ENV=prod
-    ```
-
----
-
-## 📂 Project Structure
+## 📁 Folder Structure
 
 ```text
 lib/
-├── core/                    # Shared utilities, routing, and global services
-│   ├── bootstrap/           # App initialization logic
-│   ├── config/              # Environment-specific configuration
-│   └── enums/               # App enumerations
-├── features/                # Feature modules
-│   ├── transactions/        # NEW: Unified income/expense tracking (default home screen)
-│   ├── daily_spend_guard/   # NEW: Real-time daily spending protection
-│   ├── expenses/            # Core CRUD and recurring logic
-│   ├── income/              # Income tracking and management
-│   ├── spending_intelligence/ # AI engine and insight logic
-│   ├── ocr/                 # Receipt scanning functionality
-│   ├── grocery/             # specialized bulk entry mode
-│   ├── analytics/           # fl_chart implementations
-│   ├── budget/              # Limit monitoring and alerts
-│   └── settings/            # App config and security
-├── main.dart                # Default entry point
-├── main_dev.dart            # Development entry point
-├── main_staging.dart        # Staging entry point
-└── main_prod.dart           # Production entry point
+├── core/                    # Shared utilities and infrastructure
+│   ├── bootstrap/          # App initialization and dependency injection
+│   ├── config/             # Environment-specific configuration
+│   ├── constants/          # App constants, strings, colors
+│   ├── domain/             # Core domain interfaces and use cases
+│   ├── error/              # Error handling and failure types
+│   ├── presentation/       # Shared UI components and screens
+│   ├── router/             # App routing configuration
+│   ├── services/           # Shared business logic services
+│   ├── theme/              # App theming and styling
+│   └── utils/              # Utility functions and extensions
+│
+├── features/               # Feature modules (Clean Architecture)
+│   ├── transactions/       # Unified transaction management (default home)
+│   ├── daily_spend_guard/  # Real-time daily spending protection
+│   ├── expenses/           # Expense CRUD and recurring logic
+│   ├── income/             # Income tracking and management
+│   ├── spending_intelligence/ # AI insights and anomaly detection
+│   ├── ocr/                # Receipt scanning with Google ML Kit
+│   ├── grocery/            # Specialized bulk grocery entry
+│   ├── analytics/          # Financial analytics and charts
+│   ├── budget/             # Budget monitoring and alerts
+│   ├── settings/           # App configuration and security
+│   ├── smart_entry/        # Unified transaction entry
+│   ├── quick_expense/      # Quick expense entry
+│   ├── categories/         # Category management
+│   ├── transfer/           # Transfer between accounts
+│   └── accounts_overview/  # Net worth tracking
+│
+├── main.dart               # Default entry point
+├── main_dev.dart           # Development entry point
+├── main_staging.dart       # Staging entry point
+└── main_prod.dart          # Production entry point
 ```
 
-## 🛠️ Building for Different Environments
+## ⚙️ Setup Instructions
 
-The app can be built with different flavors for various environments:
+### Prerequisites
+- Flutter SDK (^3.10.4)
+- Dart SDK
+- Android Studio / Xcode (for emulator/simulator)
+- Google ML Kit setup (for OCR functionality)
 
+### Installation Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/dipakrana844/expense_app.git
+   cd expense_app
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Generate code (CRITICAL)**
+   This project uses `freezed`, `hive`, and `riverpod_generator`. You MUST run the build runner:
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+
+4. **Run the application**
+   - **Development mode** (default):
+     ```bash
+     flutter run
+     ```
+   
+   - **With specific flavor**:
+     ```bash
+     # Development
+     flutter run --flavor dev -t lib/main_dev.dart --dart-define=ENV=dev
+     
+     # Staging
+     flutter run --flavor staging -t lib/main_staging.dart --dart-define=ENV=staging
+     
+     # Production
+     flutter run --flavor prod -t lib/main_prod.dart --dart-define=ENV=prod
+     ```
+
+### Building for Release
+
+**Android APK:**
 ```bash
-# Build development APK
+# Development
 flutter build apk --flavor dev --target lib/main_dev.dart --dart-define=ENV=dev
 
-# Build staging APK
+# Staging
 flutter build apk --flavor staging --target lib/main_staging.dart --dart-define=ENV=staging
 
-# Build production APK
+# Production
 flutter build apk --flavor prod --target lib/main_prod.dart --dart-define=ENV=prod
 ```
 
-For iOS builds:
-
+**iOS:**
 ```bash
-# Build for iOS with different flavors
 flutter build ios --flavor dev --target lib/main_dev.dart --dart-define=ENV=dev
-flutter build ios --flavor staging --target lib/main_staging.dart --dart-define=ENV=staging
-flutter build ios --flavor prod --target lib/main_prod.dart --dart-define=ENV=prod
 ```
 
-## 🚀 CI/CD Pipeline
+## 📌 Current Status
 
-This project is equipped with a robust **GitHub Actions** pipeline for Continuous Integration and Delivery:
+### ✅ Completed & Stable Features
+- Unified transaction management with 5 view modes
+- Daily spend guard with real-time protection
+- Expense and income CRUD operations
+- Category management
+- Budget tracking and monitoring
+- OCR receipt scanning (basic implementation)
+- Grocery session mode
+- Smart entry for unified transaction input
+- Quick expense entry
+- Transfer between accounts
+- Financial analytics and charts
+- Settings with biometric security
+- Background tasks for recurring expenses
+- AI spending intelligence (anomaly detection, budget prediction)
+- Multi-environment support (dev/staging/prod)
 
--   **Static Analysis**: Automatically runs `flutter analyze` on every push/PR to `main`.
--   **Automated Testing**: Runs the full suite of unit and widget tests.
--   **Android Artifacts**: Generates a debug APK on every successful build.
+### 🔄 In Progress / Planned Enhancements
+- Enhanced OCR accuracy and additional data extraction
+- Cloud sync and backup functionality
+- Export/import data features
+- Advanced reporting and PDF generation
+- Multi-currency support
+- Investment tracking integration
 
-You can view the workflow configuration in [.github/workflows/main.yml](file:///c:/Users/ADMIN/Documents/dipak/expense_app/.github/workflows/main.yml).
+### 🛠️ Technical Implementation Status
+- **Architecture**: Clean Architecture fully implemented
+- **State Management**: Riverpod with code generation
+- **Data Persistence**: Hive for offline-first storage
+- **Testing**: Unit and integration tests for core services and features
+- **CI/CD**: Manual builds (GitHub Actions pipeline planned)
+
+## 🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+**Built with ❤️ using Flutter & Clean Architecture**
