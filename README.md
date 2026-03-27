@@ -11,6 +11,22 @@
 ## 🚀 Overview
 Smart Expense Tracker is a feature-rich mobile application that helps users track income, expenses, transfers, and analyze spending patterns. Built with Flutter and following clean architecture principles, it offers a unified transaction view, real-time spending protection, AI-powered insights, and receipt scanning capabilities.
 
+## 📸 Screenshots (Updated, top-positioned)
+This project includes locally bundled screenshots in `ss/` folder. Using top placement ensures visibility of the current UI state before feature details.
+
+<table>
+  <tr>
+    <td><img src="ss/home.jpg" alt="Transactions screen" width="280"/></td>
+    <td><img src="ss/analytics.jpg" alt="Insights and trends" width="280"/></td>
+    <td><img src="ss/setting.jpg" alt="Settings screen" width="280"/></td>
+  </tr>
+  <tr>
+    <td align="center">Transactions</td>
+    <td align="center">Insights & Trends</td>
+    <td align="center">Settings</td>
+  </tr>
+</table>
+
 ## ✨ Features
 
 ### 📱 Core Transaction Management
@@ -218,6 +234,7 @@ flutter build ios --flavor dev --target lib/main_dev.dart --dart-define=ENV=dev
 - Grocery session mode
 - Smart entry for unified transaction input
 - Quick expense entry
+- Updated and production-ready UI layout with refined positioning for transactions and insights widgets
 - Transfer between accounts
 - Financial analytics and charts
 - Settings with biometric security
