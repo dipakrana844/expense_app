@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/data/local/daily_spend_local_data_source.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/data/repositories/daily_spend_repository_impl.dart';
@@ -9,8 +9,9 @@ import 'package:smart_expense_tracker/features/daily_spend_guard/domain/usecases
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/usecases/update_daily_spend_usecase.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 
-final dailySpendLocalDataSourceProvider =
-    Provider<DailySpendLocalDataSource>((ref) {
+final dailySpendLocalDataSourceProvider = Provider<DailySpendLocalDataSource>((
+  ref,
+) {
   return DailySpendLocalDataSource();
 });
 
@@ -30,31 +31,38 @@ final dailySpendRepositoryProvider = Provider<DailySpendRepository>((ref) {
   );
 });
 
-final calculateDailyLimitUseCaseProvider =
-    Provider<CalculateDailyLimitUseCase>((ref) {
-  final repository = ref.watch(dailySpendRepositoryProvider);
-  return CalculateDailyLimitUseCase(repository);
-});
+final calculateDailyLimitUseCaseProvider = Provider<CalculateDailyLimitUseCase>(
+  (ref) {
+    final repository = ref.watch(dailySpendRepositoryProvider);
+    return CalculateDailyLimitUseCase(repository);
+  },
+);
 
-final updateDailySpendUseCaseProvider = Provider<UpdateDailySpendUseCase>((ref) {
+final updateDailySpendUseCaseProvider = Provider<UpdateDailySpendUseCase>((
+  ref,
+) {
   final repository = ref.watch(dailySpendRepositoryProvider);
   return UpdateDailySpendUseCase(repository);
 });
 
-final dailySpendStateProvider = StateNotifierProvider<DailySpendNotifier,
-    AsyncValue<DailySpendStateEntity>>((ref) {
-  final repository = ref.watch(dailySpendRepositoryProvider);
-  final updateUseCase = ref.watch(updateDailySpendUseCaseProvider);
-  final calculateUseCase = ref.watch(calculateDailyLimitUseCaseProvider);
+final dailySpendStateProvider =
+    StateNotifierProvider<
+      DailySpendNotifier,
+      AsyncValue<DailySpendStateEntity>
+    >((ref) {
+      final repository = ref.watch(dailySpendRepositoryProvider);
+      final updateUseCase = ref.watch(updateDailySpendUseCaseProvider);
+      final calculateUseCase = ref.watch(calculateDailyLimitUseCaseProvider);
 
-  return DailySpendNotifier(
-    repository: repository,
-    updateUseCase: updateUseCase,
-    calculateUseCase: calculateUseCase,
-  );
-});
+      return DailySpendNotifier(
+        repository: repository,
+        updateUseCase: updateUseCase,
+        calculateUseCase: calculateUseCase,
+      );
+    });
 
-class DailySpendNotifier extends StateNotifier<AsyncValue<DailySpendStateEntity>> {
+class DailySpendNotifier
+    extends StateNotifier<AsyncValue<DailySpendStateEntity>> {
   final DailySpendRepository _repository;
   final UpdateDailySpendUseCase _updateUseCase;
   final CalculateDailyLimitUseCase _calculateUseCase;
@@ -63,10 +71,10 @@ class DailySpendNotifier extends StateNotifier<AsyncValue<DailySpendStateEntity>
     required DailySpendRepository repository,
     required UpdateDailySpendUseCase updateUseCase,
     required CalculateDailyLimitUseCase calculateUseCase,
-  })  : _repository = repository,
-        _updateUseCase = updateUseCase,
-        _calculateUseCase = calculateUseCase,
-        super(const AsyncValue.loading()) {
+  }) : _repository = repository,
+       _updateUseCase = updateUseCase,
+       _calculateUseCase = calculateUseCase,
+       super(const AsyncValue.loading()) {
     _initialize();
   }
 
@@ -142,4 +150,3 @@ class DailySpendNotifier extends StateNotifier<AsyncValue<DailySpendStateEntity>
     }
   }
 }
-

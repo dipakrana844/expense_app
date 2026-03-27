@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_expense_tracker/features/settings/data/infrastructure_provider.dart';
 import '../config/app_config.dart';
 import '../enums/environment.dart';
 import '../../app.dart';
@@ -13,7 +14,6 @@ import '../services/background_service.dart';
 import '../../features/expenses/presentation/providers/expense_providers.dart';
 import '../../features/income/presentation/providers/income_providers.dart';
 import '../../features/grocery/presentation/providers/grocery_notifier.dart';
-import '../../features/settings/presentation/providers/settings_providers.dart';
 import '../../features/daily_spend_guard/presentation/providers/daily_spend_providers.dart';
 import '../../features/categories/data/category_infrastructure_provider.dart';
 import '../../features/spending_intelligence/data/datasources/spending_intelligence_local_data_source.dart';

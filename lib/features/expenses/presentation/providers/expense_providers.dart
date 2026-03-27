@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:uuid/uuid.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import 'package:smart_expense_tracker/core/services/aggregation_service.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
@@ -43,7 +43,8 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
   final Ref _ref;
   StreamSubscription? _subscription;
 
-  ExpensesNotifier(this._repository, this._ref) : super(const AsyncValue.loading()) {
+  ExpensesNotifier(this._repository, this._ref)
+    : super(const AsyncValue.loading()) {
     _listenToExpenses();
   }
 
@@ -97,7 +98,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
         note: note,
       );
     }
-    
+
     // Update storage usage after adding expense
     try {
       final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
@@ -106,12 +107,14 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       // Silently fail if settings not available
       debugPrint('Failed to update storage usage after adding expense: $e');
     }
-    
+
     // Refresh transaction providers to update the UI
     try {
       _ref.read(transactionActionsProvider.notifier).refresh();
     } catch (e) {
-      debugPrint('Failed to refresh transaction providers after adding expense: $e');
+      debugPrint(
+        'Failed to refresh transaction providers after adding expense: $e',
+      );
     }
   }
 
@@ -129,7 +132,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       date: date,
       note: note,
     );
-    
+
     // Update storage usage after updating expense
     try {
       final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
@@ -138,18 +141,20 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       // Silently fail if settings not available
       debugPrint('Failed to update storage usage after updating expense: $e');
     }
-    
+
     // Refresh transaction providers to update the UI
     try {
       _ref.read(transactionActionsProvider.notifier).refresh();
     } catch (e) {
-      debugPrint('Failed to refresh transaction providers after updating expense: $e');
+      debugPrint(
+        'Failed to refresh transaction providers after updating expense: $e',
+      );
     }
   }
 
   Future<void> deleteExpense(String id) async {
     await _repository.deleteExpense(id);
-    
+
     // Update storage usage after deleting expense
     try {
       final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
@@ -158,12 +163,14 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
       // Silently fail if settings not available
       debugPrint('Failed to update storage usage after deleting expense: $e');
     }
-    
+
     // Refresh transaction providers to update the UI
     try {
       _ref.read(transactionActionsProvider.notifier).refresh();
     } catch (e) {
-      debugPrint('Failed to refresh transaction providers after deleting expense: $e');
+      debugPrint(
+        'Failed to refresh transaction providers after deleting expense: $e',
+      );
     }
   }
 
@@ -332,11 +339,13 @@ final monthlyAnalyticsProvider = Provider<MonthlyAnalytics>((ref) {
       );
 
       // Use shared service for calculations
-      final total = AggregationService.calculateTotal(transactions: currentMonthExpenses);
+      final total = AggregationService.calculateTotal(
+        transactions: currentMonthExpenses,
+      );
       final categoryBreakdown = AggregationService.calculateCategoryBreakdown(
         transactions: currentMonthExpenses,
       );
-      
+
       final topCategories = AggregationService.getTopCategories(
         transactions: currentMonthExpenses,
         limit: 1,
@@ -344,8 +353,12 @@ final monthlyAnalyticsProvider = Provider<MonthlyAnalytics>((ref) {
 
       return MonthlyAnalytics(
         totalSpent: total,
-        categoryBreakdown: categoryBreakdown.map((key, value) => MapEntry(key, value.amount)),
-        topCategory: topCategories.isNotEmpty ? topCategories.first.category : null,
+        categoryBreakdown: categoryBreakdown.map(
+          (key, value) => MapEntry(key, value.amount),
+        ),
+        topCategory: topCategories.isNotEmpty
+            ? topCategories.first.category
+            : null,
         topAmount: topCategories.isNotEmpty ? topCategories.first.amount : 0.0,
         expenseCount: currentMonthExpenses.length,
       );
@@ -374,11 +387,13 @@ final monthlyTrendProvider = Provider<Map<String, double>>((ref) {
           year: monthDate.year,
           month: monthDate.month,
         );
-        
-        final monthTotal = AggregationService.calculateTotal(transactions: monthExpenses);
+
+        final monthTotal = AggregationService.calculateTotal(
+          transactions: monthExpenses,
+        );
         trend[monthKey] = monthTotal;
       }
-      
+
       return trend;
     },
     orElse: () => {},

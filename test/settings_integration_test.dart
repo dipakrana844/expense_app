@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
+import 'package:smart_expense_tracker/features/settings/data/infrastructure_provider.dart';
 import 'package:smart_expense_tracker/features/settings/data/local/settings_local_data_source.dart';
 import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
 
@@ -35,14 +36,19 @@ class FakeSettingsLocalDataSource extends SettingsLocalDataSource {
   }) async {
     _settings = _settings.copyWith(
       defaultCurrency: defaultCurrency ?? _settings.defaultCurrency,
-      defaultExpenseCategory: defaultExpenseCategory ?? _settings.defaultExpenseCategory,
+      defaultExpenseCategory:
+          defaultExpenseCategory ?? _settings.defaultExpenseCategory,
       enableQuickExpense: enableQuickExpense ?? _settings.enableQuickExpense,
       enableGroceryOCR: enableGroceryOCR ?? _settings.enableGroceryOCR,
       saveLastStoreName: saveLastStoreName ?? _settings.saveLastStoreName,
-      showFrequentItemSuggestions: showFrequentItemSuggestions ?? _settings.showFrequentItemSuggestions,
-      clearGrocerySessionOnExit: clearGrocerySessionOnExit ?? _settings.clearGrocerySessionOnExit,
-      confirmBeforeGrocerySubmit: confirmBeforeGrocerySubmit ?? _settings.confirmBeforeGrocerySubmit,
-      enableSpendingIntelligence: enableSpendingIntelligence ?? _settings.enableSpendingIntelligence,
+      showFrequentItemSuggestions:
+          showFrequentItemSuggestions ?? _settings.showFrequentItemSuggestions,
+      clearGrocerySessionOnExit:
+          clearGrocerySessionOnExit ?? _settings.clearGrocerySessionOnExit,
+      confirmBeforeGrocerySubmit:
+          confirmBeforeGrocerySubmit ?? _settings.confirmBeforeGrocerySubmit,
+      enableSpendingIntelligence:
+          enableSpendingIntelligence ?? _settings.enableSpendingIntelligence,
       insightFrequency: insightFrequency ?? _settings.insightFrequency,
       enableAppLock: enableAppLock ?? _settings.enableAppLock,
       autoLockTimer: autoLockTimer ?? _settings.autoLockTimer,

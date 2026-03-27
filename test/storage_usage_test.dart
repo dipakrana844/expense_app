@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
+import 'package:smart_expense_tracker/features/settings/data/infrastructure_provider.dart';
 import 'package:smart_expense_tracker/features/settings/data/local/settings_local_data_source.dart';
 import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
 
@@ -88,11 +89,11 @@ void main() {
       // Should be a reasonable size for app data
       expect(estimatedBytes, lessThan(10000000)); // Less than 10MB
     });
-   group('Integration Tests Helper Methods', () {
+    group('Integration Tests Helper Methods', () {
       test('recalculateStorageUsage updates state', () async {
         final notifier = container.read(appSettingsNotifierProvider.notifier);
         await notifier.recalculateStorageUsage();
-        
+
         final state = container.read(appSettingsNotifierProvider);
         expect(state.storageUsageBytes, 1024);
       });

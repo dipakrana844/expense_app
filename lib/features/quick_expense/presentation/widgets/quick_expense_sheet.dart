@@ -108,7 +108,7 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -191,13 +191,13 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
         hintStyle: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: Colors.grey.withOpacity(0.5),
+          color: Colors.grey.withValues(alpha: 0.5),
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         filled: true,
         fillColor: Theme.of(
           context,
-        ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         contentPadding: const EdgeInsets.all(20),
       ),
       onChanged: (value) => notifier.updateAmount(value),

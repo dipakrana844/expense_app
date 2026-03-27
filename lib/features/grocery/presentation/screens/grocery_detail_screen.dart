@@ -59,7 +59,9 @@ class GroceryDetailScreen extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       elevation: 0,
-      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+      color: Theme.of(
+        context,
+      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -128,7 +130,9 @@ class GroceryDetailScreen extends ConsumerWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -167,14 +171,14 @@ class GroceryDetailScreen extends ConsumerWidget {
                 side: BorderSide(
                   color: Theme.of(
                     context,
-                  ).colorScheme.outlineVariant.withOpacity(0.5),
+                  ).colorScheme.outlineVariant.withValues(alpha: 0.5),
                 ),
               ),
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.1),
+                  ).colorScheme.primary.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.shopping_bag_outlined,
                     color: Theme.of(context).colorScheme.primary,
@@ -208,7 +212,9 @@ class GroceryDetailScreen extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -231,7 +237,9 @@ class GroceryDetailScreen extends ConsumerWidget {
             Text(
               'This expense was recorded without itemized tracking.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -268,7 +276,7 @@ class GroceryDetailScreen extends ConsumerWidget {
             side: BorderSide(
               color: Theme.of(
                 context,
-              ).colorScheme.outlineVariant.withOpacity(0.5),
+              ).colorScheme.outlineVariant.withValues(alpha: 0.5),
             ),
           ),
           child: Column(
@@ -311,12 +319,12 @@ class GroceryDetailScreen extends ConsumerWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       title: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
       subtitle: Text(

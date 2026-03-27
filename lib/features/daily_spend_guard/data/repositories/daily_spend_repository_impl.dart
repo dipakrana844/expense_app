@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/repositories/daily_spend_repository.dart';
 import 'package:smart_expense_tracker/features/expenses/data/repositories/expense_repository.dart';
@@ -15,9 +15,9 @@ class DailySpendRepositoryImpl implements DailySpendRepository {
     required DailySpendLocalDataSource localDataSource,
     required ExpenseRepository expenseRepository,
     required Box budgetBox,
-  })  : _localDataSource = localDataSource,
-        _expenseRepository = expenseRepository,
-        _budgetBox = budgetBox;
+  }) : _localDataSource = localDataSource,
+       _expenseRepository = expenseRepository,
+       _budgetBox = budgetBox;
 
   @override
   Future<void> init() {
@@ -59,10 +59,8 @@ class DailySpendRepositoryImpl implements DailySpendRepository {
     }
     return expenses
         .map(
-          (expense) => ExpenseSnapshot(
-            amount: expense.amount,
-            date: expense.date,
-          ),
+          (expense) =>
+              ExpenseSnapshot(amount: expense.amount, date: expense.date),
         )
         .toList();
   }

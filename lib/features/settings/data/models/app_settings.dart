@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 part 'app_settings.freezed.dart';
 part 'app_settings.g.dart';
@@ -17,78 +17,50 @@ part 'app_settings.g.dart';
 class AppSettings with _$AppSettings {
   const factory AppSettings({
     // Expense Preferences
-    @HiveField(0)
-    @Default('₹')
-    String defaultCurrency,
+    @HiveField(0) @Default('₹') String defaultCurrency,
 
-    @HiveField(1)
-    @Default('Others')
-    String defaultExpenseCategory,
+    @HiveField(1) @Default('Others') String defaultExpenseCategory,
 
-    @HiveField(2)
-    @Default(true)
-    bool enableQuickExpense,
+    @HiveField(2) @Default(true) bool enableQuickExpense,
 
-    @HiveField(3)
-    @Default(true)
-    bool enableGroceryOCR,
+    @HiveField(3) @Default(true) bool enableGroceryOCR,
 
     // Grocery Settings
-    @HiveField(4)
-    @Default(true)
-    bool saveLastStoreName,
+    @HiveField(4) @Default(true) bool saveLastStoreName,
 
-    @HiveField(5)
-    @Default(true)
-    bool showFrequentItemSuggestions,
+    @HiveField(5) @Default(true) bool showFrequentItemSuggestions,
 
-    @HiveField(6)
-    @Default(false)
-    bool clearGrocerySessionOnExit,
+    @HiveField(6) @Default(false) bool clearGrocerySessionOnExit,
 
-    @HiveField(7)
-    @Default(true)
-    bool confirmBeforeGrocerySubmit,
+    @HiveField(7) @Default(true) bool confirmBeforeGrocerySubmit,
 
     // Smart Insights Controls
-    @HiveField(8)
-    @Default(true)
-    bool enableSpendingIntelligence,
+    @HiveField(8) @Default(true) bool enableSpendingIntelligence,
 
     @HiveField(9)
     @Default(InsightFrequency.weekly)
     InsightFrequency insightFrequency,
 
     // Security Settings
-    @HiveField(10)
-    @Default(false)
-    bool enableAppLock,
+    @HiveField(10) @Default(false) bool enableAppLock,
 
     @HiveField(11)
     @Default(AutoLockTimer.thirtySeconds)
     AutoLockTimer autoLockTimer,
 
-    @HiveField(12)
-    @Default(true)
-    bool requireAuthOnLaunch,
+    @HiveField(12) @Default(true) bool requireAuthOnLaunch,
 
     // Data & Storage
-    @HiveField(13)
-    DateTime? lastExportDate,
+    @HiveField(13) DateTime? lastExportDate,
 
-    @HiveField(14)
-    int? storageUsageBytes,
+    @HiveField(14) int? storageUsageBytes,
 
     // Metadata
-    @HiveField(15)
-    DateTime? createdAt,
+    @HiveField(15) DateTime? createdAt,
 
-    @HiveField(16)
-    DateTime? lastModified,
+    @HiveField(16) DateTime? lastModified,
 
-    @HiveField(17)
-    @Default(1)
-    int version,
+    @HiveField(17) @Default(1) int version,
   }) = _AppSettings;
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

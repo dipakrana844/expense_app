@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 part 'grocery_preferences.freezed.dart';
 part 'grocery_preferences.g.dart';
@@ -15,42 +15,28 @@ part 'grocery_preferences.g.dart';
 class GroceryPreferences with _$GroceryPreferences {
   const factory GroceryPreferences({
     /// Last store name used in a grocery session
-    @HiveField(0)
-    String? lastStoreName,
+    @HiveField(0) String? lastStoreName,
 
     /// List of frequently purchased items (name only)
-    @HiveField(1)
-    @Default([])
-    List<String> frequentItems,
+    @HiveField(1) @Default([]) List<String> frequentItems,
 
     /// Maximum number of frequent items to track
-    @HiveField(2)
-    @Default(20)
-    int maxFrequentItems,
+    @HiveField(2) @Default(20) int maxFrequentItems,
 
     /// Whether to save last store name between sessions
-    @HiveField(3)
-    @Default(true)
-    bool saveLastStore,
+    @HiveField(3) @Default(true) bool saveLastStore,
 
     /// Whether to show frequent item suggestions
-    @HiveField(4)
-    @Default(true)
-    bool showSuggestions,
+    @HiveField(4) @Default(true) bool showSuggestions,
 
     /// Whether to clear grocery session on app exit
-    @HiveField(5)
-    @Default(false)
-    bool clearOnExit,
+    @HiveField(5) @Default(false) bool clearOnExit,
 
     /// Whether to confirm before submitting grocery session
-    @HiveField(6)
-    @Default(true)
-    bool confirmSubmit,
+    @HiveField(6) @Default(true) bool confirmSubmit,
 
     /// Timestamp of last update
-    @HiveField(7)
-    DateTime? lastUpdated,
+    @HiveField(7) DateTime? lastUpdated,
   }) = _GroceryPreferences;
 
   factory GroceryPreferences.fromJson(Map<String, dynamic> json) =>
