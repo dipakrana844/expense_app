@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../domain/entities/smart_entry_entity.dart';
 import '../../domain/enums/transaction_mode.dart';

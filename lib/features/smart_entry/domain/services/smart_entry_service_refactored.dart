@@ -69,7 +69,7 @@ class SmartEntryServiceRefactored {
       // Note: In a real implementation, we would also update other feature states
       // (expenses, incomes, transfers) through their respective repositories
       // This would be done via domain events or a coordinating service
-    } on Failure catch (failure) {
+    } on Failure {
       // Re-throw the failure for the presentation layer to handle
       rethrow;
     } catch (e) {

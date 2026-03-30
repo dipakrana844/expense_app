@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/core/error/failures.dart';
 
 import '../../domain/entities/smart_entry_entity.dart';
