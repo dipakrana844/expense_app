@@ -26,6 +26,16 @@ class FinancialTrendUseCase {
     required List<TransactionInterface> transactions,
     int monthsBack = 12,
   }) async {
+    // Validate monthsBack parameter
+    if (monthsBack <= 0) {
+      throw ArgumentError('monthsBack must be greater than 0');
+    }
+
+    // Limit to reasonable maximum to prevent performance issues
+    if (monthsBack > 60) {
+      monthsBack = 60;
+    }
+
     // Filter to relevant time period
     final cutoffDate = DateTime.now().subtract(Duration(days: 30 * monthsBack));
     final filteredTransactions = transactions
@@ -33,13 +43,9 @@ class FinancialTrendUseCase {
         .toList();
 
     // Separate income and expenses using TransactionInterface
-    final incomes = filteredTransactions
-        .where((t) => t.isIncome)
-        .toList();
-    
-    final expenses = filteredTransactions
-        .where((t) => t.isExpense)
-        .toList();
+    final incomes = filteredTransactions.where((t) => t.isIncome).toList();
+
+    final expenses = filteredTransactions.where((t) => t.isExpense).toList();
 
     // Generate all components
     final netBalanceTrend = _calculateNetBalanceTrend(
@@ -95,19 +101,15 @@ class FinancialTrendUseCase {
 
     // Sort dates and get month range
     allDates.sort();
-    final startDate = DateTime(
-      allDates.first.year,
-      allDates.first.month,
-      1,
-    );
-    
+    final startDate = DateTime(allDates.first.year, allDates.first.month, 1);
+
     final endDate = DateTime.now();
-    
+
     // Generate points for each month in range
     DateTime currentDate = startDate;
-    while (currentDate.isBefore(endDate) || 
-           (currentDate.year == endDate.year && currentDate.month == endDate.month)) {
-      
+    while (currentDate.isBefore(endDate) ||
+        (currentDate.year == endDate.year &&
+            currentDate.month == endDate.month)) {
       // Filter transactions for current month
       final monthIncomes = AggregationService.filterByMonth(
         transactions: incomes,
@@ -122,20 +124,29 @@ class FinancialTrendUseCase {
       );
 
       // Calculate monthly totals directly using TransactionInterface
-      final monthlyIncome = monthIncomes.fold<double>(0.0, (sum, t) => sum + t.amount);
-      final monthlyExpense = monthExpenses.fold<double>(0.0, (sum, t) => sum + t.amount);
-      
+      final monthlyIncome = monthIncomes.fold<double>(
+        0.0,
+        (sum, t) => sum + t.amount,
+      );
+      final monthlyExpense = monthExpenses.fold<double>(
+        0.0,
+        (sum, t) => sum + t.amount,
+      );
+
       final netChange = monthlyIncome - monthlyExpense;
       cumulativeBalance += netChange;
 
-      trendPoints.add(MonthlyBalancePoint(
-        monthKey: '${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}',
-        date: currentDate,
-        cumulativeBalance: cumulativeBalance,
-        monthlyIncome: monthlyIncome,
-        monthlyExpense: monthlyExpense,
-        netChange: netChange,
-      ));
+      trendPoints.add(
+        MonthlyBalancePoint(
+          monthKey:
+              '${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}',
+          date: currentDate,
+          cumulativeBalance: cumulativeBalance,
+          monthlyIncome: monthlyIncome,
+          monthlyExpense: monthlyExpense,
+          netChange: netChange,
+        ),
+      );
 
       // Move to next month
       currentDate = DateTime(currentDate.year, currentDate.month + 1, 1);
@@ -151,13 +162,13 @@ class FinancialTrendUseCase {
     required int monthsBack,
   }) {
     final comparisons = <IncomeExpenseComparison>[];
-    
+
     final now = DateTime.now();
-    
+
     // Calculate for last N months
     for (int i = monthsBack - 1; i >= 0; i--) {
       final monthDate = DateTime(now.year, now.month - i, 1);
-      
+
       final monthIncomes = AggregationService.filterByMonth(
         transactions: incomes,
         year: monthDate.year,
@@ -171,15 +182,24 @@ class FinancialTrendUseCase {
       );
 
       // Calculate totals directly using TransactionInterface
-      final incomeTotal = monthIncomes.fold<double>(0.0, (sum, t) => sum + t.amount);
-      final expenseTotal = monthExpenses.fold<double>(0.0, (sum, t) => sum + t.amount);
-      
-      comparisons.add(IncomeExpenseComparison(
-        monthKey: '${monthDate.year}-${monthDate.month.toString().padLeft(2, '0')}',
-        income: incomeTotal,
-        expense: expenseTotal,
-        difference: incomeTotal - expenseTotal,
-      ));
+      final incomeTotal = monthIncomes.fold<double>(
+        0.0,
+        (sum, t) => sum + t.amount,
+      );
+      final expenseTotal = monthExpenses.fold<double>(
+        0.0,
+        (sum, t) => sum + t.amount,
+      );
+
+      comparisons.add(
+        IncomeExpenseComparison(
+          monthKey:
+              '${monthDate.year}-${monthDate.month.toString().padLeft(2, '0')}',
+          income: incomeTotal,
+          expense: expenseTotal,
+          difference: incomeTotal - expenseTotal,
+        ),
+      );
     }
 
     return comparisons;
@@ -196,43 +216,55 @@ class FinancialTrendUseCase {
         averageMonthlyExpense: 0.0,
         savingsRate: 0.0,
         incomeConsistency: 0.0,
-        bestMonth: MonthlyPerformance(monthKey: '', netBalance: 0.0, savingsRate: 0.0),
-        worstMonth: MonthlyPerformance(monthKey: '', netBalance: 0.0, savingsRate: 0.0),
+        bestMonth: MonthlyPerformance(
+          monthKey: '',
+          netBalance: 0.0,
+          savingsRate: 0.0,
+        ),
+        worstMonth: MonthlyPerformance(
+          monthKey: '',
+          netBalance: 0.0,
+          savingsRate: 0.0,
+        ),
       );
     }
 
     // Group by month for analysis
     final monthlyData = <String, Map<String, double>>{};
-    
+
     // Process incomes
     for (final income in incomes) {
-      final monthKey = '${income.date.year}-${income.date.month.toString().padLeft(2, '0')}';
+      final monthKey =
+          '${income.date.year}-${income.date.month.toString().padLeft(2, '0')}';
       monthlyData.putIfAbsent(monthKey, () => {'income': 0.0, 'expense': 0.0});
-      monthlyData[monthKey]!['income'] = monthlyData[monthKey]!['income']! + income.amount;
+      monthlyData[monthKey]!['income'] =
+          monthlyData[monthKey]!['income']! + income.amount;
     }
-    
+
     // Process expenses
     for (final expense in expenses) {
-      final monthKey = '${expense.date.year}-${expense.date.month.toString().padLeft(2, '0')}';
+      final monthKey =
+          '${expense.date.year}-${expense.date.month.toString().padLeft(2, '0')}';
       monthlyData.putIfAbsent(monthKey, () => {'income': 0.0, 'expense': 0.0});
-      monthlyData[monthKey]!['expense'] = monthlyData[monthKey]!['expense']! + expense.amount;
+      monthlyData[monthKey]!['expense'] =
+          monthlyData[monthKey]!['expense']! + expense.amount;
     }
 
     // Calculate averages
     final incomeValues = monthlyData.values.map((m) => m['income']!).toList();
     final expenseValues = monthlyData.values.map((m) => m['expense']!).toList();
-    
-    final avgIncome = incomeValues.isNotEmpty 
-        ? incomeValues.reduce((a, b) => a + b) / incomeValues.length 
+
+    final avgIncome = incomeValues.isNotEmpty
+        ? incomeValues.reduce((a, b) => a + b) / incomeValues.length
         : 0.0;
-        
-    final avgExpense = expenseValues.isNotEmpty 
-        ? expenseValues.reduce((a, b) => a + b) / expenseValues.length 
+
+    final avgExpense = expenseValues.isNotEmpty
+        ? expenseValues.reduce((a, b) => a + b) / expenseValues.length
         : 0.0;
 
     // Calculate savings rate
-    final savingsRate = avgIncome > 0 
-        ? ((avgIncome - avgExpense) / avgIncome) * 100 
+    final savingsRate = avgIncome > 0
+        ? ((avgIncome - avgExpense) / avgIncome) * 100
         : 0.0;
 
     // Calculate income consistency
@@ -240,23 +272,25 @@ class FinancialTrendUseCase {
 
     // Find best and worst months
     MonthlyPerformance bestMonth = MonthlyPerformance(
-      monthKey: '', 
-      netBalance: double.negativeInfinity, 
-      savingsRate: 0.0
+      monthKey: '',
+      netBalance: double.negativeInfinity,
+      savingsRate: 0.0,
     );
-    
+
     MonthlyPerformance worstMonth = MonthlyPerformance(
-      monthKey: '', 
-      netBalance: double.infinity, 
-      savingsRate: 0.0
+      monthKey: '',
+      netBalance: double.infinity,
+      savingsRate: 0.0,
     );
 
     monthlyData.forEach((monthKey, data) {
       final income = data['income']!;
       final expense = data['expense']!;
       final netBalance = income - expense;
-      final monthSavingsRate = income > 0 ? ((income - expense) / income) * 100 : 0.0;
-      
+      final monthSavingsRate = income > 0
+          ? ((income - expense) / income) * 100
+          : 0.0;
+
       if (netBalance > bestMonth.netBalance) {
         bestMonth = MonthlyPerformance(
           monthKey: monthKey,
@@ -264,7 +298,7 @@ class FinancialTrendUseCase {
           savingsRate: monthSavingsRate,
         );
       }
-      
+
       if (netBalance < worstMonth.netBalance) {
         worstMonth = MonthlyPerformance(
           monthKey: monthKey,
@@ -287,22 +321,26 @@ class FinancialTrendUseCase {
   /// Calculate income consistency score (0-100)
   double _calculateIncomeConsistency(List<double> incomeValues) {
     if (incomeValues.isEmpty) return 0.0;
-    if (incomeValues.length == 1) return 100.0; // Perfect consistency with one data point
-    
+    if (incomeValues.length == 1) {
+      return 100.0; // Perfect consistency with one data point
+    }
+
     final average = incomeValues.reduce((a, b) => a + b) / incomeValues.length;
     if (average == 0) return 0.0;
-    
+
     // Calculate standard deviation
-    final variance = incomeValues
-        .map((value) => pow(value - average, 2))
-        .reduce((a, b) => a + b) / incomeValues.length;
-    
+    final variance =
+        incomeValues
+            .map((value) => pow(value - average, 2))
+            .reduce((a, b) => a + b) /
+        incomeValues.length;
+
     final standardDeviation = sqrt(variance);
-    
+
     // Convert to consistency score (inverse of coefficient of variation)
     final coefficientOfVariation = standardDeviation / average;
     final consistencyScore = (1 - coefficientOfVariation.clamp(0, 1)) * 100;
-    
+
     return consistencyScore.clamp(0, 100).toDouble();
   }
 
@@ -332,7 +370,9 @@ class FinancialTrendUseCase {
     final insights = <FinancialInsight>[];
     final now = DateTime.now();
 
-    if (trend.length < 3) return insights; // Need at least 3 months for trend analysis
+    if (trend.length < 3) {
+      return insights; // Need at least 3 months for trend analysis
+    }
 
     // Check for declining trend
     int decliningMonths = 0;
@@ -345,28 +385,34 @@ class FinancialTrendUseCase {
     }
 
     if (decliningMonths >= 3) {
-      insights.add(FinancialInsight(
-        id: const Uuid().v4(),
-        type: InsightType.trend,
-        severity: InsightSeverity.warning,
-        title: 'Declining Net Worth Trend',
-        message: 'Your net balance has declined for $decliningMonths consecutive months. Consider reviewing your spending habits.',
-        createdDate: now,
-        isRead: false,
-      ));
+      insights.add(
+        FinancialInsight(
+          id: const Uuid().v4(),
+          type: InsightType.trend,
+          severity: InsightSeverity.warning,
+          title: 'Declining Net Worth Trend',
+          message:
+              'Your net balance has declined for $decliningMonths consecutive months. Consider reviewing your spending habits.',
+          createdDate: now,
+          isRead: false,
+        ),
+      );
     }
 
     // Check savings rate improvement
     if (metrics.savingsRate > 20) {
-      insights.add(FinancialInsight(
-        id: const Uuid().v4(),
-        type: InsightType.milestone,
-        severity: InsightSeverity.info,
-        title: 'Healthy Savings Rate Achieved',
-        message: 'Your savings rate of ${metrics.savingsRate.toStringAsFixed(1)}% is excellent. Keep up the good work!',
-        createdDate: now,
-        isRead: false,
-      ));
+      insights.add(
+        FinancialInsight(
+          id: const Uuid().v4(),
+          type: InsightType.milestone,
+          severity: InsightSeverity.info,
+          title: 'Healthy Savings Rate Achieved',
+          message:
+              'Your savings rate of ${metrics.savingsRate.toStringAsFixed(1)}% is excellent. Keep up the good work!',
+          createdDate: now,
+          isRead: false,
+        ),
+      );
     }
 
     return insights;

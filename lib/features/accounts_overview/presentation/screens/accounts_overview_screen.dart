@@ -6,6 +6,7 @@ import '../providers/financial_trend_providers.dart';
 import '../widgets/financial_health_summary.dart';
 import '../widgets/income_expense_comparison_chart.dart';
 import '../widgets/net_balance_chart.dart';
+import '../widgets/time_range_selector.dart';
 
 /// Screen: Accounts Overview
 ///
@@ -31,32 +32,77 @@ class AccountsOverviewScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.refresh(financialTrendProvider),
+            onPressed: () {
+              final notifier = ref.read(financialTrendProvider.notifier);
+              notifier.refresh();
+            },
             tooltip: 'Refresh data',
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Section 1: Net Balance Trend Chart
-            const NetBalanceTrendChart(height: 220),
-            const SizedBox(height: 20),
+      body: Consumer(
+        builder: (context, ref, child) {
+          final financialTrendAsync = ref.watch(financialTrendProvider);
 
-            // Section 2: Income vs Expense Comparison
-            const IncomeExpenseComparisonChart(height: 280),
-            const SizedBox(height: 20),
+          return financialTrendAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load financial data',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    error.toString(),
+                    style: theme.textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      final notifier = ref.read(
+                        financialTrendProvider.notifier,
+                      );
+                      notifier.refresh();
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+            data: (trend) => SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Section 0: Time Range Selector
+                  const TimeRangeSelector(),
+                  const SizedBox(height: 20),
 
-            // Section 3: Financial Health Summary
-            const FinancialHealthSummary(),
-            const SizedBox(height: 20),
+                  // Section 1: Net Balance Trend Chart
+                  const NetBalanceTrendChart(height: 220),
+                  const SizedBox(height: 20),
 
-            // Section 4: Financial Insights (if any)
-            _buildInsightsSection(ref, theme, isDark),
-          ],
-        ),
+                  // Section 2: Income vs Expense Comparison
+                  const IncomeExpenseComparisonChart(height: 280),
+                  const SizedBox(height: 20),
+
+                  // Section 3: Financial Health Summary
+                  const FinancialHealthSummary(),
+                  const SizedBox(height: 20),
+
+                  // Section 4: Financial Insights (if any)
+                  _buildInsightsSection(ref, theme, isDark),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
