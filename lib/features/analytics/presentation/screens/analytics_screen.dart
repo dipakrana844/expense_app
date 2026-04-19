@@ -3,118 +3,158 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
-import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
-import 'package:smart_expense_tracker/features/analytics/presentation/providers/analytics_providers.dart';
+import 'package:smart_expense_tracker/features/analytics/presentation/providers/analytics_providers_optimized.dart'
+    as analytics_providers;
 import 'package:smart_expense_tracker/features/analytics/domain/entities/analytics_entity.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/presentation/widgets/daily_spend_card.dart';
+import 'package:smart_expense_tracker/features/analytics/presentation/widgets/analytics_time_range_selector.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final analytics = ref.watch(monthlyAnalyticsProvider);
-    final trendData = ref.watch(monthlyTrendProvider);
-    final snapshot = ref.watch(dailySnapshotProvider);
-    final warnings = ref.watch(smartWarningsProvider);
-    final trendExplanation = ref.watch(trendExplanationProvider);
-    final categoryInsights = ref.watch(categoryActionInsightsProvider);
+    final analyticsAsync = ref.watch(analytics_providers.analyticsDataProvider);
     final theme = Theme.of(context);
 
-    if (!analytics.hasExpenses) {
-      return Scaffold(
+    return analyticsAsync.when(
+      loading: () => Scaffold(
+        appBar: AppBar(title: const Text('Analytics')),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Analytics')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.pie_chart_outline,
-                size: 64,
-                color: theme.colorScheme.secondary,
-              ),
+              const Icon(Icons.error_outline, size: 64),
               const SizedBox(height: 16),
-              const Text('No expenses to analyze yet'),
+              Text('Error loading analytics: $error'),
               const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => context.pushNamed('add-expense'),
-                icon: const Icon(Icons.add),
-                label: const Text('Add your first expense'),
+              ElevatedButton(
+                onPressed: () {
+                  ref.read(analytics_providers.analyticsDataProvider.notifier).refresh();
+                },
+                child: const Text('Retry'),
               ),
             ],
           ),
         ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Insights & Trends')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Daily Spend Guard Card - Always visible at top
-            const DailySpendCard(showFullDetails: false),
-            const SizedBox(height: 24),
-
-            // 1. Daily Snapshot
-            _buildDailySnapshot(context, snapshot),
-            const SizedBox(height: 24),
-
-            // 2. Smart Warnings
-            if (warnings.isNotEmpty) ...[
-              Text('Actionable Insights', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 12),
-              ...warnings.map((insight) => _buildInsightCard(context, insight)),
-              const SizedBox(height: 24),
-            ],
-
-            // 3. Month Total Card
-            _buildTotalCard(context, analytics),
-            const SizedBox(height: 32),
-
-            // 4. Monthly Trend
-            Text('6-Month Trend', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 16),
-            _buildTrendSection(context, trendData, trendExplanation, theme),
-            const SizedBox(height: 32),
-
-            // 5. Pie Chart
-            Text('Spending by Category', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 220,
-              child: PieChart(
-                PieChartData(
-                  sections: _getSections(analytics, theme),
-                  centerSpaceRadius: 40,
-                  sectionsSpace: 2,
-                ),
+      ),
+      data: (analytics) {
+        if (!analytics.monthlyAnalytics.hasExpenses) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Analytics')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.pie_chart_outline,
+                    size: 64,
+                    color: theme.colorScheme.secondary,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('No expenses to analyze yet'),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    onPressed: () => context.pushNamed('add-expense'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add your first expense'),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 24),
+          );
+        }
 
-            // 6. Detailed Breakdown with Insights
-            Text('Category Breakdown', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 16),
-            ...analytics.categoryBreakdown.entries.map((entry) {
-              final insight = categoryInsights[entry.key];
-              return _buildCategoryTile(
-                context,
-                entry.key,
-                entry.value,
-                analytics.total,
-                insight,
-                theme,
-              );
-            }),
+        return Scaffold(
+          appBar: AppBar(title: const Text('Insights & Trends')),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Time Range Selector
+                const AnalyticsTimeRangeSelector(),
+                const SizedBox(height: 24),
+                
+                // Daily Spend Guard Card - Always visible at top
+                const DailySpendCard(showFullDetails: false),
+                const SizedBox(height: 24),
 
-            const SizedBox(height: 100), // Space for bottom
-          ],
-        ),
-      ),
+                // 1. Daily Snapshot
+                _buildDailySnapshot(context, analytics.dailySnapshot),
+                const SizedBox(height: 24),
+
+                // 2. Smart Warnings
+                if (analytics.smartWarnings.isNotEmpty) ...[
+                  Text('Actionable Insights', style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  ...analytics.smartWarnings.map((insight) => _buildInsightCard(context, insight)),
+                  const SizedBox(height: 24),
+                ],
+
+                // 3. Month Total Card
+                _buildTotalCard(context, analytics.monthlyAnalytics),
+                const SizedBox(height: 32),
+
+                // 4. Monthly Trend
+                Text('6-Month Trend', style: theme.textTheme.titleLarge),
+                const SizedBox(height: 16),
+                _buildTrendSection(context, analytics.monthlyTrend, analytics.trendExplanation, theme),
+                const SizedBox(height: 32),
+
+                // 5. Pie Chart
+                Text('Spending by Category', style: theme.textTheme.titleLarge),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 220,
+                  child: PieChart(
+                    PieChartData(
+                      sections: _getSections(analytics.monthlyAnalytics, theme),
+                      centerSpaceRadius: 40,
+                      sectionsSpace: 2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 6. Detailed Breakdown with Insights
+                Text('Category Breakdown', style: theme.textTheme.titleLarge),
+                const SizedBox(height: 16),
+                ...analytics.monthlyAnalytics.categoryBreakdown.entries.map((entry) {
+                  final insight = analytics.categoryInsights[entry.key];
+                  return _buildCategoryTile(
+                    context,
+                    entry.key,
+                    entry.value,
+                    analytics.monthlyAnalytics.totalSpent,
+                    insight,
+                    theme,
+                  );
+                }),
+                const SizedBox(height: 24),
+
+                // 7. Refresh Button
+                Center(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      ref.read(analytics_providers.analyticsDataProvider.notifier).refresh();
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Refresh Analytics'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -271,7 +311,10 @@ class AnalyticsScreen extends ConsumerWidget {
     return const SizedBox.shrink();
   }
 
-  Widget _buildTotalCard(BuildContext context, MonthlyAnalytics analytics) {
+  Widget _buildTotalCard(
+    BuildContext context,
+    MonthlyAnalyticsEntity analytics,
+  ) {
     final theme = Theme.of(context);
     return Card(
       elevation: 0,
@@ -288,7 +331,7 @@ class AnalyticsScreen extends ConsumerWidget {
                   const Text('Month to Date'),
                   const SizedBox(height: 4),
                   Text(
-                    CurrencyUtils.formatAmount(analytics.total),
+                    CurrencyUtils.formatAmount(analytics.totalSpent),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onPrimaryContainer,
@@ -436,7 +479,7 @@ class AnalyticsScreen extends ConsumerWidget {
   }
 
   List<PieChartSectionData> _getSections(
-    MonthlyAnalytics analytics,
+    MonthlyAnalyticsEntity analytics,
     ThemeData theme,
   ) {
     final List<Color> colors = [
@@ -452,7 +495,7 @@ class AnalyticsScreen extends ConsumerWidget {
     return analytics.categoryBreakdown.entries.map((entry) {
       final color = colors[index % colors.length];
       index++;
-      final percentage = (entry.value / analytics.total * 100);
+      final percentage = (entry.value / analytics.totalSpent * 100);
 
       return PieChartSectionData(
         color: color,

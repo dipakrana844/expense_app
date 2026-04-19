@@ -1,4 +1,5 @@
 import 'package:smart_expense_tracker/core/services/financial_calculator.dart';
+import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 
 /// Daily Snapshot Data - Entity
 class DailySnapshotEntity {
@@ -101,9 +102,46 @@ class TrendDataEntity {
 
   TrendDataEntity({required this.monthlyTrend, required this.explanation});
 
-  factory TrendDataEntity.empty() => TrendDataEntity(
+  factory TrendDataEntity.empty() =>
+      TrendDataEntity(monthlyTrend: {}, explanation: 'No data available');
+}
+
+/// Unified Analytics Data - Entity
+///
+/// Purpose: Single source of truth for all analytics data
+/// - Eliminates duplicate calculations
+/// - Easier to cache and manage
+/// - Better performance
+class AnalyticsData {
+  final DailySnapshotEntity dailySnapshot;
+  final List<Insight> smartWarnings;
+  final String trendExplanation;
+  final Map<String, CategoryInsightEntity> categoryInsights;
+  final FinancialAnalyticsEntity financialAnalytics;
+  final Map<String, Map<String, double>> incomeExpenseTrend;
+  final MonthlyAnalyticsEntity monthlyAnalytics;
+  final Map<String, double> monthlyTrend;
+
+  AnalyticsData({
+    required this.dailySnapshot,
+    required this.smartWarnings,
+    required this.trendExplanation,
+    required this.categoryInsights,
+    required this.financialAnalytics,
+    required this.incomeExpenseTrend,
+    required this.monthlyAnalytics,
+    required this.monthlyTrend,
+  });
+
+  factory AnalyticsData.empty() => AnalyticsData(
+    dailySnapshot: DailySnapshotEntity.empty(),
+    smartWarnings: [],
+    trendExplanation: 'No data available',
+    categoryInsights: {},
+    financialAnalytics: FinancialAnalyticsEntity.empty(),
+    incomeExpenseTrend: {},
+    monthlyAnalytics: MonthlyAnalyticsEntity.empty(),
     monthlyTrend: {},
-    explanation: "No data to analyze trends.",
   );
 }
 
