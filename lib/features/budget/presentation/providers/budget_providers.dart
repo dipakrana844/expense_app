@@ -6,6 +6,7 @@ import '../../data/budget_infrastructure_provider.dart';
 import 'package:smart_expense_tracker/core/domain/usecases/base_usecase.dart';
 import 'package:smart_expense_tracker/core/error/failures.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
+import 'package:smart_expense_tracker/core/constants/budget_constants.dart';
 
 // ---------------------------------------------------------------------------
 // Use-case providers (depend only on abstract BudgetRepository)
@@ -56,6 +57,22 @@ class BudgetController extends AsyncNotifier<BudgetEntity?> {
   }
 
   Future<void> updateBudget(double amount) async {
+    // Validate input before creating entity
+    if (amount < BudgetConstants.minBudgetAmount) {
+      state = AsyncValue.error(
+        'Budget amount cannot be negative',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (amount > BudgetConstants.maxBudgetAmount) {
+      state = AsyncValue.error(
+        'Budget amount exceeds maximum limit',
+        StackTrace.current,
+      );
+      return;
+    }
+
     final currency = ref.watch(defaultCurrencyProvider);
     final newBudget = BudgetEntity(
       amount: amount,
@@ -64,7 +81,8 @@ class BudgetController extends AsyncNotifier<BudgetEntity?> {
       createdAt: state.value?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    final failure = await _updateBudgetUseCase.call(newBudget);
+
+    final (updatedBudget, failure) = await _updateBudgetUseCase.call(newBudget);
     if (failure != null) {
       state = AsyncValue.error(
         FailureX(failure).userMessage,
@@ -72,7 +90,7 @@ class BudgetController extends AsyncNotifier<BudgetEntity?> {
       );
       return;
     }
-    state = AsyncValue.data(newBudget);
+    state = AsyncValue.data(updatedBudget);
   }
 
   Future<void> clearBudget() async {

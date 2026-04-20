@@ -9,11 +9,22 @@ import '../domain/repository.dart';
 /// free of any concrete data-layer imports — they only depend on the abstract
 /// [BudgetRepository] interface.
 
+/// Provider for the budget local data source.
+/// This provider creates a new instance of BudgetLocalDataSource.
+/// The data source must be initialized by calling [budgetInitializationProvider].
 final budgetLocalDataSourceProvider = Provider<BudgetLocalDataSource>((ref) {
-  // Data source is expected to be initialized before use (e.g., in main.dart).
-  throw UnimplementedError('budgetLocalDataSourceProvider must be overridden');
+  return BudgetLocalDataSource();
 });
 
+/// Provider for initializing the budget data source.
+/// This should be awaited during app initialization (e.g., in main.dart).
+final budgetInitializationProvider = FutureProvider<void>((ref) async {
+  final dataSource = ref.watch(budgetLocalDataSourceProvider);
+  await dataSource.init();
+});
+
+/// Provider for the budget repository.
+/// Depends on the budget local data source provider.
 final budgetRepositoryProvider = Provider<BudgetRepository>((ref) {
   final dataSource = ref.watch(budgetLocalDataSourceProvider);
   return BudgetRepositoryImpl(dataSource);

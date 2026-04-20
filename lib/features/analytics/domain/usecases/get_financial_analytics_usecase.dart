@@ -4,11 +4,7 @@ import 'package:smart_expense_tracker/features/expenses/domain/entities/expense_
 import 'package:smart_expense_tracker/features/income/domain/entities/income_entity.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/algorithms/spending_algorithms.dart';
-import 'package:smart_expense_tracker/core/services/balance_service.dart'
-    hide FinancialHealth;
 import 'package:smart_expense_tracker/core/services/aggregation_service.dart';
-import 'package:smart_expense_tracker/core/services/financial_calculator.dart';
-import 'package:smart_expense_tracker/features/budget/presentation/providers/budget_providers.dart';
 
 /// Usecase for getting comprehensive financial analytics
 class GetFinancialAnalyticsUsecase {

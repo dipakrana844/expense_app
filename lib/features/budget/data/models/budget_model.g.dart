@@ -59,7 +59,7 @@ class BudgetModelAdapter extends TypeAdapter<BudgetModel> {
 _$BudgetModelImpl _$$BudgetModelImplFromJson(Map<String, dynamic> json) =>
     _$BudgetModelImpl(
       amount: (json['amount'] as num).toDouble(),
-      currency: json['currency'] as String? ?? '₹',
+      currency: json['currency'] as String? ?? BudgetConstants.defaultCurrency,
       isActive: json['isActive'] as bool? ?? false,
       createdAt: json['createdAt'] == null
           ? null

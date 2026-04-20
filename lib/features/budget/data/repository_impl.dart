@@ -36,6 +36,13 @@ class BudgetRepositoryImpl implements BudgetRepository {
   @override
   Future<Failure?> updateBudget(BudgetEntity budget) async {
     try {
+      // Validate budget before updating
+      final validationError = budget.validate();
+      if (validationError != null) {
+        debugPrint('BudgetRepositoryImpl: Validation error: $validationError');
+        return Failure.validation(message: validationError);
+      }
+
       debugPrint(
         'BudgetRepositoryImpl: Updating budget to ${budget.amount} ${budget.currency}',
       );

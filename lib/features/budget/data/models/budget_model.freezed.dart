@@ -158,7 +158,7 @@ class __$$BudgetModelImplCopyWithImpl<$Res>
 class _$BudgetModelImpl extends _BudgetModel {
   const _$BudgetModelImpl(
       {@HiveField(0) required this.amount,
-      @HiveField(1) this.currency = '₹',
+      @HiveField(1) this.currency = BudgetConstants.defaultCurrency,
       @HiveField(2) this.isActive = false,
       @HiveField(3) this.createdAt,
       @HiveField(4) this.updatedAt})

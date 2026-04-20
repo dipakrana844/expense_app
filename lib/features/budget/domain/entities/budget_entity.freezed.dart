@@ -148,7 +148,7 @@ class __$$BudgetEntityImplCopyWithImpl<$Res>
 class _$BudgetEntityImpl extends _BudgetEntity {
   const _$BudgetEntityImpl(
       {required this.amount,
-      this.currency = '₹',
+      this.currency = BudgetConstants.defaultCurrency,
       this.isActive = false,
       this.createdAt,
       this.updatedAt})

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
+import 'package:smart_expense_tracker/core/constants/budget_constants.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import '../providers/budget_providers.dart';
@@ -43,11 +44,11 @@ class BudgetScreen extends ConsumerWidget {
           ),
           data: (budgetEntity) {
             final monthlyBudget = budgetEntity?.amount ?? 0.0;
-            final progress = monthlyBudget > 0
-                ? (totalSpent / monthlyBudget)
-                : 0.0;
-            final isOverBudget = progress > 1.0;
-            final isNearBudget = progress > 0.8;
+            final progress = budgetEntity?.getProgress(totalSpent) ?? 0.0;
+            final isOverBudget =
+                budgetEntity?.isOverBudget(totalSpent) ?? false;
+            final isNearBudget =
+                budgetEntity?.isNearBudget(totalSpent) ?? false;
 
             return Scaffold(
               appBar: AppBar(title: const Text('Budget Tracking')),
@@ -116,7 +117,9 @@ class BudgetScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold,
                                     color: isOverBudget
                                         ? Colors.red
-                                        : Colors.green,
+                                        : (isNearBudget
+                                              ? Colors.orange
+                                              : Colors.green),
                                   ),
                                 ),
                               ],
@@ -138,7 +141,7 @@ class BudgetScreen extends ConsumerWidget {
                               children: [
                                 Text(CurrencyUtils.formatAmount(totalSpent)),
                                 Text(
-                                  'Remaining: ${CurrencyUtils.formatAmount(monthlyBudget - totalSpent)}',
+                                  'Remaining: ${CurrencyUtils.formatAmount(budgetEntity?.getRemaining(totalSpent) ?? 0.0)}',
                                 ),
                               ],
                             ),
@@ -209,33 +212,71 @@ class BudgetScreen extends ConsumerWidget {
     double currentBudget,
   ) {
     final controller = TextEditingController(text: currentBudget.toString());
+    final validationError = ValueNotifier<String?>(null);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Update Monthly Budget'),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(
-            prefixText: '${AppConstants.currencySymbol} ',
-            hintText: 'Enter amount',
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ValueListenableBuilder<String?>(
+              valueListenable: validationError,
+              builder: (context, error, _) => TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                decoration: InputDecoration(
+                  prefixText: '${AppConstants.currencySymbol} ',
+                  hintText: 'Enter amount',
+                  errorText: error,
+                ),
+                onChanged: (value) {
+                  final val = double.tryParse(value);
+                  if (val == null) {
+                    validationError.value = 'Please enter a valid number';
+                  } else if (val < BudgetConstants.minBudgetAmount) {
+                    validationError.value = 'Budget cannot be negative';
+                  } else if (val > BudgetConstants.maxBudgetAmount) {
+                    validationError.value = 'Budget exceeds maximum limit';
+                  } else {
+                    validationError.value = null;
+                  }
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Maximum: ${CurrencyUtils.formatAmount(BudgetConstants.maxBudgetAmount)}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-          FilledButton(
-            onPressed: () {
-              final val = double.tryParse(controller.text);
-              if (val != null) {
-                ref.read(budgetControllerProvider.notifier).updateBudget(val);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Save'),
+          ValueListenableBuilder<String?>(
+            valueListenable: validationError,
+            builder: (context, error, _) => FilledButton(
+              onPressed: error != null
+                  ? null
+                  : () {
+                      final val = double.tryParse(controller.text);
+                      if (val != null) {
+                        ref
+                            .read(budgetControllerProvider.notifier)
+                            .updateBudget(val);
+                        Navigator.pop(context);
+                      }
+                    },
+              child: const Text('Save'),
+            ),
           ),
         ],
       ),

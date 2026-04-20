@@ -347,7 +347,7 @@ class AnalyticsDataFamilyNotifier extends AsyncNotifier<AnalyticsData> {
 
     // Generate cache key based on months back parameter
     final now = DateTime.now();
-    final cacheKey = 'analytics_${now.year}_${now.month}_${_monthsBack}';
+    final cacheKey = 'analytics_${now.year}_${now.month}_$_monthsBack';
 
     // Check cache first
     final cached = cache.get(cacheKey);
