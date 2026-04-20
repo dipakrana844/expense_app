@@ -35,6 +35,11 @@ migrate_working_dir/
 /coverage/
 /githubTemp
 
+# Generated files (build_runner, freezed, json_serializable, etc.)
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
 # Symbolication related
 app.*.symbols
 
