@@ -1,7 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../enums/category_type.dart';
 
 part 'category_entity.freezed.dart';
 
+/// Domain entity representing a category.
+/// Uses Freezed for immutability and value equality.
 @freezed
 class CategoryEntity with _$CategoryEntity {
   const CategoryEntity._();
@@ -9,7 +12,7 @@ class CategoryEntity with _$CategoryEntity {
   const factory CategoryEntity({
     required String id,
     required String name,
-    required String type, // 'income' or 'expense'
+    required CategoryType type,
     required int iconCodePoint,
     required int colorValue,
     required DateTime createdAt,
@@ -17,6 +20,30 @@ class CategoryEntity with _$CategoryEntity {
     @Default(false) bool isDeleted, // For soft delete
   }) = _CategoryEntity;
 
-  bool get isIncome => type.toLowerCase() == 'income';
-  bool get isExpense => type.toLowerCase() == 'expense';
+  /// Returns true if this is an income category
+  bool get isIncome => type == CategoryType.income;
+
+  /// Returns true if this is an expense category
+  bool get isExpense => type == CategoryType.expense;
+
+  /// Returns the type as a lowercase string for backward compatibility
+  String get typeString => type.toLowerCaseString();
+
+  /// Returns the display name for the type
+  String get typeDisplayName => type.displayName;
+
+  /// Creates a copy with updated timestamp
+  CategoryEntity withUpdatedTimestamp() {
+    return copyWith(updatedAt: DateTime.now());
+  }
+
+  /// Creates a soft-deleted copy
+  CategoryEntity withSoftDelete() {
+    return copyWith(isDeleted: true, updatedAt: DateTime.now());
+  }
+
+  /// Creates a restored copy (undo soft delete)
+  CategoryEntity withRestore() {
+    return copyWith(isDeleted: false, updatedAt: DateTime.now());
+  }
 }

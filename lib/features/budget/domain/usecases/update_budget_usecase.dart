@@ -1,6 +1,5 @@
 import '../repository.dart';
 import '../entities/budget_entity.dart';
-import 'package:smart_expense_tracker/core/error/failures.dart';
 import 'package:smart_expense_tracker/core/domain/usecases/base_usecase.dart';
 
 /// Use case for updating a budget.

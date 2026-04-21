@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_expense_tracker/features/expenses/domain/entities/expense_entity.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
-import 'package:smart_expense_tracker/features/income/domain/entities/income_entity.dart';
 import 'package:smart_expense_tracker/features/income/presentation/providers/income_providers.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 import 'package:smart_expense_tracker/features/analytics/domain/entities/analytics_entity.dart';

@@ -26,7 +26,7 @@ mixin _$CategoryModel {
   String get name => throw _privateConstructorUsedError;
   @HiveField(2)
   String get type =>
-      throw _privateConstructorUsedError; // 'income' or 'expense'
+      throw _privateConstructorUsedError; // Stored as string for Hive compatibility
   @HiveField(3)
   int get iconCodePoint => throw _privateConstructorUsedError;
   @HiveField(4)
@@ -222,7 +222,7 @@ class _$CategoryModelImpl extends _CategoryModel {
   @override
   @HiveField(2)
   final String type;
-// 'income' or 'expense'
+// Stored as string for Hive compatibility
   @override
   @HiveField(3)
   final int iconCodePoint;
@@ -308,7 +308,7 @@ abstract class _CategoryModel extends CategoryModel {
   @override
   @HiveField(2)
   String get type;
-  @override // 'income' or 'expense'
+  @override // Stored as string for Hive compatibility
   @HiveField(3)
   int get iconCodePoint;
   @override

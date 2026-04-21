@@ -18,8 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$CategoryEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get type =>
-      throw _privateConstructorUsedError; // 'income' or 'expense'
+  CategoryType get type => throw _privateConstructorUsedError;
   int get iconCodePoint => throw _privateConstructorUsedError;
   int get colorValue => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -40,7 +39,7 @@ abstract class $CategoryEntityCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String type,
+      CategoryType type,
       int iconCodePoint,
       int colorValue,
       DateTime createdAt,
@@ -82,7 +81,7 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryType,
       iconCodePoint: null == iconCodePoint
           ? _value.iconCodePoint
           : iconCodePoint // ignore: cast_nullable_to_non_nullable
@@ -118,7 +117,7 @@ abstract class _$$CategoryEntityImplCopyWith<$Res>
   $Res call(
       {String id,
       String name,
-      String type,
+      CategoryType type,
       int iconCodePoint,
       int colorValue,
       DateTime createdAt,
@@ -158,7 +157,7 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryType,
       iconCodePoint: null == iconCodePoint
           ? _value.iconCodePoint
           : iconCodePoint // ignore: cast_nullable_to_non_nullable
@@ -202,8 +201,7 @@ class _$CategoryEntityImpl extends _CategoryEntity {
   @override
   final String name;
   @override
-  final String type;
-// 'income' or 'expense'
+  final CategoryType type;
   @override
   final int iconCodePoint;
   @override
@@ -257,7 +255,7 @@ abstract class _CategoryEntity extends CategoryEntity {
   const factory _CategoryEntity(
       {required final String id,
       required final String name,
-      required final String type,
+      required final CategoryType type,
       required final int iconCodePoint,
       required final int colorValue,
       required final DateTime createdAt,
@@ -270,8 +268,8 @@ abstract class _CategoryEntity extends CategoryEntity {
   @override
   String get name;
   @override
-  String get type;
-  @override // 'income' or 'expense'
+  CategoryType get type;
+  @override
   int get iconCodePoint;
   @override
   int get colorValue;
