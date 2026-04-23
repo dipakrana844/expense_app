@@ -6,6 +6,7 @@ import '../providers/smart_entry_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'category_picker.dart';
 import 'package:smart_expense_tracker/features/categories/presentation/widgets/add_category_sheet.dart';
+import 'package:smart_expense_tracker/features/categories/domain/enums/category_type.dart';
 
 class SmartEntryFormFields extends ConsumerWidget {
   final SmartEntryState state;
@@ -58,7 +59,7 @@ class SmartEntryFormFields extends ConsumerWidget {
           _buildDateTimeRow(context),
           const SizedBox(height: 16),
           CategoryPicker(
-            transactionType: 'expense',
+            transactionType: CategoryType.expense,
             selectedCategory: state.category,
             onCategoryChanged: onCategoryChanged,
             onAddCategoryPressed: () {
@@ -66,8 +67,9 @@ class SmartEntryFormFields extends ConsumerWidget {
                 context: context,
                 isScrollControlled: true,
                 showDragHandle: true,
-                builder: (_) =>
-                    const AddCategorySheet(transactionType: 'expense'),
+                builder: (_) => const AddCategorySheet(
+                  transactionType: CategoryType.expense,
+                ),
               );
             },
           ),
@@ -287,10 +289,10 @@ class SmartEntryFormFields extends ConsumerWidget {
     return DropdownButtonFormField<String>(
       initialValue:
           value != null &&
-                  value.trim().isNotEmpty &&
-                  effectiveSources.contains(value.trim())
-              ? value.trim()
-              : null,
+              value.trim().isNotEmpty &&
+              effectiveSources.contains(value.trim())
+          ? value.trim()
+          : null,
       decoration: const InputDecoration(
         labelText: 'Source',
         border: OutlineInputBorder(),
@@ -319,10 +321,10 @@ class SmartEntryFormFields extends ConsumerWidget {
     return DropdownButtonFormField<String>(
       initialValue:
           value != null &&
-                  value.trim().isNotEmpty &&
-                  effectiveAccounts.contains(value.trim())
-              ? value.trim()
-              : null,
+              value.trim().isNotEmpty &&
+              effectiveAccounts.contains(value.trim())
+          ? value.trim()
+          : null,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),

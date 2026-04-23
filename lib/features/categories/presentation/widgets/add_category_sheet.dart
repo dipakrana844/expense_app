@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/category_providers.dart';
+import '../../domain/enums/category_type.dart';
+import '../../domain/failures/category_failure.dart';
 
 /// Widget: AddCategorySheet
 ///
@@ -14,12 +16,12 @@ import '../providers/category_providers.dart';
 ///   context: context,
 ///   isScrollControlled: true,
 ///   showDragHandle: true,
-///   builder: (_) => AddCategorySheet(transactionType: 'expense'),
+///   builder: (_) => AddCategorySheet(transactionType: CategoryType.expense),
 /// );
 /// ```
 class AddCategorySheet extends ConsumerStatefulWidget {
-  /// 'income' or 'expense'
-  final String transactionType;
+  /// CategoryType.income or CategoryType.expense
+  final CategoryType transactionType;
 
   const AddCategorySheet({super.key, required this.transactionType});
 
@@ -29,6 +31,9 @@ class AddCategorySheet extends ConsumerStatefulWidget {
 
 class _AddCategorySheetState extends ConsumerState<AddCategorySheet> {
   final _nameController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
   static const int _defaultIconCodePoint = 0xe5cc;
   static const int _defaultColorValue = 0xFF2196F3;
 
@@ -39,40 +44,66 @@ class _AddCategorySheetState extends ConsumerState<AddCategorySheet> {
   }
 
   String get _label =>
-      widget.transactionType == 'income' ? 'Source' : 'Category';
+      widget.transactionType == CategoryType.income ? 'Source' : 'Category';
 
   Future<void> _submit() async {
     final normalizedName = _nameController.text.trim();
-    if (normalizedName.isEmpty) return;
-
-    // Duplicate check
-    final existingCategories = await ref
-        .read(getCategoriesUseCaseProvider)
-        .call(type: widget.transactionType);
-
-    final alreadyExists = existingCategories.any(
-      (c) => c.name.trim().toLowerCase() == normalizedName.toLowerCase(),
-    );
-
-    if (alreadyExists) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('$_label already exists')));
+    if (normalizedName.isEmpty) {
+      setState(() => _errorMessage = '$_label name cannot be empty');
       return;
     }
 
-    await ref
-        .read(categoryControllerProvider.notifier)
-        .addCategory(
-          name: normalizedName,
-          type: widget.transactionType,
-          iconCodePoint: _defaultIconCodePoint,
-          colorValue: _defaultColorValue,
-        );
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
-    if (!mounted) return;
-    Navigator.of(context).pop();
+    try {
+      // Check for duplicates using the use case
+      final useCase = ref.read(getCategoriesUseCaseProvider);
+      final result = await useCase.call(type: widget.transactionType);
+
+      result.fold(
+        onSuccess: (existingCategories) {
+          final alreadyExists = existingCategories.any(
+            (c) => c.name.trim().toLowerCase() == normalizedName.toLowerCase(),
+          );
+
+          if (alreadyExists) {
+            setState(() {
+              _errorMessage = '$_label already exists';
+              _isLoading = false;
+            });
+            return;
+          }
+
+          // Add the category
+          ref
+              .read(categoryControllerProvider.notifier)
+              .addCategory(
+                name: normalizedName,
+                type: widget.transactionType,
+                iconCodePoint: _defaultIconCodePoint,
+                colorValue: _defaultColorValue,
+              );
+
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+        },
+        onFailure: (failure) {
+          setState(() {
+            _errorMessage = failure.message;
+            _isLoading = false;
+          });
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An unexpected error occurred';
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -102,14 +133,21 @@ class _AddCategorySheetState extends ConsumerState<AddCategorySheet> {
             decoration: InputDecoration(
               labelText: '$_label Name',
               border: const OutlineInputBorder(),
+              errorText: _errorMessage,
             ),
           ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _submit,
-              child: Text('Add $_label'),
+              onPressed: _isLoading ? null : _submit,
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text('Add $_label'),
             ),
           ),
           const SizedBox(height: 8),

@@ -6,6 +6,7 @@ import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import 'package:smart_expense_tracker/core/services/export_service.dart';
 import 'package:smart_expense_tracker/core/services/security_service.dart';
 import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
+import 'package:smart_expense_tracker/features/categories/domain/enums/category_type.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import '../providers/settings_providers.dart';
 import '../widgets/setting_tiles.dart';
@@ -31,10 +32,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _recalculateStorageUsage() async {
     // Check if already calculating to prevent duplicate calls
     if (ref.read(storageCalculationLoadingProvider)) return;
-    
+
     // Set loading state
     ref.read(storageCalculationLoadingProvider.notifier).state = true;
-    
+
     try {
       final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
       await settingsNotifier.recalculateStorageUsage();
@@ -48,7 +49,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final settings = ref.watch(appSettingsNotifierProvider);
     final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
-    final expenseCategoriesAsync = ref.watch(categoriesByTypeProvider('expense'));
+    final expenseCategoriesAsync = ref.watch(
+      categoriesByTypeProvider(CategoryType.expense),
+    );
     final dynamicCategories = expenseCategoriesAsync.maybeWhen(
       data: (categories) => categories.map((c) => c.name.trim()).toList(),
       orElse: () => const <String>[],
@@ -60,9 +63,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }.where((name) => name.isNotEmpty).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: ListView(
         children: [
           // Expense & Grocery Section
@@ -112,7 +113,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       await _showAddCategorySheet(context, settingsNotifier);
                       return;
                     }
-                    await settingsNotifier.updateSettings(defaultExpenseCategory: value);
+                    await settingsNotifier.updateSettings(
+                      defaultExpenseCategory: value,
+                    );
                   }
                 },
               ),
@@ -251,9 +254,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ? null
                     : (value) async {
                         if (value) {
-                          await _handleAppLockToggle(context, settingsNotifier, value);
+                          await _handleAppLockToggle(
+                            context,
+                            settingsNotifier,
+                            value,
+                          );
                         } else {
-                          await settingsNotifier.updateSettings(enableAppLock: value);
+                          await settingsNotifier.updateSettings(
+                            enableAppLock: value,
+                          );
                         }
                       },
               ),
@@ -283,7 +292,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onChanged: settings.enableAppLock
                     ? (value) async {
                         if (value != null) {
-                          await settingsNotifier.updateSettings(autoLockTimer: value);
+                          await settingsNotifier.updateSettings(
+                            autoLockTimer: value,
+                          );
                         }
                       }
                     : null,
@@ -295,7 +306,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 value: settings.requireAuthOnLaunch,
                 onChanged: settings.enableAppLock
                     ? (value) async {
-                        await settingsNotifier.updateSettings(requireAuthOnLaunch: value);
+                        await settingsNotifier.updateSettings(
+                          requireAuthOnLaunch: value,
+                        );
                       }
                     : null,
               ),
@@ -324,21 +337,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 subtitle: ref.watch(storageCalculationLoadingProvider)
                     ? 'Calculating...'
                     : settings.storageUsageBytes != null
-                        ? '${_formatBytes(settings.storageUsageBytes!)} used'
-                        : 'Storage usage not calculated',
+                    ? '${_formatBytes(settings.storageUsageBytes!)} used'
+                    : 'Storage usage not calculated',
                 icon: Icons.storage,
               ),
               SettingActionTile(
                 title: 'Refresh Storage Usage',
                 subtitle: 'Recalculate current storage usage',
-                icon: ref.watch(storageCalculationLoadingProvider) 
-                    ? Icons.hourglass_empty 
+                icon: ref.watch(storageCalculationLoadingProvider)
+                    ? Icons.hourglass_empty
                     : Icons.refresh,
-                iconColor: ref.watch(storageCalculationLoadingProvider) 
-                    ? Colors.grey 
+                iconColor: ref.watch(storageCalculationLoadingProvider)
+                    ? Colors.grey
                     : Colors.blue,
-                onPressed: ref.watch(storageCalculationLoadingProvider) 
-                    ? null 
+                onPressed: ref.watch(storageCalculationLoadingProvider)
+                    ? null
                     : _recalculateStorageUsage,
               ),
               SettingActionTile(
@@ -402,26 +415,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   ) async {
     // Set processing state to show loading indicator
     ref.read(securitySettingsLoadingProvider.notifier).state = true;
-    
+
     try {
       // Check if biometric authentication is available
       final isAvailable = await SecurityService().isBiometricAvailable();
-      
+
       if (!isAvailable) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Biometric authentication is not available on this device'),
+              content: Text(
+                'Biometric authentication is not available on this device',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
         }
         return;
       }
-      
+
       // Perform authentication
       final success = await SecurityService().authenticate();
-      
+
       if (success && context.mounted) {
         await settingsNotifier.updateSettings(enableAppLock: value);
         if (context.mounted) {
@@ -484,9 +499,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     } else {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No data to export')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No data to export')));
       }
     }
   }
@@ -676,7 +691,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: AppConstants.categoryIcons.entries.take(10).map((entry) {
+                    children: AppConstants.categoryIcons.entries.take(10).map((
+                      entry,
+                    ) {
                       final isSelected = selectedIcon == entry.value;
                       return ChoiceChip(
                         label: Text(entry.key),
@@ -697,26 +714,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       final normalizedName = nameController.text.trim();
                       if (normalizedName.isEmpty) return;
 
-                      final existing = await ref
+                      final result = await ref
                           .read(getCategoriesUseCaseProvider)
-                          .call(type: 'expense');
-                      final alreadyExists = existing.any(
-                        (category) =>
-                            category.name.trim().toLowerCase() ==
-                            normalizedName.toLowerCase(),
+                          .call(type: CategoryType.expense);
+
+                      final alreadyExists = result.fold(
+                        onSuccess: (existing) => existing.any(
+                          (category) =>
+                              category.name.trim().toLowerCase() ==
+                              normalizedName.toLowerCase(),
+                        ),
+                        onFailure: (_) => false,
                       );
                       if (alreadyExists) {
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Category already exists')),
+                          const SnackBar(
+                            content: Text('Category already exists'),
+                          ),
                         );
                         return;
                       }
 
-                      final controller = ref.read(categoryControllerProvider.notifier);
+                      final controller = ref.read(
+                        categoryControllerProvider.notifier,
+                      );
                       await controller.addCategory(
                         name: normalizedName,
-                        type: 'expense',
+                        type: CategoryType.expense,
                         iconCodePoint: selectedIcon,
                         colorValue: selectedColor,
                       );

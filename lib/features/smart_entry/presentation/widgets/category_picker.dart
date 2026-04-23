@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_expense_tracker/core/constants/app_categories.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
 import 'package:smart_expense_tracker/features/categories/presentation/providers/category_providers.dart';
+import 'package:smart_expense_tracker/features/categories/domain/enums/category_type.dart';
 
 class CategoryPicker extends ConsumerWidget {
-  final String transactionType; // 'income' or 'expense'
+  final CategoryType transactionType;
   final String? selectedCategory;
   final Function(String?) onCategoryChanged;
   final Function() onAddCategoryPressed;
@@ -29,7 +30,7 @@ class CategoryPicker extends ConsumerWidget {
         final persistedNames = categories
             .map((category) => category.name.trim())
             .where((name) => name.isNotEmpty);
-        final defaultNames = transactionType == 'expense'
+        final defaultNames = transactionType == CategoryType.expense
             ? AppConstants.expenseCategories
             : const <String>[];
         final categoryNames = <String>{
@@ -39,9 +40,9 @@ class CategoryPicker extends ConsumerWidget {
         }.where((name) => name.isNotEmpty).toList();
         final selectedValue =
             selectedCategory != null &&
-                    categoryNames.contains(selectedCategory?.trim())
-                ? selectedCategory?.trim()
-                : null;
+                categoryNames.contains(selectedCategory?.trim())
+            ? selectedCategory?.trim()
+            : null;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
