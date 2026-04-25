@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_expense_tracker/features/categories/domain/validators/category_validator.dart';
-import 'package:smart_expense_tracker/features/categories/domain/enums/category_type.dart';
 import 'package:smart_expense_tracker/features/categories/domain/failures/category_failure.dart';
 
 void main() {

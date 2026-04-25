@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../domain/entities/app_settings_entity.dart';
 
 part 'app_settings.freezed.dart';
 part 'app_settings.g.dart';
@@ -12,6 +13,9 @@ part 'app_settings.g.dart';
 /// - Security configuration
 /// - Smart insights controls
 /// - Data management options
+///
+/// This is the data layer model that maps to Hive storage.
+/// Domain enums are used directly to avoid duplication.
 @freezed
 @HiveType(typeId: 11)
 class AppSettings with _$AppSettings {
@@ -65,33 +69,55 @@ class AppSettings with _$AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>
       _$AppSettingsFromJson(json);
+
+  /// Convert domain entity to data model
+  factory AppSettings.fromEntity(AppSettingsEntity entity) {
+    return AppSettings(
+      defaultCurrency: entity.defaultCurrency,
+      defaultExpenseCategory: entity.defaultExpenseCategory,
+      enableQuickExpense: entity.enableQuickExpense,
+      enableGroceryOCR: entity.enableGroceryOCR,
+      saveLastStoreName: entity.saveLastStoreName,
+      showFrequentItemSuggestions: entity.showFrequentItemSuggestions,
+      clearGrocerySessionOnExit: entity.clearGrocerySessionOnExit,
+      confirmBeforeGrocerySubmit: entity.confirmBeforeGrocerySubmit,
+      enableSpendingIntelligence: entity.enableSpendingIntelligence,
+      insightFrequency: entity.insightFrequency,
+      enableAppLock: entity.enableAppLock,
+      autoLockTimer: entity.autoLockTimer,
+      requireAuthOnLaunch: entity.requireAuthOnLaunch,
+      lastExportDate: entity.lastExportDate,
+      storageUsageBytes: entity.storageUsageBytes,
+      createdAt: entity.createdAt,
+      lastModified: entity.lastModified,
+      version: entity.version,
+    );
+  }
 }
 
-/// Frequency for spending insights generation
-@HiveType(typeId: 12)
-enum InsightFrequency {
-  @HiveField(0)
-  daily,
-
-  @HiveField(1)
-  weekly,
-
-  @HiveField(2)
-  monthly,
-}
-
-/// Auto-lock timer options
-@HiveType(typeId: 13)
-enum AutoLockTimer {
-  @HiveField(0)
-  immediate,
-
-  @HiveField(1)
-  thirtySeconds,
-
-  @HiveField(2)
-  oneMinute,
-
-  @HiveField(3)
-  fiveMinutes,
+/// Extension to add toEntity method to AppSettings
+extension AppSettingsX on AppSettings {
+  /// Convert data model to domain entity
+  AppSettingsEntity toEntity() {
+    return AppSettingsEntity(
+      defaultCurrency: defaultCurrency,
+      defaultExpenseCategory: defaultExpenseCategory,
+      enableQuickExpense: enableQuickExpense,
+      enableGroceryOCR: enableGroceryOCR,
+      saveLastStoreName: saveLastStoreName,
+      showFrequentItemSuggestions: showFrequentItemSuggestions,
+      clearGrocerySessionOnExit: clearGrocerySessionOnExit,
+      confirmBeforeGrocerySubmit: confirmBeforeGrocerySubmit,
+      enableSpendingIntelligence: enableSpendingIntelligence,
+      insightFrequency: insightFrequency,
+      enableAppLock: enableAppLock,
+      autoLockTimer: autoLockTimer,
+      requireAuthOnLaunch: requireAuthOnLaunch,
+      lastExportDate: lastExportDate,
+      storageUsageBytes: storageUsageBytes,
+      createdAt: createdAt,
+      lastModified: lastModified,
+      version: version,
+    );
+  }
 }

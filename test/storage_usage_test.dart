@@ -56,7 +56,8 @@ void main() {
 
     test('Storage usage provider updates correctly', () async {
       // Initial state should have null storage usage
-      final initialState = container.read(appSettingsNotifierProvider);
+      final initialStateAsync = container.read(appSettingsNotifierProvider);
+      final initialState = initialStateAsync.valueOrNull ?? const AppSettings();
       expect(initialState.storageUsageBytes, null);
 
       // Update storage usage
@@ -64,7 +65,8 @@ void main() {
       await notifier.updateStorageUsage(1024); // 1KB
 
       // Check updated state
-      final updatedState = container.read(appSettingsNotifierProvider);
+      final updatedStateAsync = container.read(appSettingsNotifierProvider);
+      final updatedState = updatedStateAsync.valueOrNull ?? const AppSettings();
       expect(updatedState.storageUsageBytes, 1024);
     });
 
@@ -94,7 +96,8 @@ void main() {
         final notifier = container.read(appSettingsNotifierProvider.notifier);
         await notifier.recalculateStorageUsage();
 
-        final state = container.read(appSettingsNotifierProvider);
+        final stateAsync = container.read(appSettingsNotifierProvider);
+        final state = stateAsync.valueOrNull ?? const AppSettings();
         expect(state.storageUsageBytes, 1024);
       });
     });

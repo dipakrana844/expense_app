@@ -10,7 +10,7 @@ import 'package:smart_expense_tracker/features/categories/domain/enums/category_
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import '../providers/settings_providers.dart';
 import '../widgets/setting_tiles.dart';
-import '../../data/models/app_settings.dart';
+import '../../domain/entities/app_settings_entity.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -47,7 +47,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final settings = ref.watch(appSettingsNotifierProvider);
+    final settingsAsync = ref.watch(appSettingsNotifierProvider);
     final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
     final expenseCategoriesAsync = ref.watch(
       categoriesByTypeProvider(CategoryType.expense),
@@ -56,352 +56,335 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       data: (categories) => categories.map((c) => c.name.trim()).toList(),
       orElse: () => const <String>[],
     );
-    final categoryOptions = <String>{
-      ...AppConstants.expenseCategories,
-      ...dynamicCategories,
-      settings.defaultExpenseCategory,
-    }.where((name) => name.isNotEmpty).toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
-        children: [
-          // Expense & Grocery Section
-          const SettingSectionHeader(title: 'Expense & Grocery'),
-          SettingGroup(
+      body: settingsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SettingDropdownTile<String>(
-                title: 'Default Currency',
-                icon: Icons.currency_rupee,
-                value: settings.defaultCurrency,
-                items: const [
-                  DropdownMenuItem(value: '₹', child: Text('Rupee (₹)')),
-                  DropdownMenuItem(value: '\$', child: Text('Dollar (\$)')),
-                  DropdownMenuItem(value: '€', child: Text('Euro (€)')),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    settingsNotifier.updateSettings(defaultCurrency: value);
-                  }
-                },
-              ),
-              SettingDropdownTile<String>(
-                title: 'Default Category',
-                icon: Icons.category,
-                value: settings.defaultExpenseCategory,
-                items: [
-                  ...categoryOptions.map(
-                    (category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    ),
-                  ),
-                  const DropdownMenuItem(
-                    value: AppCategories.addCategoryActionValue,
-                    child: Row(
-                      children: [
-                        Icon(Icons.add, size: 18),
-                        SizedBox(width: 8),
-                        Text('Add Category'),
-                      ],
-                    ),
-                  ),
-                ],
-                onChanged: (value) async {
-                  if (value != null) {
-                    if (value == AppCategories.addCategoryActionValue) {
-                      await _showAddCategorySheet(context, settingsNotifier);
-                      return;
-                    }
-                    await settingsNotifier.updateSettings(
-                      defaultExpenseCategory: value,
-                    );
-                  }
-                },
-              ),
-              SettingSwitchTile(
-                title: 'Quick Expense',
-                subtitle: 'Enable quick expense recording',
-                icon: Icons.flash_on,
-                value: settings.enableQuickExpense,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(enableQuickExpense: value);
-                },
-              ),
-              SettingSwitchTile(
-                title: 'Grocery OCR',
-                subtitle: 'Enable receipt scanning for groceries',
-                icon: Icons.document_scanner,
-                value: settings.enableGroceryOCR,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(enableGroceryOCR: value);
-                },
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Failed to load settings: $error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => settingsNotifier.reload(),
+                child: const Text('Retry'),
               ),
             ],
           ),
+        ),
+        data: (settings) {
+          final categoryOptions = <String>{
+            ...AppConstants.expenseCategories,
+            ...dynamicCategories,
+            settings.defaultExpenseCategory,
+          }.where((name) => name.isNotEmpty).toList();
 
-          // Grocery Settings Section
-          const SettingSectionHeader(title: 'Grocery Settings'),
-          SettingGroup(
+          return ListView(
             children: [
-              SettingSwitchTile(
-                title: 'Save Last Store',
-                subtitle: 'Remember last used store name',
-                icon: Icons.store,
-                value: settings.saveLastStoreName,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(saveLastStoreName: value);
-                },
-              ),
-              SettingSwitchTile(
-                title: 'Item Suggestions',
-                subtitle: 'Show frequently purchased items',
-                icon: Icons.lightbulb,
-                value: settings.showFrequentItemSuggestions,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(
-                    showFrequentItemSuggestions: value,
-                  );
-                },
-              ),
-              SettingSwitchTile(
-                title: 'Clear on Exit',
-                subtitle: 'Clear grocery session when exiting app',
-                icon: Icons.clear,
-                value: settings.clearGrocerySessionOnExit,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(
-                    clearGrocerySessionOnExit: value,
-                  );
-                },
-              ),
-              SettingSwitchTile(
-                title: 'Confirm Submit',
-                subtitle: 'Ask for confirmation before submitting',
-                icon: Icons.check_circle,
-                value: settings.confirmBeforeGrocerySubmit,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(
-                    confirmBeforeGrocerySubmit: value,
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Smart Insights Section
-          const SettingSectionHeader(title: 'Smart Insights'),
-          SettingGroup(
-            children: [
-              SettingSwitchTile(
-                title: 'AI Insights',
-                subtitle: 'Enable spending intelligence analysis',
-                icon: Icons.auto_graph,
-                value: settings.enableSpendingIntelligence,
-                onChanged: (value) {
-                  settingsNotifier.updateSettings(
-                    enableSpendingIntelligence: value,
-                  );
-                },
-              ),
-              SettingDropdownTile<InsightFrequency>(
-                title: 'Insight Frequency',
-                subtitle: 'How often to generate insights',
-                icon: Icons.update,
-                value: settings.insightFrequency,
-                items: const [
-                  DropdownMenuItem(
-                    value: InsightFrequency.daily,
-                    child: Text('Daily'),
+              // Expense & Grocery Section
+              const SettingSectionHeader(title: 'Expense & Grocery'),
+              SettingGroup(
+                children: [
+                  SettingDropdownTile<String>(
+                    title: 'Default Currency',
+                    icon: Icons.currency_rupee,
+                    value: settings.defaultCurrency,
+                    items: const [
+                      DropdownMenuItem(value: '₹', child: Text('Rupee (₹)')),
+                      DropdownMenuItem(value: '\$', child: Text('Dollar (\$)')),
+                      DropdownMenuItem(value: '€', child: Text('Euro (€)')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        settingsNotifier.updateSettings(defaultCurrency: value);
+                      }
+                    },
                   ),
-                  DropdownMenuItem(
-                    value: InsightFrequency.weekly,
-                    child: Text('Weekly'),
-                  ),
-                  DropdownMenuItem(
-                    value: InsightFrequency.monthly,
-                    child: Text('Monthly'),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    settingsNotifier.updateSettings(insightFrequency: value);
-                  }
-                },
-              ),
-              SettingActionTile(
-                title: 'Reset Insights Data',
-                subtitle: 'Clear all collected insight data',
-                icon: Icons.restart_alt,
-                iconColor: Colors.red,
-                onPressed: () =>
-                    _showResetInsightsDialog(context, settingsNotifier),
-              ),
-            ],
-          ),
-
-          // Security Section
-          const SettingSectionHeader(title: 'Security'),
-          SettingGroup(
-            children: [
-              SettingSwitchTile(
-                title: 'App Lock',
-                subtitle: 'Require biometric authentication',
-                icon: Icons.lock,
-                value: settings.enableAppLock,
-                isLoading: ref.watch(securitySettingsLoadingProvider),
-                onChanged: ref.watch(securitySettingsLoadingProvider)
-                    ? null
-                    : (value) async {
-                        if (value) {
-                          await _handleAppLockToggle(
+                  SettingDropdownTile<String>(
+                    title: 'Default Category',
+                    icon: Icons.category,
+                    value: settings.defaultExpenseCategory,
+                    items: [
+                      ...categoryOptions.map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
+                        ),
+                      ),
+                      const DropdownMenuItem(
+                        value: AppCategories.addCategoryActionValue,
+                        child: Row(
+                          children: [
+                            Icon(Icons.add, size: 18),
+                            SizedBox(width: 8),
+                            Text('Add Category'),
+                          ],
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) async {
+                      if (value != null) {
+                        if (value == AppCategories.addCategoryActionValue) {
+                          await _showAddCategorySheet(
                             context,
                             settingsNotifier,
-                            value,
                           );
-                        } else {
-                          await settingsNotifier.updateSettings(
-                            enableAppLock: value,
-                          );
+                          return;
                         }
-                      },
-              ),
-              SettingDropdownTile<AutoLockTimer>(
-                title: 'Auto-Lock Timer',
-                subtitle: 'Time before automatic lock',
-                icon: Icons.timer,
-                value: settings.autoLockTimer,
-                items: const [
-                  DropdownMenuItem(
-                    value: AutoLockTimer.immediate,
-                    child: Text('Immediate'),
-                  ),
-                  DropdownMenuItem(
-                    value: AutoLockTimer.thirtySeconds,
-                    child: Text('30 Seconds'),
-                  ),
-                  DropdownMenuItem(
-                    value: AutoLockTimer.oneMinute,
-                    child: Text('1 Minute'),
-                  ),
-                  DropdownMenuItem(
-                    value: AutoLockTimer.fiveMinutes,
-                    child: Text('5 Minutes'),
-                  ),
-                ],
-                onChanged: settings.enableAppLock
-                    ? (value) async {
-                        if (value != null) {
-                          await settingsNotifier.updateSettings(
-                            autoLockTimer: value,
-                          );
-                        }
-                      }
-                    : null,
-              ),
-              SettingSwitchTile(
-                title: 'Auth on Launch',
-                subtitle: 'Require authentication when opening app',
-                icon: Icons.login,
-                value: settings.requireAuthOnLaunch,
-                onChanged: settings.enableAppLock
-                    ? (value) async {
                         await settingsNotifier.updateSettings(
-                          requireAuthOnLaunch: value,
+                          defaultExpenseCategory: value,
                         );
                       }
-                    : null,
+                    },
+                  ),
+                  SettingSwitchTile(
+                    title: 'Quick Expense',
+                    subtitle: 'Enable quick expense recording',
+                    icon: Icons.flash_on,
+                    value: settings.enableQuickExpense,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(
+                        enableQuickExpense: value,
+                      );
+                    },
+                  ),
+                  SettingSwitchTile(
+                    title: 'Grocery OCR',
+                    subtitle: 'Enable receipt scanning for groceries',
+                    icon: Icons.document_scanner,
+                    value: settings.enableGroceryOCR,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(enableGroceryOCR: value);
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
 
-          // Data & Storage Section
-          const SettingSectionHeader(title: 'Data & Storage'),
-          SettingGroup(
-            children: [
-              SettingActionTile(
-                title: 'Export Expenses',
-                subtitle: 'Export all expenses as CSV file',
-                icon: Icons.download,
-                onPressed: () => _exportExpenses(context, ref),
-              ),
-              SettingInfoTile(
-                title: 'Last Export',
-                subtitle: settings.lastExportDate != null
-                    ? 'Exported on ${_formatDate(settings.lastExportDate!)}'
-                    : 'No exports yet',
-                icon: Icons.history,
-              ),
-              SettingInfoTile(
-                title: 'Storage Usage',
-                subtitle: ref.watch(storageCalculationLoadingProvider)
-                    ? 'Calculating...'
-                    : settings.storageUsageBytes != null
-                    ? '${_formatBytes(settings.storageUsageBytes!)} used'
-                    : 'Storage usage not calculated',
-                icon: Icons.storage,
-              ),
-              SettingActionTile(
-                title: 'Refresh Storage Usage',
-                subtitle: 'Recalculate current storage usage',
-                icon: ref.watch(storageCalculationLoadingProvider)
-                    ? Icons.hourglass_empty
-                    : Icons.refresh,
-                iconColor: ref.watch(storageCalculationLoadingProvider)
-                    ? Colors.grey
-                    : Colors.blue,
-                onPressed: ref.watch(storageCalculationLoadingProvider)
-                    ? null
-                    : _recalculateStorageUsage,
-              ),
-              SettingActionTile(
-                title: 'Clear All Data',
-                subtitle: 'Permanently delete all expenses and settings',
-                icon: Icons.delete_forever,
-                iconColor: Colors.red,
-                onPressed: () => _showClearDataDialog(context, ref),
-              ),
-            ],
-          ),
+              const SizedBox(height: 24),
 
-          // About Section
-          const SettingSectionHeader(title: 'About'),
-          SettingGroup(
-            children: [
-              const SettingInfoTile(
-                title: 'App Version',
-                value: '1.0.0 Pro',
-                icon: Icons.info,
+              // Grocery Settings Section
+              const SettingSectionHeader(title: 'Grocery Settings'),
+              SettingGroup(
+                children: [
+                  SettingSwitchTile(
+                    title: 'Save Store Name',
+                    subtitle: 'Remember last used store name',
+                    icon: Icons.store,
+                    value: settings.saveLastStoreName,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(saveLastStoreName: value);
+                    },
+                  ),
+                  SettingSwitchTile(
+                    title: 'Frequent Item Suggestions',
+                    subtitle: 'Show suggestions based on history',
+                    icon: Icons.history,
+                    value: settings.showFrequentItemSuggestions,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(
+                        showFrequentItemSuggestions: value,
+                      );
+                    },
+                  ),
+                  SettingSwitchTile(
+                    title: 'Clear Session on Exit',
+                    subtitle: 'Clear grocery items when leaving',
+                    icon: Icons.exit_to_app,
+                    value: settings.clearGrocerySessionOnExit,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(
+                        clearGrocerySessionOnExit: value,
+                      );
+                    },
+                  ),
+                  SettingSwitchTile(
+                    title: 'Confirm Before Submit',
+                    subtitle: 'Show confirmation dialog before submitting',
+                    icon: Icons.check_circle_outline,
+                    value: settings.confirmBeforeGrocerySubmit,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(
+                        confirmBeforeGrocerySubmit: value,
+                      );
+                    },
+                  ),
+                ],
               ),
-              SettingActionTile(
-                title: 'Reset All Settings',
-                subtitle: 'Restore all settings to default values',
-                icon: Icons.settings_backup_restore,
-                iconColor: Colors.orange,
-                onPressed: () =>
-                    _showResetSettingsDialog(context, settingsNotifier),
-              ),
-            ],
-          ),
 
-          // Debug Section (only in debug mode)
-          if (kDebugMode) ...[
-            const SettingSectionHeader(title: 'Debug'),
-            SettingGroup(
-              children: [
-                SettingActionTile(
-                  title: 'Seed Dummy Data',
-                  subtitle: 'Add sample expenses for testing',
-                  icon: Icons.bug_report,
-                  iconColor: Colors.orange,
-                  onPressed: () => _seedDummyData(context, ref),
+              const SizedBox(height: 24),
+
+              // Smart Insights Section
+              const SettingSectionHeader(title: 'Smart Insights'),
+              SettingGroup(
+                children: [
+                  SettingSwitchTile(
+                    title: 'Spending Intelligence',
+                    subtitle: 'Enable AI-powered spending insights',
+                    icon: Icons.psychology,
+                    value: settings.enableSpendingIntelligence,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(
+                        enableSpendingIntelligence: value,
+                      );
+                    },
+                  ),
+                  SettingDropdownTile<InsightFrequency>(
+                    title: 'Insight Frequency',
+                    icon: Icons.insights,
+                    value: settings.insightFrequency,
+                    items: const [
+                      DropdownMenuItem(
+                        value: InsightFrequency.daily,
+                        child: Text('Daily'),
+                      ),
+                      DropdownMenuItem(
+                        value: InsightFrequency.weekly,
+                        child: Text('Weekly'),
+                      ),
+                      DropdownMenuItem(
+                        value: InsightFrequency.monthly,
+                        child: Text('Monthly'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        settingsNotifier.updateSettings(
+                          insightFrequency: value,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Security Section
+              const SettingSectionHeader(title: 'Security'),
+              SettingGroup(
+                children: [
+                  SettingSwitchTile(
+                    title: 'App Lock',
+                    subtitle: 'Require authentication to open app',
+                    icon: Icons.lock,
+                    value: settings.enableAppLock,
+                    isLoading: ref.watch(securitySettingsLoadingProvider),
+                    onChanged: ref.watch(securitySettingsLoadingProvider)
+                        ? null
+                        : (value) {
+                            _handleAppLockToggle(
+                              context,
+                              settingsNotifier,
+                              value,
+                            );
+                          },
+                  ),
+                  SettingDropdownTile<AutoLockTimer>(
+                    title: 'Auto Lock Timer',
+                    icon: Icons.timer,
+                    value: settings.autoLockTimer,
+                    items: const [
+                      DropdownMenuItem(
+                        value: AutoLockTimer.immediate,
+                        child: Text('Immediate'),
+                      ),
+                      DropdownMenuItem(
+                        value: AutoLockTimer.thirtySeconds,
+                        child: Text('30 Seconds'),
+                      ),
+                      DropdownMenuItem(
+                        value: AutoLockTimer.oneMinute,
+                        child: Text('1 Minute'),
+                      ),
+                      DropdownMenuItem(
+                        value: AutoLockTimer.fiveMinutes,
+                        child: Text('5 Minutes'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        settingsNotifier.updateSettings(autoLockTimer: value);
+                      }
+                    },
+                  ),
+                  SettingSwitchTile(
+                    title: 'Require Auth on Launch',
+                    subtitle: 'Authenticate when app starts',
+                    icon: Icons.security,
+                    value: settings.requireAuthOnLaunch,
+                    onChanged: (value) {
+                      settingsNotifier.updateSettings(
+                        requireAuthOnLaunch: value,
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Data & Storage Section
+              const SettingSectionHeader(title: 'Data & Storage'),
+              SettingGroup(
+                children: [
+                  SettingActionTile(
+                    title: 'Export Data',
+                    subtitle: settings.lastExportDate != null
+                        ? 'Last exported: ${_formatDate(settings.lastExportDate!)}'
+                        : 'Export all data to CSV',
+                    icon: Icons.download,
+                    iconColor: Colors.blue,
+                    onPressed: () => _exportData(context, settingsNotifier),
+                  ),
+                  SettingActionTile(
+                    title: 'Storage Usage',
+                    subtitle: settings.storageUsageBytes != null
+                        ? _formatBytes(settings.storageUsageBytes!)
+                        : 'Tap to calculate',
+                    icon: Icons.storage,
+                    iconColor: Colors.purple,
+                    isLoading: ref.watch(storageCalculationLoadingProvider),
+                    onPressed: ref.watch(storageCalculationLoadingProvider)
+                        ? null
+                        : () => _recalculateStorageUsage(),
+                  ),
+                  SettingActionTile(
+                    title: 'Reset All Settings',
+                    subtitle: 'Restore default settings',
+                    icon: Icons.restore,
+                    iconColor: Colors.red,
+                    onPressed: () =>
+                        _showResetConfirmation(context, settingsNotifier),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Developer Section (only in debug mode)
+              if (kDebugMode) ...[
+                const SettingSectionHeader(title: 'Developer'),
+                SettingGroup(
+                  children: [
+                    SettingActionTile(
+                      title: 'Seed Dummy Data',
+                      subtitle: 'Add sample expenses for testing',
+                      icon: Icons.bug_report,
+                      iconColor: Colors.orange,
+                      onPressed: () => _seedDummyData(context, ref),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
 
-          const SizedBox(height: 24),
-        ],
+              const SizedBox(height: 24),
+            ],
+          );
+        },
       ),
     );
   }
@@ -471,58 +454,46 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  Future<void> _exportExpenses(BuildContext context, WidgetRef ref) async {
-    final expensesAsync = ref.read(expensesProvider);
-    if (expensesAsync.hasValue && expensesAsync.value!.isNotEmpty) {
-      try {
-        await ExportService.exportExpensesToCSV(expensesAsync.value!);
-        final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
-        await settingsNotifier.updateLastExportDate(DateTime.now());
+  Future<void> _exportData(
+    BuildContext context,
+    AppSettingsNotifier settingsNotifier,
+  ) async {
+    try {
+      // Get all expenses from the repository
+      final expenseRepository = ref.read(expenseRepositoryProvider);
+      final (expenses, failure) = await expenseRepository.getAllExpenses();
 
+      if (failure != null || expenses == null) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Expenses exported successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Export failed: $e'),
+              content: Text('Failed to load expenses for export'),
               backgroundColor: Colors.red,
             ),
           );
         }
+        return;
       }
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No data to export')));
-      }
-    }
-  }
 
-  Future<void> _seedDummyData(BuildContext context, WidgetRef ref) async {
-    try {
-      final notifier = ref.read(expensesProvider.notifier);
-      await notifier.seedDummyData();
+      // Export expenses to CSV
+      await ExportService.exportExpensesToCSV(expenses);
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Dummy data added successfully'),
+            content: Text('Data exported successfully'),
             backgroundColor: Colors.green,
           ),
         );
+
+        // Update last export date
+        await settingsNotifier.updateLastExportDate(DateTime.now());
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add dummy data: $e'),
+            content: Text('Error exporting data: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -530,114 +501,111 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  void _showResetSettingsDialog(
+  Future<void> _showResetConfirmation(
     BuildContext context,
     AppSettingsNotifier settingsNotifier,
-  ) {
-    showDialog(
+  ) async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reset All Settings'),
+        title: const Text('Reset Settings'),
         content: const Text(
-          'This will restore all settings to their default values. '
-          'This action cannot be undone.',
+          'Are you sure you want to reset all settings to defaults? This action cannot be undone.',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await settingsNotifier.resetToDefaults();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Settings reset to defaults'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              }
-            },
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Reset'),
           ),
         ],
       ),
     );
+
+    if (confirmed == true && context.mounted) {
+      await settingsNotifier.resetToDefaults();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Settings reset to defaults'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    }
   }
 
-  void _showClearDataDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Clear All Data'),
-        content: const Text(
-          'This will permanently delete all expenses, settings, and preferences. '
-          'This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              Navigator.pop(context);
-              // TODO: Implement data clearing logic
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Data clearing not yet implemented'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              }
-            },
-            child: const Text('Clear All'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showResetInsightsDialog(
+  Future<void> _showAddCategorySheet(
     BuildContext context,
     AppSettingsNotifier settingsNotifier,
-  ) {
-    showDialog(
+  ) async {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final result = await showModalBottomSheet<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reset Insights Data'),
-        content: const Text(
-          'This will clear all collected spending insight data. '
-          'New insights will be generated from fresh data.',
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Add New Category',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  labelText: 'Category Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter a category name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    Navigator.of(context).pop(controller.text.trim());
+                  }
+                },
+                child: const Text('Add Category'),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              Navigator.pop(context);
-              // TODO: Implement insights data reset
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Insights data reset not yet implemented'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              }
-            },
-            child: const Text('Reset'),
-          ),
-        ],
       ),
     );
+
+    if (result != null && context.mounted) {
+      await settingsNotifier.updateSettings(defaultExpenseCategory: result);
+    }
+  }
+
+  Future<void> _seedDummyData(BuildContext context, WidgetRef ref) async {
+    // This would typically call a service to seed data
+    // For now, just show a message
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Dummy data seeding not implemented yet'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
   }
 
   String _formatDate(DateTime date) {
@@ -647,118 +615,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String _formatBytes(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-  }
-
-  Future<void> _showAddCategorySheet(
-    BuildContext context,
-    AppSettingsNotifier settingsNotifier,
-  ) async {
-    final nameController = TextEditingController();
-    int selectedIcon = 0xe5cc; // category
-    const int selectedColor = 0xFF2196F3;
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Add New Category',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Category Name',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: AppConstants.categoryIcons.entries.take(10).map((
-                      entry,
-                    ) {
-                      final isSelected = selectedIcon == entry.value;
-                      return ChoiceChip(
-                        label: Text(entry.key),
-                        selected: isSelected,
-                        onSelected: (_) {
-                          setState(() => selectedIcon = entry.value);
-                        },
-                        avatar: Icon(
-                          IconData(entry.value, fontFamily: 'MaterialIcons'),
-                          size: 16,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final normalizedName = nameController.text.trim();
-                      if (normalizedName.isEmpty) return;
-
-                      final result = await ref
-                          .read(getCategoriesUseCaseProvider)
-                          .call(type: CategoryType.expense);
-
-                      final alreadyExists = result.fold(
-                        onSuccess: (existing) => existing.any(
-                          (category) =>
-                              category.name.trim().toLowerCase() ==
-                              normalizedName.toLowerCase(),
-                        ),
-                        onFailure: (_) => false,
-                      );
-                      if (alreadyExists) {
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Category already exists'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      final controller = ref.read(
-                        categoryControllerProvider.notifier,
-                      );
-                      await controller.addCategory(
-                        name: normalizedName,
-                        type: CategoryType.expense,
-                        iconCodePoint: selectedIcon,
-                        colorValue: selectedColor,
-                      );
-                      await settingsNotifier.updateSettings(
-                        defaultExpenseCategory: normalizedName,
-                      );
-                      if (!context.mounted) return;
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Add Category'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+    if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 }

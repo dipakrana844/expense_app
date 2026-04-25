@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../models/app_settings.dart';
+import '../adapters/hive_adapters.dart' as adapters;
+import '../../domain/entities/app_settings_entity.dart';
 
 /// Local Data Source for Application Settings
 ///
@@ -26,10 +28,10 @@ class SettingsLocalDataSource {
         Hive.registerAdapter(AppSettingsAdapter());
       }
       if (!Hive.isAdapterRegistered(12)) {
-        Hive.registerAdapter(InsightFrequencyAdapter());
+        Hive.registerAdapter(adapters.InsightFrequencyAdapter());
       }
       if (!Hive.isAdapterRegistered(13)) {
-        Hive.registerAdapter(AutoLockTimerAdapter());
+        Hive.registerAdapter(adapters.AutoLockTimerAdapter());
       }
 
       // Open box
@@ -66,9 +68,7 @@ class SettingsLocalDataSource {
       return;
     }
     try {
-      final updated = settings.copyWith(
-        lastModified: DateTime.now(),
-      );
+      final updated = settings.copyWith(lastModified: DateTime.now());
       await _settingsBox.put(_settingsKey, updated);
     } catch (e) {
       debugPrint('Failed to save settings: $e');
@@ -93,10 +93,12 @@ class SettingsLocalDataSource {
     bool? requireAuthOnLaunch,
   }) async {
     if (!_isInitialized) {
-      debugPrint('Settings data source not initialized, cannot update settings');
+      debugPrint(
+        'Settings data source not initialized, cannot update settings',
+      );
       return;
     }
-    
+
     try {
       final current = getSettings();
       final updated = current.copyWith(
@@ -143,10 +145,7 @@ class SettingsLocalDataSource {
   AppSettings _getDefaultSettings() {
     return const AppSettings(
       createdAt: null, // Will be set on first save
-    ).copyWith(
-      createdAt: DateTime.now(),
-      lastModified: DateTime.now(),
-    );
+    ).copyWith(createdAt: DateTime.now(), lastModified: DateTime.now());
   }
 
   /// Update storage usage information
@@ -182,7 +181,7 @@ class SettingsLocalDataSource {
   /// Calculate actual storage usage across all app data
   Future<int> calculateActualStorageUsage() async {
     int totalBytes = 0;
-    
+
     final boxNames = [
       AppConstants.expensesBoxName,
       'incomes', // IncomeLocalDataSource._boxName is private
@@ -204,9 +203,9 @@ class SettingsLocalDataSource {
         } else {
           box = await Hive.openBox(name);
         }
-        
+
         totalBytes += _estimateBoxSize(box);
-        
+
         // Only close if we opened it specifically for this calculation
         if (!isAlreadyOpen) {
           await box.close();
@@ -215,29 +214,29 @@ class SettingsLocalDataSource {
         debugPrint('Could not access box $name for storage calculation: $e');
       }
     }
-    
+
     return totalBytes;
   }
-  
+
   /// Estimate the size of a Hive box in bytes
   int _estimateBoxSize(Box box) {
     if (!box.isOpen) return 0;
-    
+
     int totalSize = 0;
     try {
       // Estimate based on number of entries and average size
       final entryCount = box.length;
-      
+
       // Rough estimation: each entry has overhead + data
       // This is a simplified estimation - real size would require serialization
       const averageEntryOverhead = 100; // bytes for Hive metadata per entry
       const averageDataSize = 200; // bytes for typical app data
-      
+
       totalSize = entryCount * (averageEntryOverhead + averageDataSize);
     } catch (e) {
       debugPrint('Error estimating box size: $e');
     }
-    
+
     return totalSize;
   }
 
@@ -247,7 +246,7 @@ class SettingsLocalDataSource {
     try {
       final settings = getSettings();
       // Return cached value if available and recent (within 1 hour)
-      if (settings.storageUsageBytes != null && 
+      if (settings.storageUsageBytes != null &&
           settings.lastModified != null &&
           DateTime.now().difference(settings.lastModified!).inHours < 1) {
         return settings.storageUsageBytes!;
@@ -259,7 +258,7 @@ class SettingsLocalDataSource {
       return 0;
     }
   }
-  
+
   /// Force recalculate and update storage usage
   Future<void> recalculateAndSaveStorageUsage() async {
     final bytes = await calculateActualStorageUsage();
@@ -277,5 +276,4 @@ class SettingsLocalDataSource {
       }
     }
   }
-
 }

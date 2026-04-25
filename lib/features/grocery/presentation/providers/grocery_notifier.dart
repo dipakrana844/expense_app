@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
+import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/grocery/domain/entities/grocery_item.dart';
 import 'package:smart_expense_tracker/features/grocery/domain/services/grocery_service.dart';
@@ -21,7 +22,8 @@ class GroceryNotifier extends _$GroceryNotifier {
   @override
   GrocerySessionState build() {
     // Read global settings instead of local preferences
-    final settings = ref.watch(appSettingsNotifierProvider);
+    final settingsAsync = ref.watch(appSettingsNotifierProvider);
+    final settings = settingsAsync.valueOrNull ?? const AppSettings();
 
     // Get grocery preferences for data, but use global settings for behavior
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
@@ -36,7 +38,8 @@ class GroceryNotifier extends _$GroceryNotifier {
     state = state.copyWith(storeName: name);
 
     // Save to preferences if enabled in global settings
-    final settings = ref.read(appSettingsNotifierProvider);
+    final settingsAsync = ref.read(appSettingsNotifierProvider);
+    final settings = settingsAsync.valueOrNull ?? const AppSettings();
     if (settings.saveLastStoreName) {
       final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
       prefsDataSource.updateLastStoreName(name);
@@ -59,7 +62,8 @@ class GroceryNotifier extends _$GroceryNotifier {
     );
 
     // Track frequent items if enabled in global settings
-    final settings = ref.read(appSettingsNotifierProvider);
+    final settingsAsync = ref.read(appSettingsNotifierProvider);
+    final settings = settingsAsync.valueOrNull ?? const AppSettings();
     if (settings.showFrequentItemSuggestions) {
       final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
       prefsDataSource.addItemToFrequent(name);
@@ -161,7 +165,8 @@ class GroceryNotifier extends _$GroceryNotifier {
 
   /// Get suggested items based on global settings
   List<String> getSuggestedItems() {
-    final settings = ref.read(appSettingsNotifierProvider);
+    final settingsAsync = ref.read(appSettingsNotifierProvider);
+    final settings = settingsAsync.valueOrNull ?? const AppSettings();
     if (!settings.showFrequentItemSuggestions) return [];
 
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);

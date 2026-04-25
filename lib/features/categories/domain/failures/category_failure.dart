@@ -14,6 +14,7 @@ sealed class CategoryFailure {
 
 /// Failure when network operations fail
 class NetworkFailure extends CategoryFailure {
+  @override
   final String message;
   final String? technicalDetails;
 
@@ -25,6 +26,7 @@ class NetworkFailure extends CategoryFailure {
 
 /// Failure when validation fails
 class ValidationFailure extends CategoryFailure {
+  @override
   final String message;
   final String field;
 
@@ -65,6 +67,7 @@ class DuplicateFailure extends CategoryFailure {
 
 /// Failure when storage operations fail
 class StorageFailure extends CategoryFailure {
+  @override
   final String message;
   final String? technicalDetails;
 
@@ -76,6 +79,7 @@ class StorageFailure extends CategoryFailure {
 
 /// Failure when data migration is required
 class MigrationFailure extends CategoryFailure {
+  @override
   final String message;
   final int currentVersion;
   final int requiredVersion;
@@ -93,6 +97,7 @@ class MigrationFailure extends CategoryFailure {
 
 /// Failure when an unexpected error occurs
 class UnexpectedFailure extends CategoryFailure {
+  @override
   final String message;
   final Exception? exception;
   final StackTrace? stackTrace;
@@ -141,7 +146,7 @@ class Result<T> {
     required R Function(CategoryFailure failure) onFailure,
   }) {
     if (isSuccess) {
-      return onSuccess(data!);
+      return onSuccess(data as T);
     }
     return onFailure(failure!);
   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_expense_tracker/core/utils/utils.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
+import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
 import '../providers/grocery_notifier.dart';
 import '../providers/grocery_state.dart';
 import '../../domain/entities/grocery_item.dart';
@@ -69,7 +70,8 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(groceryNotifierProvider);
-    final settings = ref.watch(appSettingsNotifierProvider);
+    final settingsAsync = ref.watch(appSettingsNotifierProvider);
+    final settings = settingsAsync.valueOrNull ?? const AppSettings();
 
     return Scaffold(
       appBar: AppBar(

@@ -4,6 +4,7 @@ import 'package:smart_expense_tracker/features/settings/presentation/providers/s
 import 'package:smart_expense_tracker/features/settings/data/infrastructure_provider.dart';
 import 'package:smart_expense_tracker/features/settings/data/local/settings_local_data_source.dart';
 import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
+import 'package:smart_expense_tracker/features/settings/domain/entities/app_settings_entity.dart';
 
 class FakeSettingsLocalDataSource extends SettingsLocalDataSource {
   AppSettings _settings = const AppSettings();
@@ -87,7 +88,8 @@ void main() {
 
     test('Settings provider updates correctly', () async {
       // Initial state
-      final initialState = container.read(appSettingsNotifierProvider);
+      final initialStateAsync = container.read(appSettingsNotifierProvider);
+      final initialState = initialStateAsync.valueOrNull ?? const AppSettings();
       expect(initialState.defaultCurrency, '₹');
       expect(initialState.enableQuickExpense, true);
 
@@ -99,7 +101,8 @@ void main() {
       );
 
       // Check updated state
-      final updatedState = container.read(appSettingsNotifierProvider);
+      final updatedStateAsync = container.read(appSettingsNotifierProvider);
+      final updatedState = updatedStateAsync.valueOrNull ?? const AppSettings();
       expect(updatedState.defaultCurrency, '\$');
       expect(updatedState.enableQuickExpense, false);
     });

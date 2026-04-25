@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/category_providers.dart';
 import '../../domain/enums/category_type.dart';
-import '../../domain/failures/category_failure.dart';
 
 /// Widget: AddCategorySheet
 ///
