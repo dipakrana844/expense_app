@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/grocery/data/adapters/grocery_preferences_adapter.dart';
 import '../models/grocery_preferences.dart';
 
 /// Local Data Source for Grocery Preferences

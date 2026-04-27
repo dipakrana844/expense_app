@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/daily_spend_guard/data/adapters/daily_spend_state_adapter.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 import '../models/daily_spend_state.dart';
 

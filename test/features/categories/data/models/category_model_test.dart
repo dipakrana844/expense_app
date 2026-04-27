@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/categories/data/adapters/category_model_adapter.dart';
 import 'package:smart_expense_tracker/features/categories/data/models/category_model.dart';
 import 'package:smart_expense_tracker/features/categories/domain/entities/category_entity.dart';
 import 'package:smart_expense_tracker/features/categories/domain/enums/category_type.dart';

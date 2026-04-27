@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,324 +9,298 @@ part of 'income_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-IncomeModel _$IncomeModelFromJson(Map<String, dynamic> json) {
-  return _IncomeModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$IncomeModel {
-  @HiveField(0)
-  String get id => throw _privateConstructorUsedError;
-  @HiveField(1)
-  double get amount => throw _privateConstructorUsedError;
-  @HiveField(2)
-  String get source => throw _privateConstructorUsedError;
-  @HiveField(3)
-  DateTime get date => throw _privateConstructorUsedError;
-  @HiveField(4)
-  String? get note => throw _privateConstructorUsedError;
-  @HiveField(5)
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  @HiveField(6)
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-  @HiveField(7)
-  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $IncomeModelCopyWith<IncomeModel> get copyWith =>
-      throw _privateConstructorUsedError;
+ String get id; double get amount; String get source; DateTime get date; String? get note; DateTime get createdAt; DateTime? get updatedAt; Map<String, dynamic>? get metadata;
+/// Create a copy of IncomeModel
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$IncomeModelCopyWith<IncomeModel> get copyWith => _$IncomeModelCopyWithImpl<IncomeModel>(this as IncomeModel, _$identity);
+
+  /// Serializes this IncomeModel to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IncomeModel&&(identical(other.id, id) || other.id == id)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.source, source) || other.source == source)&&(identical(other.date, date) || other.date == date)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.metadata, metadata));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,amount,source,date,note,createdAt,updatedAt,const DeepCollectionEquality().hash(metadata));
+
+@override
+String toString() {
+  return 'IncomeModel(id: $id, amount: $amount, source: $source, date: $date, note: $note, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $IncomeModelCopyWith<$Res> {
-  factory $IncomeModelCopyWith(
-          IncomeModel value, $Res Function(IncomeModel) then) =
-      _$IncomeModelCopyWithImpl<$Res, IncomeModel>;
-  @useResult
-  $Res call(
-      {@HiveField(0) String id,
-      @HiveField(1) double amount,
-      @HiveField(2) String source,
-      @HiveField(3) DateTime date,
-      @HiveField(4) String? note,
-      @HiveField(5) DateTime createdAt,
-      @HiveField(6) DateTime? updatedAt,
-      @HiveField(7) Map<String, dynamic>? metadata});
-}
+abstract mixin class $IncomeModelCopyWith<$Res>  {
+  factory $IncomeModelCopyWith(IncomeModel value, $Res Function(IncomeModel) _then) = _$IncomeModelCopyWithImpl;
+@useResult
+$Res call({
+ String id, double amount, String source, DateTime date, String? note, DateTime createdAt, DateTime? updatedAt, Map<String, dynamic>? metadata
+});
 
+
+
+
+}
 /// @nodoc
-class _$IncomeModelCopyWithImpl<$Res, $Val extends IncomeModel>
+class _$IncomeModelCopyWithImpl<$Res>
     implements $IncomeModelCopyWith<$Res> {
-  _$IncomeModelCopyWithImpl(this._value, this._then);
+  _$IncomeModelCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final IncomeModel _self;
+  final $Res Function(IncomeModel) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? amount = null,
-    Object? source = null,
-    Object? date = null,
-    Object? note = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = freezed,
-    Object? metadata = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      source: null == source
-          ? _value.source
-          : source // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      note: freezed == note
-          ? _value.note
-          : note // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      metadata: freezed == metadata
-          ? _value.metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-    ) as $Val);
-  }
+/// Create a copy of IncomeModel
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? amount = null,Object? source = null,Object? date = null,Object? note = freezed,Object? createdAt = null,Object? updatedAt = freezed,Object? metadata = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as double,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as DateTime,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$IncomeModelImplCopyWith<$Res>
-    implements $IncomeModelCopyWith<$Res> {
-  factory _$$IncomeModelImplCopyWith(
-          _$IncomeModelImpl value, $Res Function(_$IncomeModelImpl) then) =
-      __$$IncomeModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@HiveField(0) String id,
-      @HiveField(1) double amount,
-      @HiveField(2) String source,
-      @HiveField(3) DateTime date,
-      @HiveField(4) String? note,
-      @HiveField(5) DateTime createdAt,
-      @HiveField(6) DateTime? updatedAt,
-      @HiveField(7) Map<String, dynamic>? metadata});
 }
 
-/// @nodoc
-class __$$IncomeModelImplCopyWithImpl<$Res>
-    extends _$IncomeModelCopyWithImpl<$Res, _$IncomeModelImpl>
-    implements _$$IncomeModelImplCopyWith<$Res> {
-  __$$IncomeModelImplCopyWithImpl(
-      _$IncomeModelImpl _value, $Res Function(_$IncomeModelImpl) _then)
-      : super(_value, _then);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? amount = null,
-    Object? source = null,
-    Object? date = null,
-    Object? note = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = freezed,
-    Object? metadata = freezed,
-  }) {
-    return _then(_$IncomeModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      source: null == source
-          ? _value.source
-          : source // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      note: freezed == note
-          ? _value.note
-          : note // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      metadata: freezed == metadata
-          ? _value._metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-    ));
-  }
+/// Adds pattern-matching-related methods to [IncomeModel].
+extension IncomeModelPatterns on IncomeModel {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _IncomeModel value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _IncomeModel() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _IncomeModel value)  $default,){
+final _that = this;
+switch (_that) {
+case _IncomeModel():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _IncomeModel value)?  $default,){
+final _that = this;
+switch (_that) {
+case _IncomeModel() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  double amount,  String source,  DateTime date,  String? note,  DateTime createdAt,  DateTime? updatedAt,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _IncomeModel() when $default != null:
+return $default(_that.id,_that.amount,_that.source,_that.date,_that.note,_that.createdAt,_that.updatedAt,_that.metadata);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  double amount,  String source,  DateTime date,  String? note,  DateTime createdAt,  DateTime? updatedAt,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
+switch (_that) {
+case _IncomeModel():
+return $default(_that.id,_that.amount,_that.source,_that.date,_that.note,_that.createdAt,_that.updatedAt,_that.metadata);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  double amount,  String source,  DateTime date,  String? note,  DateTime createdAt,  DateTime? updatedAt,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
+switch (_that) {
+case _IncomeModel() when $default != null:
+return $default(_that.id,_that.amount,_that.source,_that.date,_that.note,_that.createdAt,_that.updatedAt,_that.metadata);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$IncomeModelImpl extends _IncomeModel {
-  const _$IncomeModelImpl(
-      {@HiveField(0) required this.id,
-      @HiveField(1) required this.amount,
-      @HiveField(2) required this.source,
-      @HiveField(3) required this.date,
-      @HiveField(4) this.note,
-      @HiveField(5) required this.createdAt,
-      @HiveField(6) this.updatedAt,
-      @HiveField(7) final Map<String, dynamic>? metadata})
-      : _metadata = metadata,
-        super._();
 
-  factory _$IncomeModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$IncomeModelImplFromJson(json);
+class _IncomeModel extends IncomeModel {
+  const _IncomeModel({required this.id, required this.amount, required this.source, required this.date, this.note, required this.createdAt, this.updatedAt, final  Map<String, dynamic>? metadata}): _metadata = metadata,super._();
+  factory _IncomeModel.fromJson(Map<String, dynamic> json) => _$IncomeModelFromJson(json);
 
-  @override
-  @HiveField(0)
-  final String id;
-  @override
-  @HiveField(1)
-  final double amount;
-  @override
-  @HiveField(2)
-  final String source;
-  @override
-  @HiveField(3)
-  final DateTime date;
-  @override
-  @HiveField(4)
-  final String? note;
-  @override
-  @HiveField(5)
-  final DateTime createdAt;
-  @override
-  @HiveField(6)
-  final DateTime? updatedAt;
-  final Map<String, dynamic>? _metadata;
-  @override
-  @HiveField(7)
-  Map<String, dynamic>? get metadata {
-    final value = _metadata;
-    if (value == null) return null;
-    if (_metadata is EqualUnmodifiableMapView) return _metadata;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
-
-  @override
-  String toString() {
-    return 'IncomeModel(id: $id, amount: $amount, source: $source, date: $date, note: $note, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$IncomeModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.amount, amount) || other.amount == amount) &&
-            (identical(other.source, source) || other.source == source) &&
-            (identical(other.date, date) || other.date == date) &&
-            (identical(other.note, note) || other.note == note) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
-            const DeepCollectionEquality().equals(other._metadata, _metadata));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, id, amount, source, date, note,
-      createdAt, updatedAt, const DeepCollectionEquality().hash(_metadata));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$IncomeModelImplCopyWith<_$IncomeModelImpl> get copyWith =>
-      __$$IncomeModelImplCopyWithImpl<_$IncomeModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$IncomeModelImplToJson(
-      this,
-    );
-  }
+@override final  String id;
+@override final  double amount;
+@override final  String source;
+@override final  DateTime date;
+@override final  String? note;
+@override final  DateTime createdAt;
+@override final  DateTime? updatedAt;
+ final  Map<String, dynamic>? _metadata;
+@override Map<String, dynamic>? get metadata {
+  final value = _metadata;
+  if (value == null) return null;
+  if (_metadata is EqualUnmodifiableMapView) return _metadata;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
 }
 
-abstract class _IncomeModel extends IncomeModel {
-  const factory _IncomeModel(
-      {@HiveField(0) required final String id,
-      @HiveField(1) required final double amount,
-      @HiveField(2) required final String source,
-      @HiveField(3) required final DateTime date,
-      @HiveField(4) final String? note,
-      @HiveField(5) required final DateTime createdAt,
-      @HiveField(6) final DateTime? updatedAt,
-      @HiveField(7) final Map<String, dynamic>? metadata}) = _$IncomeModelImpl;
-  const _IncomeModel._() : super._();
 
-  factory _IncomeModel.fromJson(Map<String, dynamic> json) =
-      _$IncomeModelImpl.fromJson;
+/// Create a copy of IncomeModel
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$IncomeModelCopyWith<_IncomeModel> get copyWith => __$IncomeModelCopyWithImpl<_IncomeModel>(this, _$identity);
 
-  @override
-  @HiveField(0)
-  String get id;
-  @override
-  @HiveField(1)
-  double get amount;
-  @override
-  @HiveField(2)
-  String get source;
-  @override
-  @HiveField(3)
-  DateTime get date;
-  @override
-  @HiveField(4)
-  String? get note;
-  @override
-  @HiveField(5)
-  DateTime get createdAt;
-  @override
-  @HiveField(6)
-  DateTime? get updatedAt;
-  @override
-  @HiveField(7)
-  Map<String, dynamic>? get metadata;
-  @override
-  @JsonKey(ignore: true)
-  _$$IncomeModelImplCopyWith<_$IncomeModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+Map<String, dynamic> toJson() {
+  return _$IncomeModelToJson(this, );
 }
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _IncomeModel&&(identical(other.id, id) || other.id == id)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.source, source) || other.source == source)&&(identical(other.date, date) || other.date == date)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,amount,source,date,note,createdAt,updatedAt,const DeepCollectionEquality().hash(_metadata));
+
+@override
+String toString() {
+  return 'IncomeModel(id: $id, amount: $amount, source: $source, date: $date, note: $note, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$IncomeModelCopyWith<$Res> implements $IncomeModelCopyWith<$Res> {
+  factory _$IncomeModelCopyWith(_IncomeModel value, $Res Function(_IncomeModel) _then) = __$IncomeModelCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, double amount, String source, DateTime date, String? note, DateTime createdAt, DateTime? updatedAt, Map<String, dynamic>? metadata
+});
+
+
+
+
+}
+/// @nodoc
+class __$IncomeModelCopyWithImpl<$Res>
+    implements _$IncomeModelCopyWith<$Res> {
+  __$IncomeModelCopyWithImpl(this._self, this._then);
+
+  final _IncomeModel _self;
+  final $Res Function(_IncomeModel) _then;
+
+/// Create a copy of IncomeModel
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? amount = null,Object? source = null,Object? date = null,Object? note = freezed,Object? createdAt = null,Object? updatedAt = freezed,Object? metadata = freezed,}) {
+  return _then(_IncomeModel(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as double,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as DateTime,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,metadata: freezed == metadata ? _self._metadata : metadata // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
+  ));
+}
+
+
+}
+
+// dart format on

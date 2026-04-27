@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,389 +9,307 @@ part of 'grocery_preferences.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-GroceryPreferences _$GroceryPreferencesFromJson(Map<String, dynamic> json) {
-  return _GroceryPreferences.fromJson(json);
-}
-
 /// @nodoc
 mixin _$GroceryPreferences {
-  /// Last store name used in a grocery session
-  @HiveField(0)
-  String? get lastStoreName => throw _privateConstructorUsedError;
 
-  /// List of frequently purchased items (name only)
-  @HiveField(1)
-  List<String> get frequentItems => throw _privateConstructorUsedError;
+/// Last store name used in a grocery session
+ String? get lastStoreName;/// List of frequently purchased items (name only)
+ List<String> get frequentItems;/// Maximum number of frequent items to track
+ int get maxFrequentItems;/// Whether to save last store name between sessions
+ bool get saveLastStore;/// Whether to show frequent item suggestions
+ bool get showSuggestions;/// Whether to clear grocery session on app exit
+ bool get clearOnExit;/// Whether to confirm before submitting grocery session
+ bool get confirmSubmit;/// Timestamp of last update
+ DateTime? get lastUpdated;
+/// Create a copy of GroceryPreferences
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GroceryPreferencesCopyWith<GroceryPreferences> get copyWith => _$GroceryPreferencesCopyWithImpl<GroceryPreferences>(this as GroceryPreferences, _$identity);
 
-  /// Maximum number of frequent items to track
-  @HiveField(2)
-  int get maxFrequentItems => throw _privateConstructorUsedError;
 
-  /// Whether to save last store name between sessions
-  @HiveField(3)
-  bool get saveLastStore => throw _privateConstructorUsedError;
 
-  /// Whether to show frequent item suggestions
-  @HiveField(4)
-  bool get showSuggestions => throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroceryPreferences&&(identical(other.lastStoreName, lastStoreName) || other.lastStoreName == lastStoreName)&&const DeepCollectionEquality().equals(other.frequentItems, frequentItems)&&(identical(other.maxFrequentItems, maxFrequentItems) || other.maxFrequentItems == maxFrequentItems)&&(identical(other.saveLastStore, saveLastStore) || other.saveLastStore == saveLastStore)&&(identical(other.showSuggestions, showSuggestions) || other.showSuggestions == showSuggestions)&&(identical(other.clearOnExit, clearOnExit) || other.clearOnExit == clearOnExit)&&(identical(other.confirmSubmit, confirmSubmit) || other.confirmSubmit == confirmSubmit)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
+}
 
-  /// Whether to clear grocery session on app exit
-  @HiveField(5)
-  bool get clearOnExit => throw _privateConstructorUsedError;
 
-  /// Whether to confirm before submitting grocery session
-  @HiveField(6)
-  bool get confirmSubmit => throw _privateConstructorUsedError;
+@override
+int get hashCode => Object.hash(runtimeType,lastStoreName,const DeepCollectionEquality().hash(frequentItems),maxFrequentItems,saveLastStore,showSuggestions,clearOnExit,confirmSubmit,lastUpdated);
 
-  /// Timestamp of last update
-  @HiveField(7)
-  DateTime? get lastUpdated => throw _privateConstructorUsedError;
+@override
+String toString() {
+  return 'GroceryPreferences(lastStoreName: $lastStoreName, frequentItems: $frequentItems, maxFrequentItems: $maxFrequentItems, saveLastStore: $saveLastStore, showSuggestions: $showSuggestions, clearOnExit: $clearOnExit, confirmSubmit: $confirmSubmit, lastUpdated: $lastUpdated)';
+}
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $GroceryPreferencesCopyWith<GroceryPreferences> get copyWith =>
-      throw _privateConstructorUsedError;
+
 }
 
 /// @nodoc
-abstract class $GroceryPreferencesCopyWith<$Res> {
-  factory $GroceryPreferencesCopyWith(
-          GroceryPreferences value, $Res Function(GroceryPreferences) then) =
-      _$GroceryPreferencesCopyWithImpl<$Res, GroceryPreferences>;
-  @useResult
-  $Res call(
-      {@HiveField(0) String? lastStoreName,
-      @HiveField(1) List<String> frequentItems,
-      @HiveField(2) int maxFrequentItems,
-      @HiveField(3) bool saveLastStore,
-      @HiveField(4) bool showSuggestions,
-      @HiveField(5) bool clearOnExit,
-      @HiveField(6) bool confirmSubmit,
-      @HiveField(7) DateTime? lastUpdated});
-}
+abstract mixin class $GroceryPreferencesCopyWith<$Res>  {
+  factory $GroceryPreferencesCopyWith(GroceryPreferences value, $Res Function(GroceryPreferences) _then) = _$GroceryPreferencesCopyWithImpl;
+@useResult
+$Res call({
+ String? lastStoreName, List<String> frequentItems, int maxFrequentItems, bool saveLastStore, bool showSuggestions, bool clearOnExit, bool confirmSubmit, DateTime? lastUpdated
+});
 
+
+
+
+}
 /// @nodoc
-class _$GroceryPreferencesCopyWithImpl<$Res, $Val extends GroceryPreferences>
+class _$GroceryPreferencesCopyWithImpl<$Res>
     implements $GroceryPreferencesCopyWith<$Res> {
-  _$GroceryPreferencesCopyWithImpl(this._value, this._then);
+  _$GroceryPreferencesCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final GroceryPreferences _self;
+  final $Res Function(GroceryPreferences) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? lastStoreName = freezed,
-    Object? frequentItems = null,
-    Object? maxFrequentItems = null,
-    Object? saveLastStore = null,
-    Object? showSuggestions = null,
-    Object? clearOnExit = null,
-    Object? confirmSubmit = null,
-    Object? lastUpdated = freezed,
-  }) {
-    return _then(_value.copyWith(
-      lastStoreName: freezed == lastStoreName
-          ? _value.lastStoreName
-          : lastStoreName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      frequentItems: null == frequentItems
-          ? _value.frequentItems
-          : frequentItems // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      maxFrequentItems: null == maxFrequentItems
-          ? _value.maxFrequentItems
-          : maxFrequentItems // ignore: cast_nullable_to_non_nullable
-              as int,
-      saveLastStore: null == saveLastStore
-          ? _value.saveLastStore
-          : saveLastStore // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showSuggestions: null == showSuggestions
-          ? _value.showSuggestions
-          : showSuggestions // ignore: cast_nullable_to_non_nullable
-              as bool,
-      clearOnExit: null == clearOnExit
-          ? _value.clearOnExit
-          : clearOnExit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      confirmSubmit: null == confirmSubmit
-          ? _value.confirmSubmit
-          : confirmSubmit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastUpdated: freezed == lastUpdated
-          ? _value.lastUpdated
-          : lastUpdated // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
-  }
+/// Create a copy of GroceryPreferences
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? lastStoreName = freezed,Object? frequentItems = null,Object? maxFrequentItems = null,Object? saveLastStore = null,Object? showSuggestions = null,Object? clearOnExit = null,Object? confirmSubmit = null,Object? lastUpdated = freezed,}) {
+  return _then(_self.copyWith(
+lastStoreName: freezed == lastStoreName ? _self.lastStoreName : lastStoreName // ignore: cast_nullable_to_non_nullable
+as String?,frequentItems: null == frequentItems ? _self.frequentItems : frequentItems // ignore: cast_nullable_to_non_nullable
+as List<String>,maxFrequentItems: null == maxFrequentItems ? _self.maxFrequentItems : maxFrequentItems // ignore: cast_nullable_to_non_nullable
+as int,saveLastStore: null == saveLastStore ? _self.saveLastStore : saveLastStore // ignore: cast_nullable_to_non_nullable
+as bool,showSuggestions: null == showSuggestions ? _self.showSuggestions : showSuggestions // ignore: cast_nullable_to_non_nullable
+as bool,clearOnExit: null == clearOnExit ? _self.clearOnExit : clearOnExit // ignore: cast_nullable_to_non_nullable
+as bool,confirmSubmit: null == confirmSubmit ? _self.confirmSubmit : confirmSubmit // ignore: cast_nullable_to_non_nullable
+as bool,lastUpdated: freezed == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [GroceryPreferences].
+extension GroceryPreferencesPatterns on GroceryPreferences {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GroceryPreferences value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GroceryPreferences() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GroceryPreferences value)  $default,){
+final _that = this;
+switch (_that) {
+case _GroceryPreferences():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GroceryPreferences value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GroceryPreferences() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? lastStoreName,  List<String> frequentItems,  int maxFrequentItems,  bool saveLastStore,  bool showSuggestions,  bool clearOnExit,  bool confirmSubmit,  DateTime? lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GroceryPreferences() when $default != null:
+return $default(_that.lastStoreName,_that.frequentItems,_that.maxFrequentItems,_that.saveLastStore,_that.showSuggestions,_that.clearOnExit,_that.confirmSubmit,_that.lastUpdated);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? lastStoreName,  List<String> frequentItems,  int maxFrequentItems,  bool saveLastStore,  bool showSuggestions,  bool clearOnExit,  bool confirmSubmit,  DateTime? lastUpdated)  $default,) {final _that = this;
+switch (_that) {
+case _GroceryPreferences():
+return $default(_that.lastStoreName,_that.frequentItems,_that.maxFrequentItems,_that.saveLastStore,_that.showSuggestions,_that.clearOnExit,_that.confirmSubmit,_that.lastUpdated);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? lastStoreName,  List<String> frequentItems,  int maxFrequentItems,  bool saveLastStore,  bool showSuggestions,  bool clearOnExit,  bool confirmSubmit,  DateTime? lastUpdated)?  $default,) {final _that = this;
+switch (_that) {
+case _GroceryPreferences() when $default != null:
+return $default(_that.lastStoreName,_that.frequentItems,_that.maxFrequentItems,_that.saveLastStore,_that.showSuggestions,_that.clearOnExit,_that.confirmSubmit,_that.lastUpdated);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$GroceryPreferencesImplCopyWith<$Res>
-    implements $GroceryPreferencesCopyWith<$Res> {
-  factory _$$GroceryPreferencesImplCopyWith(_$GroceryPreferencesImpl value,
-          $Res Function(_$GroceryPreferencesImpl) then) =
-      __$$GroceryPreferencesImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@HiveField(0) String? lastStoreName,
-      @HiveField(1) List<String> frequentItems,
-      @HiveField(2) int maxFrequentItems,
-      @HiveField(3) bool saveLastStore,
-      @HiveField(4) bool showSuggestions,
-      @HiveField(5) bool clearOnExit,
-      @HiveField(6) bool confirmSubmit,
-      @HiveField(7) DateTime? lastUpdated});
+
+
+class _GroceryPreferences implements GroceryPreferences {
+  const _GroceryPreferences({this.lastStoreName, final  List<String> frequentItems = const [], this.maxFrequentItems = 20, this.saveLastStore = true, this.showSuggestions = true, this.clearOnExit = false, this.confirmSubmit = true, this.lastUpdated}): _frequentItems = frequentItems;
+  
+
+/// Last store name used in a grocery session
+@override final  String? lastStoreName;
+/// List of frequently purchased items (name only)
+ final  List<String> _frequentItems;
+/// List of frequently purchased items (name only)
+@override@JsonKey() List<String> get frequentItems {
+  if (_frequentItems is EqualUnmodifiableListView) return _frequentItems;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_frequentItems);
+}
+
+/// Maximum number of frequent items to track
+@override@JsonKey() final  int maxFrequentItems;
+/// Whether to save last store name between sessions
+@override@JsonKey() final  bool saveLastStore;
+/// Whether to show frequent item suggestions
+@override@JsonKey() final  bool showSuggestions;
+/// Whether to clear grocery session on app exit
+@override@JsonKey() final  bool clearOnExit;
+/// Whether to confirm before submitting grocery session
+@override@JsonKey() final  bool confirmSubmit;
+/// Timestamp of last update
+@override final  DateTime? lastUpdated;
+
+/// Create a copy of GroceryPreferences
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GroceryPreferencesCopyWith<_GroceryPreferences> get copyWith => __$GroceryPreferencesCopyWithImpl<_GroceryPreferences>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroceryPreferences&&(identical(other.lastStoreName, lastStoreName) || other.lastStoreName == lastStoreName)&&const DeepCollectionEquality().equals(other._frequentItems, _frequentItems)&&(identical(other.maxFrequentItems, maxFrequentItems) || other.maxFrequentItems == maxFrequentItems)&&(identical(other.saveLastStore, saveLastStore) || other.saveLastStore == saveLastStore)&&(identical(other.showSuggestions, showSuggestions) || other.showSuggestions == showSuggestions)&&(identical(other.clearOnExit, clearOnExit) || other.clearOnExit == clearOnExit)&&(identical(other.confirmSubmit, confirmSubmit) || other.confirmSubmit == confirmSubmit)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,lastStoreName,const DeepCollectionEquality().hash(_frequentItems),maxFrequentItems,saveLastStore,showSuggestions,clearOnExit,confirmSubmit,lastUpdated);
+
+@override
+String toString() {
+  return 'GroceryPreferences(lastStoreName: $lastStoreName, frequentItems: $frequentItems, maxFrequentItems: $maxFrequentItems, saveLastStore: $saveLastStore, showSuggestions: $showSuggestions, clearOnExit: $clearOnExit, confirmSubmit: $confirmSubmit, lastUpdated: $lastUpdated)';
+}
+
+
 }
 
 /// @nodoc
-class __$$GroceryPreferencesImplCopyWithImpl<$Res>
-    extends _$GroceryPreferencesCopyWithImpl<$Res, _$GroceryPreferencesImpl>
-    implements _$$GroceryPreferencesImplCopyWith<$Res> {
-  __$$GroceryPreferencesImplCopyWithImpl(_$GroceryPreferencesImpl _value,
-      $Res Function(_$GroceryPreferencesImpl) _then)
-      : super(_value, _then);
+abstract mixin class _$GroceryPreferencesCopyWith<$Res> implements $GroceryPreferencesCopyWith<$Res> {
+  factory _$GroceryPreferencesCopyWith(_GroceryPreferences value, $Res Function(_GroceryPreferences) _then) = __$GroceryPreferencesCopyWithImpl;
+@override @useResult
+$Res call({
+ String? lastStoreName, List<String> frequentItems, int maxFrequentItems, bool saveLastStore, bool showSuggestions, bool clearOnExit, bool confirmSubmit, DateTime? lastUpdated
+});
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? lastStoreName = freezed,
-    Object? frequentItems = null,
-    Object? maxFrequentItems = null,
-    Object? saveLastStore = null,
-    Object? showSuggestions = null,
-    Object? clearOnExit = null,
-    Object? confirmSubmit = null,
-    Object? lastUpdated = freezed,
-  }) {
-    return _then(_$GroceryPreferencesImpl(
-      lastStoreName: freezed == lastStoreName
-          ? _value.lastStoreName
-          : lastStoreName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      frequentItems: null == frequentItems
-          ? _value._frequentItems
-          : frequentItems // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      maxFrequentItems: null == maxFrequentItems
-          ? _value.maxFrequentItems
-          : maxFrequentItems // ignore: cast_nullable_to_non_nullable
-              as int,
-      saveLastStore: null == saveLastStore
-          ? _value.saveLastStore
-          : saveLastStore // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showSuggestions: null == showSuggestions
-          ? _value.showSuggestions
-          : showSuggestions // ignore: cast_nullable_to_non_nullable
-              as bool,
-      clearOnExit: null == clearOnExit
-          ? _value.clearOnExit
-          : clearOnExit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      confirmSubmit: null == confirmSubmit
-          ? _value.confirmSubmit
-          : confirmSubmit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastUpdated: freezed == lastUpdated
-          ? _value.lastUpdated
-          : lastUpdated // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
-  }
+
+
+
 }
-
 /// @nodoc
-@JsonSerializable()
-class _$GroceryPreferencesImpl implements _GroceryPreferences {
-  const _$GroceryPreferencesImpl(
-      {@HiveField(0) this.lastStoreName,
-      @HiveField(1) final List<String> frequentItems = const [],
-      @HiveField(2) this.maxFrequentItems = 20,
-      @HiveField(3) this.saveLastStore = true,
-      @HiveField(4) this.showSuggestions = true,
-      @HiveField(5) this.clearOnExit = false,
-      @HiveField(6) this.confirmSubmit = true,
-      @HiveField(7) this.lastUpdated})
-      : _frequentItems = frequentItems;
+class __$GroceryPreferencesCopyWithImpl<$Res>
+    implements _$GroceryPreferencesCopyWith<$Res> {
+  __$GroceryPreferencesCopyWithImpl(this._self, this._then);
 
-  factory _$GroceryPreferencesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GroceryPreferencesImplFromJson(json);
+  final _GroceryPreferences _self;
+  final $Res Function(_GroceryPreferences) _then;
 
-  /// Last store name used in a grocery session
-  @override
-  @HiveField(0)
-  final String? lastStoreName;
-
-  /// List of frequently purchased items (name only)
-  final List<String> _frequentItems;
-
-  /// List of frequently purchased items (name only)
-  @override
-  @JsonKey()
-  @HiveField(1)
-  List<String> get frequentItems {
-    if (_frequentItems is EqualUnmodifiableListView) return _frequentItems;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_frequentItems);
-  }
-
-  /// Maximum number of frequent items to track
-  @override
-  @JsonKey()
-  @HiveField(2)
-  final int maxFrequentItems;
-
-  /// Whether to save last store name between sessions
-  @override
-  @JsonKey()
-  @HiveField(3)
-  final bool saveLastStore;
-
-  /// Whether to show frequent item suggestions
-  @override
-  @JsonKey()
-  @HiveField(4)
-  final bool showSuggestions;
-
-  /// Whether to clear grocery session on app exit
-  @override
-  @JsonKey()
-  @HiveField(5)
-  final bool clearOnExit;
-
-  /// Whether to confirm before submitting grocery session
-  @override
-  @JsonKey()
-  @HiveField(6)
-  final bool confirmSubmit;
-
-  /// Timestamp of last update
-  @override
-  @HiveField(7)
-  final DateTime? lastUpdated;
-
-  @override
-  String toString() {
-    return 'GroceryPreferences(lastStoreName: $lastStoreName, frequentItems: $frequentItems, maxFrequentItems: $maxFrequentItems, saveLastStore: $saveLastStore, showSuggestions: $showSuggestions, clearOnExit: $clearOnExit, confirmSubmit: $confirmSubmit, lastUpdated: $lastUpdated)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GroceryPreferencesImpl &&
-            (identical(other.lastStoreName, lastStoreName) ||
-                other.lastStoreName == lastStoreName) &&
-            const DeepCollectionEquality()
-                .equals(other._frequentItems, _frequentItems) &&
-            (identical(other.maxFrequentItems, maxFrequentItems) ||
-                other.maxFrequentItems == maxFrequentItems) &&
-            (identical(other.saveLastStore, saveLastStore) ||
-                other.saveLastStore == saveLastStore) &&
-            (identical(other.showSuggestions, showSuggestions) ||
-                other.showSuggestions == showSuggestions) &&
-            (identical(other.clearOnExit, clearOnExit) ||
-                other.clearOnExit == clearOnExit) &&
-            (identical(other.confirmSubmit, confirmSubmit) ||
-                other.confirmSubmit == confirmSubmit) &&
-            (identical(other.lastUpdated, lastUpdated) ||
-                other.lastUpdated == lastUpdated));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      lastStoreName,
-      const DeepCollectionEquality().hash(_frequentItems),
-      maxFrequentItems,
-      saveLastStore,
-      showSuggestions,
-      clearOnExit,
-      confirmSubmit,
-      lastUpdated);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GroceryPreferencesImplCopyWith<_$GroceryPreferencesImpl> get copyWith =>
-      __$$GroceryPreferencesImplCopyWithImpl<_$GroceryPreferencesImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$GroceryPreferencesImplToJson(
-      this,
-    );
-  }
+/// Create a copy of GroceryPreferences
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? lastStoreName = freezed,Object? frequentItems = null,Object? maxFrequentItems = null,Object? saveLastStore = null,Object? showSuggestions = null,Object? clearOnExit = null,Object? confirmSubmit = null,Object? lastUpdated = freezed,}) {
+  return _then(_GroceryPreferences(
+lastStoreName: freezed == lastStoreName ? _self.lastStoreName : lastStoreName // ignore: cast_nullable_to_non_nullable
+as String?,frequentItems: null == frequentItems ? _self._frequentItems : frequentItems // ignore: cast_nullable_to_non_nullable
+as List<String>,maxFrequentItems: null == maxFrequentItems ? _self.maxFrequentItems : maxFrequentItems // ignore: cast_nullable_to_non_nullable
+as int,saveLastStore: null == saveLastStore ? _self.saveLastStore : saveLastStore // ignore: cast_nullable_to_non_nullable
+as bool,showSuggestions: null == showSuggestions ? _self.showSuggestions : showSuggestions // ignore: cast_nullable_to_non_nullable
+as bool,clearOnExit: null == clearOnExit ? _self.clearOnExit : clearOnExit // ignore: cast_nullable_to_non_nullable
+as bool,confirmSubmit: null == confirmSubmit ? _self.confirmSubmit : confirmSubmit // ignore: cast_nullable_to_non_nullable
+as bool,lastUpdated: freezed == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
 }
 
-abstract class _GroceryPreferences implements GroceryPreferences {
-  const factory _GroceryPreferences(
-      {@HiveField(0) final String? lastStoreName,
-      @HiveField(1) final List<String> frequentItems,
-      @HiveField(2) final int maxFrequentItems,
-      @HiveField(3) final bool saveLastStore,
-      @HiveField(4) final bool showSuggestions,
-      @HiveField(5) final bool clearOnExit,
-      @HiveField(6) final bool confirmSubmit,
-      @HiveField(7) final DateTime? lastUpdated}) = _$GroceryPreferencesImpl;
 
-  factory _GroceryPreferences.fromJson(Map<String, dynamic> json) =
-      _$GroceryPreferencesImpl.fromJson;
-
-  @override
-
-  /// Last store name used in a grocery session
-  @HiveField(0)
-  String? get lastStoreName;
-  @override
-
-  /// List of frequently purchased items (name only)
-  @HiveField(1)
-  List<String> get frequentItems;
-  @override
-
-  /// Maximum number of frequent items to track
-  @HiveField(2)
-  int get maxFrequentItems;
-  @override
-
-  /// Whether to save last store name between sessions
-  @HiveField(3)
-  bool get saveLastStore;
-  @override
-
-  /// Whether to show frequent item suggestions
-  @HiveField(4)
-  bool get showSuggestions;
-  @override
-
-  /// Whether to clear grocery session on app exit
-  @HiveField(5)
-  bool get clearOnExit;
-  @override
-
-  /// Whether to confirm before submitting grocery session
-  @HiveField(6)
-  bool get confirmSubmit;
-  @override
-
-  /// Timestamp of last update
-  @HiveField(7)
-  DateTime? get lastUpdated;
-  @override
-  @JsonKey(ignore: true)
-  _$$GroceryPreferencesImplCopyWith<_$GroceryPreferencesImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
+
+// dart format on

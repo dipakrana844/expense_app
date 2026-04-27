@@ -5,7 +5,7 @@ part 'app_settings_entity.freezed.dart';
 /// Domain entity representing application settings.
 /// This is a pure domain object without any data-layer dependencies.
 @freezed
-class AppSettingsEntity with _$AppSettingsEntity {
+abstract class AppSettingsEntity with _$AppSettingsEntity {
   const AppSettingsEntity._();
 
   const factory AppSettingsEntity({

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/budget/data/adapters/budget_model_adapter.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/budget_constants.dart';
 import '../models/budget_model.dart';
@@ -20,6 +21,13 @@ class BudgetLocalDataSource {
     if (_isInitialized) return;
 
     try {
+      await Hive.initFlutter();
+
+      // Register adapter if not already registered
+      if (!Hive.isAdapterRegistered(15)) {
+        Hive.registerAdapter(BudgetModelAdapter());
+      }
+
       _budgetBox = await Hive.openBox(AppConstants.budgetBoxName);
       _isInitialized = true;
       debugPrint('BudgetLocalDataSource: Initialized successfully');

@@ -278,10 +278,10 @@ final financialAnalyticsProvider = Provider<FinancialAnalytics>((ref) {
         );
       },
       loading: () => FinancialAnalytics.empty(),
-      error: (_, __) => FinancialAnalytics.empty(),
+      error: (_, _) => FinancialAnalytics.empty(),
     ),
     loading: () => FinancialAnalytics.empty(),
-    error: (_, __) => FinancialAnalytics.empty(),
+    error: (_, _) => FinancialAnalytics.empty(),
   );
 });
 
@@ -336,9 +336,9 @@ final incomeExpenseTrendProvider = Provider<Map<String, Map<String, double>>>((
         return trendData;
       },
       loading: () => {},
-      error: (_, __) => {},
+      error: (_, _) => {},
     ),
     loading: () => {},
-    error: (_, __) => {},
+    error: (_, _) => {},
   );
 });

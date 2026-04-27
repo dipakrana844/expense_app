@@ -5,24 +5,18 @@ part 'failures.freezed.dart';
 /// Base Failure class using Freezed for immutable error states
 /// Supports pattern matching and exhaustive error handling
 @freezed
-class Failure with _$Failure {
+abstract class Failure with _$Failure {
   /// Local storage operation failed (Hive read/write errors)
-  const factory Failure.storage({
-    required String message,
-    Object? error,
-  }) = StorageFailure;
+  const factory Failure.storage({required String message, Object? error}) =
+      StorageFailure;
 
   /// Data validation failed (invalid input)
-  const factory Failure.validation({
-    required String message,
-    String? field,
-  }) = ValidationFailure;
+  const factory Failure.validation({required String message, String? field}) =
+      ValidationFailure;
 
   /// Network-related failures (for future sync features)
-  const factory Failure.network({
-    required String message,
-    Object? error,
-  }) = NetworkFailure;
+  const factory Failure.network({required String message, Object? error}) =
+      NetworkFailure;
 
   /// Unexpected errors
   const factory Failure.unexpected({
@@ -46,7 +40,7 @@ extension FailureX on Failure {
       storage: (msg, _) => 'Storage error: $msg',
       validation: (msg, field) => field != null ? '$field: $msg' : msg,
       network: (msg, _) => 'Network error: $msg',
-      unexpected: (msg, _, __) => 'An unexpected error occurred: $msg',
+      unexpected: (msg, _, _) => 'An unexpected error occurred: $msg',
       notFound: (msg, _) => msg,
     );
   }
@@ -54,11 +48,11 @@ extension FailureX on Failure {
   /// Whether this failure should be logged for debugging
   bool get shouldLog {
     return when(
-      storage: (_, __) => true,
-      validation: (_, __) => false, // Validation errors are expected
-      network: (_, __) => true,
-      unexpected: (_, __, ___) => true,
-      notFound: (_, __) => false,
+      storage: (_, _) => true,
+      validation: (_, _) => false, // Validation errors are expected
+      network: (_, _) => true,
+      unexpected: (_, _, _) => true,
+      notFound: (_, _) => false,
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/core/constants/app_constants.dart';
+import 'package:smart_expense_tracker/features/expenses/data/adapters/expense_model_adapter.dart';
+import 'package:smart_expense_tracker/features/expenses/data/adapters/scheduled_expense_model_adapter.dart';
 import 'package:smart_expense_tracker/features/expenses/data/models/expense_model.dart';
 import 'package:smart_expense_tracker/features/expenses/data/models/scheduled_expense_model.dart';
 import 'package:uuid/uuid.dart';
@@ -17,6 +19,8 @@ void callbackDispatcher() {
     try {
       if (task == BackgroundService.taskDailyCheck) {
         await _handleDailyCheck();
+      } else if (task == BackgroundService.taskDailyReset) {
+        await _handleDailyReset();
       }
       return Future.value(true);
     } catch (e) {
@@ -65,7 +69,11 @@ Future<void> _handleDailyCheck() async {
       await expenseBox.put(newExpense.id, newExpense);
 
       // Update next run date (Assuming monthly)
-      final nextDate = DateTime(now.year, now.month + 1, schedule.dayOfMonth);
+      // Handle month rollover correctly
+      final nextMonth = now.month + 1;
+      final nextYear = nextMonth > 12 ? now.year + 1 : now.year;
+      final adjustedMonth = nextMonth > 12 ? 1 : nextMonth;
+      final nextDate = DateTime(nextYear, adjustedMonth, schedule.dayOfMonth);
 
       final updatedSchedule = schedule.copyWith(nextRunDate: nextDate);
 
@@ -97,8 +105,10 @@ Future<void> _handleDailyCheck() async {
   } catch (e) {
     debugPrint('Failed to generate insights: $e');
   }
+}
 
-  // 5. Reset Daily Spend Guard
+Future<void> _handleDailyReset() async {
+  // Reset Daily Spend Guard
   try {
     final dailySpendDataSource = DailySpendLocalDataSource();
     await dailySpendDataSource.init();
@@ -119,10 +129,7 @@ class BackgroundService {
   static const String taskDailyReset = 'daily_spend_reset';
 
   static Future<void> initialize() async {
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: kDebugMode,
-    );
+    await Workmanager().initialize(callbackDispatcher);
   }
 
   static Future<void> scheduleDailyJob() async {
@@ -148,9 +155,7 @@ class BackgroundService {
       "midnight_reset",
       taskDailyReset,
       initialDelay: delay,
-      constraints: Constraints(
-        networkType: NetworkType.notRequired,
-      ),
+      constraints: Constraints(networkType: NetworkType.notRequired),
       existingWorkPolicy: ExistingWorkPolicy.replace,
     );
   }

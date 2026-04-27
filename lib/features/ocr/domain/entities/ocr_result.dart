@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'ocr_result.freezed.dart';
 
 @freezed
-class OCRResult with _$OCRResult {
+abstract class OCRResult with _$OCRResult {
   const factory OCRResult({
     required String text,
     required bool success,

@@ -13,7 +13,9 @@ part 'income_entity.freezed.dart';
 /// Design Decision: Keep entity separate from data model to maintain clean architecture
 /// boundaries and allow independent evolution of domain and data layers
 @freezed
-class IncomeEntity with _$IncomeEntity implements TransactionInterface {
+abstract class IncomeEntity
+    with _$IncomeEntity
+    implements TransactionInterface {
   const IncomeEntity._(); // Private constructor for custom methods
 
   const factory IncomeEntity({
@@ -85,7 +87,8 @@ class IncomeEntity with _$IncomeEntity implements TransactionInterface {
     if (id.isEmpty) return 'ID cannot be empty';
     if (amount <= 0) return 'Amount must be greater than 0';
     if (source.isEmpty) return 'Source is required';
-    if (date.isAfter(DateTime.now().add(const Duration(days: 1)))) return 'Date cannot be too far in the future';
+    if (date.isAfter(DateTime.now().add(const Duration(days: 1))))
+      return 'Date cannot be too far in the future';
     if (note != null && note!.length > 500) return 'Note is too long';
 
     return null; // Valid

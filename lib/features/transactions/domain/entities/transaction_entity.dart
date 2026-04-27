@@ -14,7 +14,9 @@ part 'transaction_entity.freezed.dart';
 /// - Unified: Handles both income and expense types
 /// - Clean: Contains only business logic, no UI or data layer concerns
 @freezed
-class TransactionEntity with _$TransactionEntity implements TransactionInterface {
+abstract class TransactionEntity
+    with _$TransactionEntity
+    implements TransactionInterface {
   const TransactionEntity._(); // Private constructor for custom methods
 
   const factory TransactionEntity({
@@ -86,7 +88,8 @@ class TransactionEntity with _$TransactionEntity implements TransactionInterface
   @override
   String? validate() {
     if (id.isEmpty) return 'ID cannot be empty';
-    if (amount <= 0 && type != TransactionType.transfer) return 'Amount must be greater than 0';
+    if (amount <= 0 && type != TransactionType.transfer)
+      return 'Amount must be greater than 0';
     if (amount < 0) return 'Amount cannot be negative';
     if (categoryOrSource.isEmpty) return 'Category/Source is required';
     if (date.isAfter(DateTime.now().add(const Duration(days: 1)))) {

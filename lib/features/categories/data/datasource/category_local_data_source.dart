@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/categories/data/adapters/category_model_adapter.dart';
 import '../models/category_model.dart';
 import '../../domain/enums/category_type.dart';
 import '../../domain/failures/category_failure.dart';

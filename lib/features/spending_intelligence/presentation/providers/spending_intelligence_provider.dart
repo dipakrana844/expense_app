@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../data/repositories/spending_intelligence_repository_impl.dart';
 import '../../data/datasources/spending_intelligence_local_data_source.dart';
 import '../../domain/repositories/spending_intelligence_repository.dart';

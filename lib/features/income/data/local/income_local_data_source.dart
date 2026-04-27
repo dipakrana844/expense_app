@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/income/data/adapters/income_model_adapter.dart';
 import '../models/income_model.dart';
 import '../../domain/entities/income_entity.dart';
 

@@ -13,7 +13,9 @@ part 'expense_entity.freezed.dart';
 /// Design Decision: Keep entity separate from data model to maintain clean architecture
 /// boundaries and allow independent evolution of domain and data layers
 @freezed
-class ExpenseEntity with _$ExpenseEntity implements TransactionInterface {
+abstract class ExpenseEntity
+    with _$ExpenseEntity
+    implements TransactionInterface {
   const ExpenseEntity._(); // Private constructor for custom methods
 
   const factory ExpenseEntity({

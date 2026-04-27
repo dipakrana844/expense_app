@@ -1,5 +1,4 @@
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/usecases/process_receipt_usecase.dart';
 import '../../domain/usecases/scan_receipt_usecase.dart';

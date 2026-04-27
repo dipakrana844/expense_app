@@ -98,7 +98,7 @@ final monthlyIncomeProvider = FutureProvider<double>((ref) async {
       return total;
     },
     loading: () => 0.0,
-    error: (_, __) => 0.0,
+    error: (_, _) => 0.0,
   );
 });
 
@@ -121,7 +121,7 @@ final incomeSourcesProvider = FutureProvider<List<String>>((ref) async {
       return sourceList;
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 });
 

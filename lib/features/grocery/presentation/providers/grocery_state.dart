@@ -6,7 +6,7 @@ part 'grocery_state.freezed.dart';
 enum GrocerySessionMode { create, edit }
 
 @freezed
-class GrocerySessionState with _$GrocerySessionState {
+abstract class GrocerySessionState with _$GrocerySessionState {
   const GrocerySessionState._();
 
   const factory GrocerySessionState({

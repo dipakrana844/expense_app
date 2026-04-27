@@ -1,54 +1,35 @@
-import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../domain/entities/smart_entry_entity.dart';
 import '../../domain/enums/transaction_mode.dart';
 
-part 'smart_entry_model.g.dart';
-
 /// Data model for Hive storage
 /// Maps between domain entity and persistence model
-@HiveType(typeId: 100) // Use a unique typeId
 class SmartEntryModel {
-  @HiveField(0)
   final String id;
 
-  @HiveField(1)
   final int modeIndex; // Store enum as index
 
-  @HiveField(2)
   final double amount;
 
-  @HiveField(3)
   final DateTime date;
 
-  @HiveField(4)
   final String? note;
 
-  @HiveField(5)
   final String? category;
 
-  @HiveField(6)
   final String? source;
 
-  @HiveField(7)
   final String? fromAccount;
 
-  @HiveField(8)
   final String? toAccount;
 
-  @HiveField(9)
   final double? transferFee;
 
-  @HiveField(10)
   final bool isRecurring;
 
-  @HiveField(11)
   final DateTime createdAt;
 
-  @HiveField(12)
   final DateTime updatedAt;
 
-  @HiveField(13)
   final Map<String, dynamic> metadata;
 
   SmartEntryModel({

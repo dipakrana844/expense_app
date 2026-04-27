@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/misc.dart';
 import '../../../transactions/presentation/providers/transaction_providers.dart';
 import '../../domain/entities/financial_trend_dto.dart';
 import '../../domain/usecases/financial_trend_usecase.dart';
@@ -179,7 +181,7 @@ final netBalanceTrendProvider = Provider<List<FlSpot>>((ref) {
             )
             .toList(),
         loading: () => [],
-        error: (_, __) => [],
+        error: (_, _) => [],
       ),
     ),
   );
@@ -198,7 +200,7 @@ final incomeExpenseComparisonProvider = Provider<List<IncomeExpenseComparison>>(
         (asyncValue) => asyncValue.when(
           data: (trend) => trend.monthlyComparisons,
           loading: () => [],
-          error: (_, __) => [],
+          error: (_, _) => [],
         ),
       ),
     );
@@ -218,7 +220,7 @@ final financialHealthMetricsProvider = Provider<FinancialHealthMetrics?>((ref) {
       (asyncValue) => asyncValue.when(
         data: (trend) => trend.healthMetrics,
         loading: () => null,
-        error: (_, __) => null,
+        error: (_, _) => null,
       ),
     ),
   );
@@ -237,7 +239,7 @@ final financialInsightsProvider = Provider<List<FinancialInsight>>((ref) {
       (asyncValue) => asyncValue.when(
         data: (trend) => trend.insights,
         loading: () => [],
-        error: (_, __) => [],
+        error: (_, _) => [],
       ),
     ),
   );
@@ -268,7 +270,7 @@ final currentMonthFinancialSummaryProvider = Provider<MonthlyBalancePoint?>((
           );
         },
         loading: () => null,
-        error: (_, __) => null,
+        error: (_, _) => null,
       ),
     ),
   );

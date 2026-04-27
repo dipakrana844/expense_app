@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,254 +9,284 @@ part of 'grocery_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
 /// @nodoc
 mixin _$GrocerySessionState {
-  List<GroceryItem> get items => throw _privateConstructorUsedError;
-  double get totalAmount => throw _privateConstructorUsedError;
-  bool get isSubmitting => throw _privateConstructorUsedError;
-  String? get storeName => throw _privateConstructorUsedError;
-  GrocerySessionMode get mode => throw _privateConstructorUsedError;
-  String? get expenseId => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
-  $GrocerySessionStateCopyWith<GrocerySessionState> get copyWith =>
-      throw _privateConstructorUsedError;
+ List<GroceryItem> get items; double get totalAmount; bool get isSubmitting; String? get storeName; GrocerySessionMode get mode; String? get expenseId;
+/// Create a copy of GrocerySessionState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GrocerySessionStateCopyWith<GrocerySessionState> get copyWith => _$GrocerySessionStateCopyWithImpl<GrocerySessionState>(this as GrocerySessionState, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GrocerySessionState&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.totalAmount, totalAmount) || other.totalAmount == totalAmount)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.storeName, storeName) || other.storeName == storeName)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.expenseId, expenseId) || other.expenseId == expenseId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),totalAmount,isSubmitting,storeName,mode,expenseId);
+
+@override
+String toString() {
+  return 'GrocerySessionState(items: $items, totalAmount: $totalAmount, isSubmitting: $isSubmitting, storeName: $storeName, mode: $mode, expenseId: $expenseId)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $GrocerySessionStateCopyWith<$Res> {
-  factory $GrocerySessionStateCopyWith(
-          GrocerySessionState value, $Res Function(GrocerySessionState) then) =
-      _$GrocerySessionStateCopyWithImpl<$Res, GrocerySessionState>;
-  @useResult
-  $Res call(
-      {List<GroceryItem> items,
-      double totalAmount,
-      bool isSubmitting,
-      String? storeName,
-      GrocerySessionMode mode,
-      String? expenseId});
-}
+abstract mixin class $GrocerySessionStateCopyWith<$Res>  {
+  factory $GrocerySessionStateCopyWith(GrocerySessionState value, $Res Function(GrocerySessionState) _then) = _$GrocerySessionStateCopyWithImpl;
+@useResult
+$Res call({
+ List<GroceryItem> items, double totalAmount, bool isSubmitting, String? storeName, GrocerySessionMode mode, String? expenseId
+});
 
+
+
+
+}
 /// @nodoc
-class _$GrocerySessionStateCopyWithImpl<$Res, $Val extends GrocerySessionState>
+class _$GrocerySessionStateCopyWithImpl<$Res>
     implements $GrocerySessionStateCopyWith<$Res> {
-  _$GrocerySessionStateCopyWithImpl(this._value, this._then);
+  _$GrocerySessionStateCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final GrocerySessionState _self;
+  final $Res Function(GrocerySessionState) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? items = null,
-    Object? totalAmount = null,
-    Object? isSubmitting = null,
-    Object? storeName = freezed,
-    Object? mode = null,
-    Object? expenseId = freezed,
-  }) {
-    return _then(_value.copyWith(
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<GroceryItem>,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      isSubmitting: null == isSubmitting
-          ? _value.isSubmitting
-          : isSubmitting // ignore: cast_nullable_to_non_nullable
-              as bool,
-      storeName: freezed == storeName
-          ? _value.storeName
-          : storeName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      mode: null == mode
-          ? _value.mode
-          : mode // ignore: cast_nullable_to_non_nullable
-              as GrocerySessionMode,
-      expenseId: freezed == expenseId
-          ? _value.expenseId
-          : expenseId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
+/// Create a copy of GrocerySessionState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? totalAmount = null,Object? isSubmitting = null,Object? storeName = freezed,Object? mode = null,Object? expenseId = freezed,}) {
+  return _then(_self.copyWith(
+items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<GroceryItem>,totalAmount: null == totalAmount ? _self.totalAmount : totalAmount // ignore: cast_nullable_to_non_nullable
+as double,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as bool,storeName: freezed == storeName ? _self.storeName : storeName // ignore: cast_nullable_to_non_nullable
+as String?,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as GrocerySessionMode,expenseId: freezed == expenseId ? _self.expenseId : expenseId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [GrocerySessionState].
+extension GrocerySessionStatePatterns on GrocerySessionState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GrocerySessionState value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GrocerySessionState() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GrocerySessionState value)  $default,){
+final _that = this;
+switch (_that) {
+case _GrocerySessionState():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GrocerySessionState value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GrocerySessionState() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<GroceryItem> items,  double totalAmount,  bool isSubmitting,  String? storeName,  GrocerySessionMode mode,  String? expenseId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GrocerySessionState() when $default != null:
+return $default(_that.items,_that.totalAmount,_that.isSubmitting,_that.storeName,_that.mode,_that.expenseId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<GroceryItem> items,  double totalAmount,  bool isSubmitting,  String? storeName,  GrocerySessionMode mode,  String? expenseId)  $default,) {final _that = this;
+switch (_that) {
+case _GrocerySessionState():
+return $default(_that.items,_that.totalAmount,_that.isSubmitting,_that.storeName,_that.mode,_that.expenseId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<GroceryItem> items,  double totalAmount,  bool isSubmitting,  String? storeName,  GrocerySessionMode mode,  String? expenseId)?  $default,) {final _that = this;
+switch (_that) {
+case _GrocerySessionState() when $default != null:
+return $default(_that.items,_that.totalAmount,_that.isSubmitting,_that.storeName,_that.mode,_that.expenseId);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$GrocerySessionStateImplCopyWith<$Res>
-    implements $GrocerySessionStateCopyWith<$Res> {
-  factory _$$GrocerySessionStateImplCopyWith(_$GrocerySessionStateImpl value,
-          $Res Function(_$GrocerySessionStateImpl) then) =
-      __$$GrocerySessionStateImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {List<GroceryItem> items,
-      double totalAmount,
-      bool isSubmitting,
-      String? storeName,
-      GrocerySessionMode mode,
-      String? expenseId});
+
+
+class _GrocerySessionState extends GrocerySessionState {
+  const _GrocerySessionState({final  List<GroceryItem> items = const [], this.totalAmount = 0.0, this.isSubmitting = false, this.storeName = '', this.mode = GrocerySessionMode.create, this.expenseId}): _items = items,super._();
+  
+
+ final  List<GroceryItem> _items;
+@override@JsonKey() List<GroceryItem> get items {
+  if (_items is EqualUnmodifiableListView) return _items;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_items);
+}
+
+@override@JsonKey() final  double totalAmount;
+@override@JsonKey() final  bool isSubmitting;
+@override@JsonKey() final  String? storeName;
+@override@JsonKey() final  GrocerySessionMode mode;
+@override final  String? expenseId;
+
+/// Create a copy of GrocerySessionState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GrocerySessionStateCopyWith<_GrocerySessionState> get copyWith => __$GrocerySessionStateCopyWithImpl<_GrocerySessionState>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GrocerySessionState&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.totalAmount, totalAmount) || other.totalAmount == totalAmount)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.storeName, storeName) || other.storeName == storeName)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.expenseId, expenseId) || other.expenseId == expenseId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),totalAmount,isSubmitting,storeName,mode,expenseId);
+
+@override
+String toString() {
+  return 'GrocerySessionState(items: $items, totalAmount: $totalAmount, isSubmitting: $isSubmitting, storeName: $storeName, mode: $mode, expenseId: $expenseId)';
+}
+
+
 }
 
 /// @nodoc
-class __$$GrocerySessionStateImplCopyWithImpl<$Res>
-    extends _$GrocerySessionStateCopyWithImpl<$Res, _$GrocerySessionStateImpl>
-    implements _$$GrocerySessionStateImplCopyWith<$Res> {
-  __$$GrocerySessionStateImplCopyWithImpl(_$GrocerySessionStateImpl _value,
-      $Res Function(_$GrocerySessionStateImpl) _then)
-      : super(_value, _then);
+abstract mixin class _$GrocerySessionStateCopyWith<$Res> implements $GrocerySessionStateCopyWith<$Res> {
+  factory _$GrocerySessionStateCopyWith(_GrocerySessionState value, $Res Function(_GrocerySessionState) _then) = __$GrocerySessionStateCopyWithImpl;
+@override @useResult
+$Res call({
+ List<GroceryItem> items, double totalAmount, bool isSubmitting, String? storeName, GrocerySessionMode mode, String? expenseId
+});
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? items = null,
-    Object? totalAmount = null,
-    Object? isSubmitting = null,
-    Object? storeName = freezed,
-    Object? mode = null,
-    Object? expenseId = freezed,
-  }) {
-    return _then(_$GrocerySessionStateImpl(
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<GroceryItem>,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      isSubmitting: null == isSubmitting
-          ? _value.isSubmitting
-          : isSubmitting // ignore: cast_nullable_to_non_nullable
-              as bool,
-      storeName: freezed == storeName
-          ? _value.storeName
-          : storeName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      mode: null == mode
-          ? _value.mode
-          : mode // ignore: cast_nullable_to_non_nullable
-              as GrocerySessionMode,
-      expenseId: freezed == expenseId
-          ? _value.expenseId
-          : expenseId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
+
+
+
 }
-
 /// @nodoc
+class __$GrocerySessionStateCopyWithImpl<$Res>
+    implements _$GrocerySessionStateCopyWith<$Res> {
+  __$GrocerySessionStateCopyWithImpl(this._self, this._then);
 
-class _$GrocerySessionStateImpl extends _GrocerySessionState {
-  const _$GrocerySessionStateImpl(
-      {final List<GroceryItem> items = const [],
-      this.totalAmount = 0.0,
-      this.isSubmitting = false,
-      this.storeName = '',
-      this.mode = GrocerySessionMode.create,
-      this.expenseId})
-      : _items = items,
-        super._();
+  final _GrocerySessionState _self;
+  final $Res Function(_GrocerySessionState) _then;
 
-  final List<GroceryItem> _items;
-  @override
-  @JsonKey()
-  List<GroceryItem> get items {
-    if (_items is EqualUnmodifiableListView) return _items;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_items);
-  }
-
-  @override
-  @JsonKey()
-  final double totalAmount;
-  @override
-  @JsonKey()
-  final bool isSubmitting;
-  @override
-  @JsonKey()
-  final String? storeName;
-  @override
-  @JsonKey()
-  final GrocerySessionMode mode;
-  @override
-  final String? expenseId;
-
-  @override
-  String toString() {
-    return 'GrocerySessionState(items: $items, totalAmount: $totalAmount, isSubmitting: $isSubmitting, storeName: $storeName, mode: $mode, expenseId: $expenseId)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GrocerySessionStateImpl &&
-            const DeepCollectionEquality().equals(other._items, _items) &&
-            (identical(other.totalAmount, totalAmount) ||
-                other.totalAmount == totalAmount) &&
-            (identical(other.isSubmitting, isSubmitting) ||
-                other.isSubmitting == isSubmitting) &&
-            (identical(other.storeName, storeName) ||
-                other.storeName == storeName) &&
-            (identical(other.mode, mode) || other.mode == mode) &&
-            (identical(other.expenseId, expenseId) ||
-                other.expenseId == expenseId));
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_items),
-      totalAmount,
-      isSubmitting,
-      storeName,
-      mode,
-      expenseId);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GrocerySessionStateImplCopyWith<_$GrocerySessionStateImpl> get copyWith =>
-      __$$GrocerySessionStateImplCopyWithImpl<_$GrocerySessionStateImpl>(
-          this, _$identity);
+/// Create a copy of GrocerySessionState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? items = null,Object? totalAmount = null,Object? isSubmitting = null,Object? storeName = freezed,Object? mode = null,Object? expenseId = freezed,}) {
+  return _then(_GrocerySessionState(
+items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<GroceryItem>,totalAmount: null == totalAmount ? _self.totalAmount : totalAmount // ignore: cast_nullable_to_non_nullable
+as double,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as bool,storeName: freezed == storeName ? _self.storeName : storeName // ignore: cast_nullable_to_non_nullable
+as String?,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as GrocerySessionMode,expenseId: freezed == expenseId ? _self.expenseId : expenseId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-abstract class _GrocerySessionState extends GrocerySessionState {
-  const factory _GrocerySessionState(
-      {final List<GroceryItem> items,
-      final double totalAmount,
-      final bool isSubmitting,
-      final String? storeName,
-      final GrocerySessionMode mode,
-      final String? expenseId}) = _$GrocerySessionStateImpl;
-  const _GrocerySessionState._() : super._();
 
-  @override
-  List<GroceryItem> get items;
-  @override
-  double get totalAmount;
-  @override
-  bool get isSubmitting;
-  @override
-  String? get storeName;
-  @override
-  GrocerySessionMode get mode;
-  @override
-  String? get expenseId;
-  @override
-  @JsonKey(ignore: true)
-  _$$GrocerySessionStateImplCopyWith<_$GrocerySessionStateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
+
+// dart format on

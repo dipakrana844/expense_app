@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/settings/data/adapters/app_settings_adapter.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../models/app_settings.dart';
 import '../adapters/hive_adapters.dart' as adapters;

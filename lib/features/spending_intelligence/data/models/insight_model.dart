@@ -1,32 +1,20 @@
-import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/insight.dart';
 
-part 'insight_model.g.dart';
-
-@HiveType(typeId: 2)
 class InsightModel {
-  @HiveField(0)
   final String id;
 
-  @HiveField(1)
   final String type;
 
-  @HiveField(2)
   final String severity;
 
-  @HiveField(3)
   final String title;
 
-  @HiveField(4)
   final String message;
 
-  @HiveField(5)
   final DateTime createdDate;
 
-  @HiveField(6)
   final bool isRead;
 
-  @HiveField(7)
   final Map<String, dynamic>? metadata;
 
   InsightModel({

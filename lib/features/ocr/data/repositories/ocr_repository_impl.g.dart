@@ -6,20 +6,46 @@ part of 'ocr_repository_impl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$ocrRepositoryHash() => r'b119a648c8a3709d0817164df1d7fce9d8d3d198';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [ocrRepository].
 @ProviderFor(ocrRepository)
-final ocrRepositoryProvider = AutoDisposeProvider<OCRRepository>.internal(
-  ocrRepository,
-  name: r'ocrRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$ocrRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final ocrRepositoryProvider = OcrRepositoryProvider._();
 
-typedef OcrRepositoryRef = AutoDisposeProviderRef<OCRRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+final class OcrRepositoryProvider
+    extends $FunctionalProvider<OCRRepository, OCRRepository, OCRRepository>
+    with $Provider<OCRRepository> {
+  OcrRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ocrRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ocrRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<OCRRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  OCRRepository create(Ref ref) {
+    return ocrRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(OCRRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<OCRRepository>(value),
+    );
+  }
+}
+
+String _$ocrRepositoryHash() => r'b119a648c8a3709d0817164df1d7fce9d8d3d198';

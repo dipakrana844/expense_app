@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/app_settings_entity.dart';
 
 part 'app_settings.freezed.dart';
@@ -17,54 +17,49 @@ part 'app_settings.g.dart';
 /// This is the data layer model that maps to Hive storage.
 /// Domain enums are used directly to avoid duplication.
 @freezed
-@HiveType(typeId: 11)
-class AppSettings with _$AppSettings {
+abstract class AppSettings with _$AppSettings {
   const factory AppSettings({
     // Expense Preferences
-    @HiveField(0) @Default('₹') String defaultCurrency,
+    @Default('₹') String defaultCurrency,
 
-    @HiveField(1) @Default('Others') String defaultExpenseCategory,
+    @Default('Others') String defaultExpenseCategory,
 
-    @HiveField(2) @Default(true) bool enableQuickExpense,
+    @Default(true) bool enableQuickExpense,
 
-    @HiveField(3) @Default(true) bool enableGroceryOCR,
+    @Default(true) bool enableGroceryOCR,
 
     // Grocery Settings
-    @HiveField(4) @Default(true) bool saveLastStoreName,
+    @Default(true) bool saveLastStoreName,
 
-    @HiveField(5) @Default(true) bool showFrequentItemSuggestions,
+    @Default(true) bool showFrequentItemSuggestions,
 
-    @HiveField(6) @Default(false) bool clearGrocerySessionOnExit,
+    @Default(false) bool clearGrocerySessionOnExit,
 
-    @HiveField(7) @Default(true) bool confirmBeforeGrocerySubmit,
+    @Default(true) bool confirmBeforeGrocerySubmit,
 
     // Smart Insights Controls
-    @HiveField(8) @Default(true) bool enableSpendingIntelligence,
+    @Default(true) bool enableSpendingIntelligence,
 
-    @HiveField(9)
-    @Default(InsightFrequency.weekly)
-    InsightFrequency insightFrequency,
+    @Default(InsightFrequency.weekly) InsightFrequency insightFrequency,
 
     // Security Settings
-    @HiveField(10) @Default(false) bool enableAppLock,
+    @Default(false) bool enableAppLock,
 
-    @HiveField(11)
-    @Default(AutoLockTimer.thirtySeconds)
-    AutoLockTimer autoLockTimer,
+    @Default(AutoLockTimer.thirtySeconds) AutoLockTimer autoLockTimer,
 
-    @HiveField(12) @Default(true) bool requireAuthOnLaunch,
+    @Default(true) bool requireAuthOnLaunch,
 
     // Data & Storage
-    @HiveField(13) DateTime? lastExportDate,
+    DateTime? lastExportDate,
 
-    @HiveField(14) int? storageUsageBytes,
+    int? storageUsageBytes,
 
     // Metadata
-    @HiveField(15) DateTime? createdAt,
+    DateTime? createdAt,
 
-    @HiveField(16) DateTime? lastModified,
+    DateTime? lastModified,
 
-    @HiveField(17) @Default(1) int version,
+    @Default(1) int version,
   }) = _AppSettings;
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

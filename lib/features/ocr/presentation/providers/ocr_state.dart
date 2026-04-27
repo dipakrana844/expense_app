@@ -11,7 +11,7 @@ part 'ocr_state.freezed.dart';
 /// - scannedItems: Parsed grocery items from OCR text
 /// - errorMessage: User-friendly error messages
 @freezed
-class GroceryOCRState with _$GroceryOCRState {
+abstract class GroceryOCRState with _$GroceryOCRState {
   const factory GroceryOCRState({
     /// Whether OCR is currently processing
     @Default(false) bool isScanning,

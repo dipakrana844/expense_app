@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/entities/transaction_summary.dart';
 import '../../domain/enums/transaction_type.dart';

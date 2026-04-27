@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,607 +9,332 @@ part of 'app_settings.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) {
-  return _AppSettings.fromJson(json);
-}
 
 /// @nodoc
 mixin _$AppSettings {
+
 // Expense Preferences
-  @HiveField(0)
-  String get defaultCurrency => throw _privateConstructorUsedError;
-  @HiveField(1)
-  String get defaultExpenseCategory => throw _privateConstructorUsedError;
-  @HiveField(2)
-  bool get enableQuickExpense => throw _privateConstructorUsedError;
-  @HiveField(3)
-  bool get enableGroceryOCR =>
-      throw _privateConstructorUsedError; // Grocery Settings
-  @HiveField(4)
-  bool get saveLastStoreName => throw _privateConstructorUsedError;
-  @HiveField(5)
-  bool get showFrequentItemSuggestions => throw _privateConstructorUsedError;
-  @HiveField(6)
-  bool get clearGrocerySessionOnExit => throw _privateConstructorUsedError;
-  @HiveField(7)
-  bool get confirmBeforeGrocerySubmit =>
-      throw _privateConstructorUsedError; // Smart Insights Controls
-  @HiveField(8)
-  bool get enableSpendingIntelligence => throw _privateConstructorUsedError;
-  @HiveField(9)
-  InsightFrequency get insightFrequency =>
-      throw _privateConstructorUsedError; // Security Settings
-  @HiveField(10)
-  bool get enableAppLock => throw _privateConstructorUsedError;
-  @HiveField(11)
-  AutoLockTimer get autoLockTimer => throw _privateConstructorUsedError;
-  @HiveField(12)
-  bool get requireAuthOnLaunch =>
-      throw _privateConstructorUsedError; // Data & Storage
-  @HiveField(13)
-  DateTime? get lastExportDate => throw _privateConstructorUsedError;
-  @HiveField(14)
-  int? get storageUsageBytes => throw _privateConstructorUsedError; // Metadata
-  @HiveField(15)
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  @HiveField(16)
-  DateTime? get lastModified => throw _privateConstructorUsedError;
-  @HiveField(17)
-  int get version => throw _privateConstructorUsedError;
+ String get defaultCurrency; String get defaultExpenseCategory; bool get enableQuickExpense; bool get enableGroceryOCR;// Grocery Settings
+ bool get saveLastStoreName; bool get showFrequentItemSuggestions; bool get clearGrocerySessionOnExit; bool get confirmBeforeGrocerySubmit;// Smart Insights Controls
+ bool get enableSpendingIntelligence; InsightFrequency get insightFrequency;// Security Settings
+ bool get enableAppLock; AutoLockTimer get autoLockTimer; bool get requireAuthOnLaunch;// Data & Storage
+ DateTime? get lastExportDate; int? get storageUsageBytes;// Metadata
+ DateTime? get createdAt; DateTime? get lastModified; int get version;
+/// Create a copy of AppSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AppSettingsCopyWith<AppSettings> get copyWith => _$AppSettingsCopyWithImpl<AppSettings>(this as AppSettings, _$identity);
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $AppSettingsCopyWith<AppSettings> get copyWith =>
-      throw _privateConstructorUsedError;
+  /// Serializes this AppSettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppSettings&&(identical(other.defaultCurrency, defaultCurrency) || other.defaultCurrency == defaultCurrency)&&(identical(other.defaultExpenseCategory, defaultExpenseCategory) || other.defaultExpenseCategory == defaultExpenseCategory)&&(identical(other.enableQuickExpense, enableQuickExpense) || other.enableQuickExpense == enableQuickExpense)&&(identical(other.enableGroceryOCR, enableGroceryOCR) || other.enableGroceryOCR == enableGroceryOCR)&&(identical(other.saveLastStoreName, saveLastStoreName) || other.saveLastStoreName == saveLastStoreName)&&(identical(other.showFrequentItemSuggestions, showFrequentItemSuggestions) || other.showFrequentItemSuggestions == showFrequentItemSuggestions)&&(identical(other.clearGrocerySessionOnExit, clearGrocerySessionOnExit) || other.clearGrocerySessionOnExit == clearGrocerySessionOnExit)&&(identical(other.confirmBeforeGrocerySubmit, confirmBeforeGrocerySubmit) || other.confirmBeforeGrocerySubmit == confirmBeforeGrocerySubmit)&&(identical(other.enableSpendingIntelligence, enableSpendingIntelligence) || other.enableSpendingIntelligence == enableSpendingIntelligence)&&(identical(other.insightFrequency, insightFrequency) || other.insightFrequency == insightFrequency)&&(identical(other.enableAppLock, enableAppLock) || other.enableAppLock == enableAppLock)&&(identical(other.autoLockTimer, autoLockTimer) || other.autoLockTimer == autoLockTimer)&&(identical(other.requireAuthOnLaunch, requireAuthOnLaunch) || other.requireAuthOnLaunch == requireAuthOnLaunch)&&(identical(other.lastExportDate, lastExportDate) || other.lastExportDate == lastExportDate)&&(identical(other.storageUsageBytes, storageUsageBytes) || other.storageUsageBytes == storageUsageBytes)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastModified, lastModified) || other.lastModified == lastModified)&&(identical(other.version, version) || other.version == version));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,defaultCurrency,defaultExpenseCategory,enableQuickExpense,enableGroceryOCR,saveLastStoreName,showFrequentItemSuggestions,clearGrocerySessionOnExit,confirmBeforeGrocerySubmit,enableSpendingIntelligence,insightFrequency,enableAppLock,autoLockTimer,requireAuthOnLaunch,lastExportDate,storageUsageBytes,createdAt,lastModified,version);
+
+@override
+String toString() {
+  return 'AppSettings(defaultCurrency: $defaultCurrency, defaultExpenseCategory: $defaultExpenseCategory, enableQuickExpense: $enableQuickExpense, enableGroceryOCR: $enableGroceryOCR, saveLastStoreName: $saveLastStoreName, showFrequentItemSuggestions: $showFrequentItemSuggestions, clearGrocerySessionOnExit: $clearGrocerySessionOnExit, confirmBeforeGrocerySubmit: $confirmBeforeGrocerySubmit, enableSpendingIntelligence: $enableSpendingIntelligence, insightFrequency: $insightFrequency, enableAppLock: $enableAppLock, autoLockTimer: $autoLockTimer, requireAuthOnLaunch: $requireAuthOnLaunch, lastExportDate: $lastExportDate, storageUsageBytes: $storageUsageBytes, createdAt: $createdAt, lastModified: $lastModified, version: $version)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $AppSettingsCopyWith<$Res> {
-  factory $AppSettingsCopyWith(
-          AppSettings value, $Res Function(AppSettings) then) =
-      _$AppSettingsCopyWithImpl<$Res, AppSettings>;
-  @useResult
-  $Res call(
-      {@HiveField(0) String defaultCurrency,
-      @HiveField(1) String defaultExpenseCategory,
-      @HiveField(2) bool enableQuickExpense,
-      @HiveField(3) bool enableGroceryOCR,
-      @HiveField(4) bool saveLastStoreName,
-      @HiveField(5) bool showFrequentItemSuggestions,
-      @HiveField(6) bool clearGrocerySessionOnExit,
-      @HiveField(7) bool confirmBeforeGrocerySubmit,
-      @HiveField(8) bool enableSpendingIntelligence,
-      @HiveField(9) InsightFrequency insightFrequency,
-      @HiveField(10) bool enableAppLock,
-      @HiveField(11) AutoLockTimer autoLockTimer,
-      @HiveField(12) bool requireAuthOnLaunch,
-      @HiveField(13) DateTime? lastExportDate,
-      @HiveField(14) int? storageUsageBytes,
-      @HiveField(15) DateTime? createdAt,
-      @HiveField(16) DateTime? lastModified,
-      @HiveField(17) int version});
-}
+abstract mixin class $AppSettingsCopyWith<$Res>  {
+  factory $AppSettingsCopyWith(AppSettings value, $Res Function(AppSettings) _then) = _$AppSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String defaultCurrency, String defaultExpenseCategory, bool enableQuickExpense, bool enableGroceryOCR, bool saveLastStoreName, bool showFrequentItemSuggestions, bool clearGrocerySessionOnExit, bool confirmBeforeGrocerySubmit, bool enableSpendingIntelligence, InsightFrequency insightFrequency, bool enableAppLock, AutoLockTimer autoLockTimer, bool requireAuthOnLaunch, DateTime? lastExportDate, int? storageUsageBytes, DateTime? createdAt, DateTime? lastModified, int version
+});
 
+
+
+
+}
 /// @nodoc
-class _$AppSettingsCopyWithImpl<$Res, $Val extends AppSettings>
+class _$AppSettingsCopyWithImpl<$Res>
     implements $AppSettingsCopyWith<$Res> {
-  _$AppSettingsCopyWithImpl(this._value, this._then);
+  _$AppSettingsCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final AppSettings _self;
+  final $Res Function(AppSettings) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? defaultCurrency = null,
-    Object? defaultExpenseCategory = null,
-    Object? enableQuickExpense = null,
-    Object? enableGroceryOCR = null,
-    Object? saveLastStoreName = null,
-    Object? showFrequentItemSuggestions = null,
-    Object? clearGrocerySessionOnExit = null,
-    Object? confirmBeforeGrocerySubmit = null,
-    Object? enableSpendingIntelligence = null,
-    Object? insightFrequency = null,
-    Object? enableAppLock = null,
-    Object? autoLockTimer = null,
-    Object? requireAuthOnLaunch = null,
-    Object? lastExportDate = freezed,
-    Object? storageUsageBytes = freezed,
-    Object? createdAt = freezed,
-    Object? lastModified = freezed,
-    Object? version = null,
-  }) {
-    return _then(_value.copyWith(
-      defaultCurrency: null == defaultCurrency
-          ? _value.defaultCurrency
-          : defaultCurrency // ignore: cast_nullable_to_non_nullable
-              as String,
-      defaultExpenseCategory: null == defaultExpenseCategory
-          ? _value.defaultExpenseCategory
-          : defaultExpenseCategory // ignore: cast_nullable_to_non_nullable
-              as String,
-      enableQuickExpense: null == enableQuickExpense
-          ? _value.enableQuickExpense
-          : enableQuickExpense // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableGroceryOCR: null == enableGroceryOCR
-          ? _value.enableGroceryOCR
-          : enableGroceryOCR // ignore: cast_nullable_to_non_nullable
-              as bool,
-      saveLastStoreName: null == saveLastStoreName
-          ? _value.saveLastStoreName
-          : saveLastStoreName // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showFrequentItemSuggestions: null == showFrequentItemSuggestions
-          ? _value.showFrequentItemSuggestions
-          : showFrequentItemSuggestions // ignore: cast_nullable_to_non_nullable
-              as bool,
-      clearGrocerySessionOnExit: null == clearGrocerySessionOnExit
-          ? _value.clearGrocerySessionOnExit
-          : clearGrocerySessionOnExit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      confirmBeforeGrocerySubmit: null == confirmBeforeGrocerySubmit
-          ? _value.confirmBeforeGrocerySubmit
-          : confirmBeforeGrocerySubmit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableSpendingIntelligence: null == enableSpendingIntelligence
-          ? _value.enableSpendingIntelligence
-          : enableSpendingIntelligence // ignore: cast_nullable_to_non_nullable
-              as bool,
-      insightFrequency: null == insightFrequency
-          ? _value.insightFrequency
-          : insightFrequency // ignore: cast_nullable_to_non_nullable
-              as InsightFrequency,
-      enableAppLock: null == enableAppLock
-          ? _value.enableAppLock
-          : enableAppLock // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoLockTimer: null == autoLockTimer
-          ? _value.autoLockTimer
-          : autoLockTimer // ignore: cast_nullable_to_non_nullable
-              as AutoLockTimer,
-      requireAuthOnLaunch: null == requireAuthOnLaunch
-          ? _value.requireAuthOnLaunch
-          : requireAuthOnLaunch // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastExportDate: freezed == lastExportDate
-          ? _value.lastExportDate
-          : lastExportDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      storageUsageBytes: freezed == storageUsageBytes
-          ? _value.storageUsageBytes
-          : storageUsageBytes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastModified: freezed == lastModified
-          ? _value.lastModified
-          : lastModified // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      version: null == version
-          ? _value.version
-          : version // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
+/// Create a copy of AppSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? defaultCurrency = null,Object? defaultExpenseCategory = null,Object? enableQuickExpense = null,Object? enableGroceryOCR = null,Object? saveLastStoreName = null,Object? showFrequentItemSuggestions = null,Object? clearGrocerySessionOnExit = null,Object? confirmBeforeGrocerySubmit = null,Object? enableSpendingIntelligence = null,Object? insightFrequency = null,Object? enableAppLock = null,Object? autoLockTimer = null,Object? requireAuthOnLaunch = null,Object? lastExportDate = freezed,Object? storageUsageBytes = freezed,Object? createdAt = freezed,Object? lastModified = freezed,Object? version = null,}) {
+  return _then(_self.copyWith(
+defaultCurrency: null == defaultCurrency ? _self.defaultCurrency : defaultCurrency // ignore: cast_nullable_to_non_nullable
+as String,defaultExpenseCategory: null == defaultExpenseCategory ? _self.defaultExpenseCategory : defaultExpenseCategory // ignore: cast_nullable_to_non_nullable
+as String,enableQuickExpense: null == enableQuickExpense ? _self.enableQuickExpense : enableQuickExpense // ignore: cast_nullable_to_non_nullable
+as bool,enableGroceryOCR: null == enableGroceryOCR ? _self.enableGroceryOCR : enableGroceryOCR // ignore: cast_nullable_to_non_nullable
+as bool,saveLastStoreName: null == saveLastStoreName ? _self.saveLastStoreName : saveLastStoreName // ignore: cast_nullable_to_non_nullable
+as bool,showFrequentItemSuggestions: null == showFrequentItemSuggestions ? _self.showFrequentItemSuggestions : showFrequentItemSuggestions // ignore: cast_nullable_to_non_nullable
+as bool,clearGrocerySessionOnExit: null == clearGrocerySessionOnExit ? _self.clearGrocerySessionOnExit : clearGrocerySessionOnExit // ignore: cast_nullable_to_non_nullable
+as bool,confirmBeforeGrocerySubmit: null == confirmBeforeGrocerySubmit ? _self.confirmBeforeGrocerySubmit : confirmBeforeGrocerySubmit // ignore: cast_nullable_to_non_nullable
+as bool,enableSpendingIntelligence: null == enableSpendingIntelligence ? _self.enableSpendingIntelligence : enableSpendingIntelligence // ignore: cast_nullable_to_non_nullable
+as bool,insightFrequency: null == insightFrequency ? _self.insightFrequency : insightFrequency // ignore: cast_nullable_to_non_nullable
+as InsightFrequency,enableAppLock: null == enableAppLock ? _self.enableAppLock : enableAppLock // ignore: cast_nullable_to_non_nullable
+as bool,autoLockTimer: null == autoLockTimer ? _self.autoLockTimer : autoLockTimer // ignore: cast_nullable_to_non_nullable
+as AutoLockTimer,requireAuthOnLaunch: null == requireAuthOnLaunch ? _self.requireAuthOnLaunch : requireAuthOnLaunch // ignore: cast_nullable_to_non_nullable
+as bool,lastExportDate: freezed == lastExportDate ? _self.lastExportDate : lastExportDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,storageUsageBytes: freezed == storageUsageBytes ? _self.storageUsageBytes : storageUsageBytes // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,lastModified: freezed == lastModified ? _self.lastModified : lastModified // ignore: cast_nullable_to_non_nullable
+as DateTime?,version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
 }
 
-/// @nodoc
-abstract class _$$AppSettingsImplCopyWith<$Res>
-    implements $AppSettingsCopyWith<$Res> {
-  factory _$$AppSettingsImplCopyWith(
-          _$AppSettingsImpl value, $Res Function(_$AppSettingsImpl) then) =
-      __$$AppSettingsImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@HiveField(0) String defaultCurrency,
-      @HiveField(1) String defaultExpenseCategory,
-      @HiveField(2) bool enableQuickExpense,
-      @HiveField(3) bool enableGroceryOCR,
-      @HiveField(4) bool saveLastStoreName,
-      @HiveField(5) bool showFrequentItemSuggestions,
-      @HiveField(6) bool clearGrocerySessionOnExit,
-      @HiveField(7) bool confirmBeforeGrocerySubmit,
-      @HiveField(8) bool enableSpendingIntelligence,
-      @HiveField(9) InsightFrequency insightFrequency,
-      @HiveField(10) bool enableAppLock,
-      @HiveField(11) AutoLockTimer autoLockTimer,
-      @HiveField(12) bool requireAuthOnLaunch,
-      @HiveField(13) DateTime? lastExportDate,
-      @HiveField(14) int? storageUsageBytes,
-      @HiveField(15) DateTime? createdAt,
-      @HiveField(16) DateTime? lastModified,
-      @HiveField(17) int version});
 }
 
-/// @nodoc
-class __$$AppSettingsImplCopyWithImpl<$Res>
-    extends _$AppSettingsCopyWithImpl<$Res, _$AppSettingsImpl>
-    implements _$$AppSettingsImplCopyWith<$Res> {
-  __$$AppSettingsImplCopyWithImpl(
-      _$AppSettingsImpl _value, $Res Function(_$AppSettingsImpl) _then)
-      : super(_value, _then);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? defaultCurrency = null,
-    Object? defaultExpenseCategory = null,
-    Object? enableQuickExpense = null,
-    Object? enableGroceryOCR = null,
-    Object? saveLastStoreName = null,
-    Object? showFrequentItemSuggestions = null,
-    Object? clearGrocerySessionOnExit = null,
-    Object? confirmBeforeGrocerySubmit = null,
-    Object? enableSpendingIntelligence = null,
-    Object? insightFrequency = null,
-    Object? enableAppLock = null,
-    Object? autoLockTimer = null,
-    Object? requireAuthOnLaunch = null,
-    Object? lastExportDate = freezed,
-    Object? storageUsageBytes = freezed,
-    Object? createdAt = freezed,
-    Object? lastModified = freezed,
-    Object? version = null,
-  }) {
-    return _then(_$AppSettingsImpl(
-      defaultCurrency: null == defaultCurrency
-          ? _value.defaultCurrency
-          : defaultCurrency // ignore: cast_nullable_to_non_nullable
-              as String,
-      defaultExpenseCategory: null == defaultExpenseCategory
-          ? _value.defaultExpenseCategory
-          : defaultExpenseCategory // ignore: cast_nullable_to_non_nullable
-              as String,
-      enableQuickExpense: null == enableQuickExpense
-          ? _value.enableQuickExpense
-          : enableQuickExpense // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableGroceryOCR: null == enableGroceryOCR
-          ? _value.enableGroceryOCR
-          : enableGroceryOCR // ignore: cast_nullable_to_non_nullable
-              as bool,
-      saveLastStoreName: null == saveLastStoreName
-          ? _value.saveLastStoreName
-          : saveLastStoreName // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showFrequentItemSuggestions: null == showFrequentItemSuggestions
-          ? _value.showFrequentItemSuggestions
-          : showFrequentItemSuggestions // ignore: cast_nullable_to_non_nullable
-              as bool,
-      clearGrocerySessionOnExit: null == clearGrocerySessionOnExit
-          ? _value.clearGrocerySessionOnExit
-          : clearGrocerySessionOnExit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      confirmBeforeGrocerySubmit: null == confirmBeforeGrocerySubmit
-          ? _value.confirmBeforeGrocerySubmit
-          : confirmBeforeGrocerySubmit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableSpendingIntelligence: null == enableSpendingIntelligence
-          ? _value.enableSpendingIntelligence
-          : enableSpendingIntelligence // ignore: cast_nullable_to_non_nullable
-              as bool,
-      insightFrequency: null == insightFrequency
-          ? _value.insightFrequency
-          : insightFrequency // ignore: cast_nullable_to_non_nullable
-              as InsightFrequency,
-      enableAppLock: null == enableAppLock
-          ? _value.enableAppLock
-          : enableAppLock // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoLockTimer: null == autoLockTimer
-          ? _value.autoLockTimer
-          : autoLockTimer // ignore: cast_nullable_to_non_nullable
-              as AutoLockTimer,
-      requireAuthOnLaunch: null == requireAuthOnLaunch
-          ? _value.requireAuthOnLaunch
-          : requireAuthOnLaunch // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastExportDate: freezed == lastExportDate
-          ? _value.lastExportDate
-          : lastExportDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      storageUsageBytes: freezed == storageUsageBytes
-          ? _value.storageUsageBytes
-          : storageUsageBytes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastModified: freezed == lastModified
-          ? _value.lastModified
-          : lastModified // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      version: null == version
-          ? _value.version
-          : version // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
+/// Adds pattern-matching-related methods to [AppSettings].
+extension AppSettingsPatterns on AppSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _AppSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _AppSettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _AppSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String defaultCurrency,  String defaultExpenseCategory,  bool enableQuickExpense,  bool enableGroceryOCR,  bool saveLastStoreName,  bool showFrequentItemSuggestions,  bool clearGrocerySessionOnExit,  bool confirmBeforeGrocerySubmit,  bool enableSpendingIntelligence,  InsightFrequency insightFrequency,  bool enableAppLock,  AutoLockTimer autoLockTimer,  bool requireAuthOnLaunch,  DateTime? lastExportDate,  int? storageUsageBytes,  DateTime? createdAt,  DateTime? lastModified,  int version)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _AppSettings() when $default != null:
+return $default(_that.defaultCurrency,_that.defaultExpenseCategory,_that.enableQuickExpense,_that.enableGroceryOCR,_that.saveLastStoreName,_that.showFrequentItemSuggestions,_that.clearGrocerySessionOnExit,_that.confirmBeforeGrocerySubmit,_that.enableSpendingIntelligence,_that.insightFrequency,_that.enableAppLock,_that.autoLockTimer,_that.requireAuthOnLaunch,_that.lastExportDate,_that.storageUsageBytes,_that.createdAt,_that.lastModified,_that.version);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String defaultCurrency,  String defaultExpenseCategory,  bool enableQuickExpense,  bool enableGroceryOCR,  bool saveLastStoreName,  bool showFrequentItemSuggestions,  bool clearGrocerySessionOnExit,  bool confirmBeforeGrocerySubmit,  bool enableSpendingIntelligence,  InsightFrequency insightFrequency,  bool enableAppLock,  AutoLockTimer autoLockTimer,  bool requireAuthOnLaunch,  DateTime? lastExportDate,  int? storageUsageBytes,  DateTime? createdAt,  DateTime? lastModified,  int version)  $default,) {final _that = this;
+switch (_that) {
+case _AppSettings():
+return $default(_that.defaultCurrency,_that.defaultExpenseCategory,_that.enableQuickExpense,_that.enableGroceryOCR,_that.saveLastStoreName,_that.showFrequentItemSuggestions,_that.clearGrocerySessionOnExit,_that.confirmBeforeGrocerySubmit,_that.enableSpendingIntelligence,_that.insightFrequency,_that.enableAppLock,_that.autoLockTimer,_that.requireAuthOnLaunch,_that.lastExportDate,_that.storageUsageBytes,_that.createdAt,_that.lastModified,_that.version);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String defaultCurrency,  String defaultExpenseCategory,  bool enableQuickExpense,  bool enableGroceryOCR,  bool saveLastStoreName,  bool showFrequentItemSuggestions,  bool clearGrocerySessionOnExit,  bool confirmBeforeGrocerySubmit,  bool enableSpendingIntelligence,  InsightFrequency insightFrequency,  bool enableAppLock,  AutoLockTimer autoLockTimer,  bool requireAuthOnLaunch,  DateTime? lastExportDate,  int? storageUsageBytes,  DateTime? createdAt,  DateTime? lastModified,  int version)?  $default,) {final _that = this;
+switch (_that) {
+case _AppSettings() when $default != null:
+return $default(_that.defaultCurrency,_that.defaultExpenseCategory,_that.enableQuickExpense,_that.enableGroceryOCR,_that.saveLastStoreName,_that.showFrequentItemSuggestions,_that.clearGrocerySessionOnExit,_that.confirmBeforeGrocerySubmit,_that.enableSpendingIntelligence,_that.insightFrequency,_that.enableAppLock,_that.autoLockTimer,_that.requireAuthOnLaunch,_that.lastExportDate,_that.storageUsageBytes,_that.createdAt,_that.lastModified,_that.version);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AppSettingsImpl implements _AppSettings {
-  const _$AppSettingsImpl(
-      {@HiveField(0) this.defaultCurrency = '₹',
-      @HiveField(1) this.defaultExpenseCategory = 'Others',
-      @HiveField(2) this.enableQuickExpense = true,
-      @HiveField(3) this.enableGroceryOCR = true,
-      @HiveField(4) this.saveLastStoreName = true,
-      @HiveField(5) this.showFrequentItemSuggestions = true,
-      @HiveField(6) this.clearGrocerySessionOnExit = false,
-      @HiveField(7) this.confirmBeforeGrocerySubmit = true,
-      @HiveField(8) this.enableSpendingIntelligence = true,
-      @HiveField(9) this.insightFrequency = InsightFrequency.weekly,
-      @HiveField(10) this.enableAppLock = false,
-      @HiveField(11) this.autoLockTimer = AutoLockTimer.thirtySeconds,
-      @HiveField(12) this.requireAuthOnLaunch = true,
-      @HiveField(13) this.lastExportDate,
-      @HiveField(14) this.storageUsageBytes,
-      @HiveField(15) this.createdAt,
-      @HiveField(16) this.lastModified,
-      @HiveField(17) this.version = 1});
 
-  factory _$AppSettingsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AppSettingsImplFromJson(json);
+class _AppSettings implements AppSettings {
+  const _AppSettings({this.defaultCurrency = '₹', this.defaultExpenseCategory = 'Others', this.enableQuickExpense = true, this.enableGroceryOCR = true, this.saveLastStoreName = true, this.showFrequentItemSuggestions = true, this.clearGrocerySessionOnExit = false, this.confirmBeforeGrocerySubmit = true, this.enableSpendingIntelligence = true, this.insightFrequency = InsightFrequency.weekly, this.enableAppLock = false, this.autoLockTimer = AutoLockTimer.thirtySeconds, this.requireAuthOnLaunch = true, this.lastExportDate, this.storageUsageBytes, this.createdAt, this.lastModified, this.version = 1});
+  factory _AppSettings.fromJson(Map<String, dynamic> json) => _$AppSettingsFromJson(json);
 
 // Expense Preferences
-  @override
-  @JsonKey()
-  @HiveField(0)
-  final String defaultCurrency;
-  @override
-  @JsonKey()
-  @HiveField(1)
-  final String defaultExpenseCategory;
-  @override
-  @JsonKey()
-  @HiveField(2)
-  final bool enableQuickExpense;
-  @override
-  @JsonKey()
-  @HiveField(3)
-  final bool enableGroceryOCR;
+@override@JsonKey() final  String defaultCurrency;
+@override@JsonKey() final  String defaultExpenseCategory;
+@override@JsonKey() final  bool enableQuickExpense;
+@override@JsonKey() final  bool enableGroceryOCR;
 // Grocery Settings
-  @override
-  @JsonKey()
-  @HiveField(4)
-  final bool saveLastStoreName;
-  @override
-  @JsonKey()
-  @HiveField(5)
-  final bool showFrequentItemSuggestions;
-  @override
-  @JsonKey()
-  @HiveField(6)
-  final bool clearGrocerySessionOnExit;
-  @override
-  @JsonKey()
-  @HiveField(7)
-  final bool confirmBeforeGrocerySubmit;
+@override@JsonKey() final  bool saveLastStoreName;
+@override@JsonKey() final  bool showFrequentItemSuggestions;
+@override@JsonKey() final  bool clearGrocerySessionOnExit;
+@override@JsonKey() final  bool confirmBeforeGrocerySubmit;
 // Smart Insights Controls
-  @override
-  @JsonKey()
-  @HiveField(8)
-  final bool enableSpendingIntelligence;
-  @override
-  @JsonKey()
-  @HiveField(9)
-  final InsightFrequency insightFrequency;
+@override@JsonKey() final  bool enableSpendingIntelligence;
+@override@JsonKey() final  InsightFrequency insightFrequency;
 // Security Settings
-  @override
-  @JsonKey()
-  @HiveField(10)
-  final bool enableAppLock;
-  @override
-  @JsonKey()
-  @HiveField(11)
-  final AutoLockTimer autoLockTimer;
-  @override
-  @JsonKey()
-  @HiveField(12)
-  final bool requireAuthOnLaunch;
+@override@JsonKey() final  bool enableAppLock;
+@override@JsonKey() final  AutoLockTimer autoLockTimer;
+@override@JsonKey() final  bool requireAuthOnLaunch;
 // Data & Storage
-  @override
-  @HiveField(13)
-  final DateTime? lastExportDate;
-  @override
-  @HiveField(14)
-  final int? storageUsageBytes;
+@override final  DateTime? lastExportDate;
+@override final  int? storageUsageBytes;
 // Metadata
-  @override
-  @HiveField(15)
-  final DateTime? createdAt;
-  @override
-  @HiveField(16)
-  final DateTime? lastModified;
-  @override
-  @JsonKey()
-  @HiveField(17)
-  final int version;
+@override final  DateTime? createdAt;
+@override final  DateTime? lastModified;
+@override@JsonKey() final  int version;
 
-  @override
-  String toString() {
-    return 'AppSettings(defaultCurrency: $defaultCurrency, defaultExpenseCategory: $defaultExpenseCategory, enableQuickExpense: $enableQuickExpense, enableGroceryOCR: $enableGroceryOCR, saveLastStoreName: $saveLastStoreName, showFrequentItemSuggestions: $showFrequentItemSuggestions, clearGrocerySessionOnExit: $clearGrocerySessionOnExit, confirmBeforeGrocerySubmit: $confirmBeforeGrocerySubmit, enableSpendingIntelligence: $enableSpendingIntelligence, insightFrequency: $insightFrequency, enableAppLock: $enableAppLock, autoLockTimer: $autoLockTimer, requireAuthOnLaunch: $requireAuthOnLaunch, lastExportDate: $lastExportDate, storageUsageBytes: $storageUsageBytes, createdAt: $createdAt, lastModified: $lastModified, version: $version)';
-  }
+/// Create a copy of AppSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AppSettingsCopyWith<_AppSettings> get copyWith => __$AppSettingsCopyWithImpl<_AppSettings>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AppSettingsImpl &&
-            (identical(other.defaultCurrency, defaultCurrency) ||
-                other.defaultCurrency == defaultCurrency) &&
-            (identical(other.defaultExpenseCategory, defaultExpenseCategory) ||
-                other.defaultExpenseCategory == defaultExpenseCategory) &&
-            (identical(other.enableQuickExpense, enableQuickExpense) ||
-                other.enableQuickExpense == enableQuickExpense) &&
-            (identical(other.enableGroceryOCR, enableGroceryOCR) ||
-                other.enableGroceryOCR == enableGroceryOCR) &&
-            (identical(other.saveLastStoreName, saveLastStoreName) ||
-                other.saveLastStoreName == saveLastStoreName) &&
-            (identical(other.showFrequentItemSuggestions,
-                    showFrequentItemSuggestions) ||
-                other.showFrequentItemSuggestions ==
-                    showFrequentItemSuggestions) &&
-            (identical(other.clearGrocerySessionOnExit, clearGrocerySessionOnExit) ||
-                other.clearGrocerySessionOnExit == clearGrocerySessionOnExit) &&
-            (identical(other.confirmBeforeGrocerySubmit, confirmBeforeGrocerySubmit) ||
-                other.confirmBeforeGrocerySubmit ==
-                    confirmBeforeGrocerySubmit) &&
-            (identical(other.enableSpendingIntelligence,
-                    enableSpendingIntelligence) ||
-                other.enableSpendingIntelligence ==
-                    enableSpendingIntelligence) &&
-            (identical(other.insightFrequency, insightFrequency) ||
-                other.insightFrequency == insightFrequency) &&
-            (identical(other.enableAppLock, enableAppLock) ||
-                other.enableAppLock == enableAppLock) &&
-            (identical(other.autoLockTimer, autoLockTimer) ||
-                other.autoLockTimer == autoLockTimer) &&
-            (identical(other.requireAuthOnLaunch, requireAuthOnLaunch) ||
-                other.requireAuthOnLaunch == requireAuthOnLaunch) &&
-            (identical(other.lastExportDate, lastExportDate) ||
-                other.lastExportDate == lastExportDate) &&
-            (identical(other.storageUsageBytes, storageUsageBytes) ||
-                other.storageUsageBytes == storageUsageBytes) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.lastModified, lastModified) ||
-                other.lastModified == lastModified) &&
-            (identical(other.version, version) || other.version == version));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      defaultCurrency,
-      defaultExpenseCategory,
-      enableQuickExpense,
-      enableGroceryOCR,
-      saveLastStoreName,
-      showFrequentItemSuggestions,
-      clearGrocerySessionOnExit,
-      confirmBeforeGrocerySubmit,
-      enableSpendingIntelligence,
-      insightFrequency,
-      enableAppLock,
-      autoLockTimer,
-      requireAuthOnLaunch,
-      lastExportDate,
-      storageUsageBytes,
-      createdAt,
-      lastModified,
-      version);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AppSettingsImplCopyWith<_$AppSettingsImpl> get copyWith =>
-      __$$AppSettingsImplCopyWithImpl<_$AppSettingsImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AppSettingsImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$AppSettingsToJson(this, );
 }
 
-abstract class _AppSettings implements AppSettings {
-  const factory _AppSettings(
-      {@HiveField(0) final String defaultCurrency,
-      @HiveField(1) final String defaultExpenseCategory,
-      @HiveField(2) final bool enableQuickExpense,
-      @HiveField(3) final bool enableGroceryOCR,
-      @HiveField(4) final bool saveLastStoreName,
-      @HiveField(5) final bool showFrequentItemSuggestions,
-      @HiveField(6) final bool clearGrocerySessionOnExit,
-      @HiveField(7) final bool confirmBeforeGrocerySubmit,
-      @HiveField(8) final bool enableSpendingIntelligence,
-      @HiveField(9) final InsightFrequency insightFrequency,
-      @HiveField(10) final bool enableAppLock,
-      @HiveField(11) final AutoLockTimer autoLockTimer,
-      @HiveField(12) final bool requireAuthOnLaunch,
-      @HiveField(13) final DateTime? lastExportDate,
-      @HiveField(14) final int? storageUsageBytes,
-      @HiveField(15) final DateTime? createdAt,
-      @HiveField(16) final DateTime? lastModified,
-      @HiveField(17) final int version}) = _$AppSettingsImpl;
-
-  factory _AppSettings.fromJson(Map<String, dynamic> json) =
-      _$AppSettingsImpl.fromJson;
-
-  @override // Expense Preferences
-  @HiveField(0)
-  String get defaultCurrency;
-  @override
-  @HiveField(1)
-  String get defaultExpenseCategory;
-  @override
-  @HiveField(2)
-  bool get enableQuickExpense;
-  @override
-  @HiveField(3)
-  bool get enableGroceryOCR;
-  @override // Grocery Settings
-  @HiveField(4)
-  bool get saveLastStoreName;
-  @override
-  @HiveField(5)
-  bool get showFrequentItemSuggestions;
-  @override
-  @HiveField(6)
-  bool get clearGrocerySessionOnExit;
-  @override
-  @HiveField(7)
-  bool get confirmBeforeGrocerySubmit;
-  @override // Smart Insights Controls
-  @HiveField(8)
-  bool get enableSpendingIntelligence;
-  @override
-  @HiveField(9)
-  InsightFrequency get insightFrequency;
-  @override // Security Settings
-  @HiveField(10)
-  bool get enableAppLock;
-  @override
-  @HiveField(11)
-  AutoLockTimer get autoLockTimer;
-  @override
-  @HiveField(12)
-  bool get requireAuthOnLaunch;
-  @override // Data & Storage
-  @HiveField(13)
-  DateTime? get lastExportDate;
-  @override
-  @HiveField(14)
-  int? get storageUsageBytes;
-  @override // Metadata
-  @HiveField(15)
-  DateTime? get createdAt;
-  @override
-  @HiveField(16)
-  DateTime? get lastModified;
-  @override
-  @HiveField(17)
-  int get version;
-  @override
-  @JsonKey(ignore: true)
-  _$$AppSettingsImplCopyWith<_$AppSettingsImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppSettings&&(identical(other.defaultCurrency, defaultCurrency) || other.defaultCurrency == defaultCurrency)&&(identical(other.defaultExpenseCategory, defaultExpenseCategory) || other.defaultExpenseCategory == defaultExpenseCategory)&&(identical(other.enableQuickExpense, enableQuickExpense) || other.enableQuickExpense == enableQuickExpense)&&(identical(other.enableGroceryOCR, enableGroceryOCR) || other.enableGroceryOCR == enableGroceryOCR)&&(identical(other.saveLastStoreName, saveLastStoreName) || other.saveLastStoreName == saveLastStoreName)&&(identical(other.showFrequentItemSuggestions, showFrequentItemSuggestions) || other.showFrequentItemSuggestions == showFrequentItemSuggestions)&&(identical(other.clearGrocerySessionOnExit, clearGrocerySessionOnExit) || other.clearGrocerySessionOnExit == clearGrocerySessionOnExit)&&(identical(other.confirmBeforeGrocerySubmit, confirmBeforeGrocerySubmit) || other.confirmBeforeGrocerySubmit == confirmBeforeGrocerySubmit)&&(identical(other.enableSpendingIntelligence, enableSpendingIntelligence) || other.enableSpendingIntelligence == enableSpendingIntelligence)&&(identical(other.insightFrequency, insightFrequency) || other.insightFrequency == insightFrequency)&&(identical(other.enableAppLock, enableAppLock) || other.enableAppLock == enableAppLock)&&(identical(other.autoLockTimer, autoLockTimer) || other.autoLockTimer == autoLockTimer)&&(identical(other.requireAuthOnLaunch, requireAuthOnLaunch) || other.requireAuthOnLaunch == requireAuthOnLaunch)&&(identical(other.lastExportDate, lastExportDate) || other.lastExportDate == lastExportDate)&&(identical(other.storageUsageBytes, storageUsageBytes) || other.storageUsageBytes == storageUsageBytes)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastModified, lastModified) || other.lastModified == lastModified)&&(identical(other.version, version) || other.version == version));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,defaultCurrency,defaultExpenseCategory,enableQuickExpense,enableGroceryOCR,saveLastStoreName,showFrequentItemSuggestions,clearGrocerySessionOnExit,confirmBeforeGrocerySubmit,enableSpendingIntelligence,insightFrequency,enableAppLock,autoLockTimer,requireAuthOnLaunch,lastExportDate,storageUsageBytes,createdAt,lastModified,version);
+
+@override
+String toString() {
+  return 'AppSettings(defaultCurrency: $defaultCurrency, defaultExpenseCategory: $defaultExpenseCategory, enableQuickExpense: $enableQuickExpense, enableGroceryOCR: $enableGroceryOCR, saveLastStoreName: $saveLastStoreName, showFrequentItemSuggestions: $showFrequentItemSuggestions, clearGrocerySessionOnExit: $clearGrocerySessionOnExit, confirmBeforeGrocerySubmit: $confirmBeforeGrocerySubmit, enableSpendingIntelligence: $enableSpendingIntelligence, insightFrequency: $insightFrequency, enableAppLock: $enableAppLock, autoLockTimer: $autoLockTimer, requireAuthOnLaunch: $requireAuthOnLaunch, lastExportDate: $lastExportDate, storageUsageBytes: $storageUsageBytes, createdAt: $createdAt, lastModified: $lastModified, version: $version)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AppSettingsCopyWith<$Res> implements $AppSettingsCopyWith<$Res> {
+  factory _$AppSettingsCopyWith(_AppSettings value, $Res Function(_AppSettings) _then) = __$AppSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String defaultCurrency, String defaultExpenseCategory, bool enableQuickExpense, bool enableGroceryOCR, bool saveLastStoreName, bool showFrequentItemSuggestions, bool clearGrocerySessionOnExit, bool confirmBeforeGrocerySubmit, bool enableSpendingIntelligence, InsightFrequency insightFrequency, bool enableAppLock, AutoLockTimer autoLockTimer, bool requireAuthOnLaunch, DateTime? lastExportDate, int? storageUsageBytes, DateTime? createdAt, DateTime? lastModified, int version
+});
+
+
+
+
+}
+/// @nodoc
+class __$AppSettingsCopyWithImpl<$Res>
+    implements _$AppSettingsCopyWith<$Res> {
+  __$AppSettingsCopyWithImpl(this._self, this._then);
+
+  final _AppSettings _self;
+  final $Res Function(_AppSettings) _then;
+
+/// Create a copy of AppSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? defaultCurrency = null,Object? defaultExpenseCategory = null,Object? enableQuickExpense = null,Object? enableGroceryOCR = null,Object? saveLastStoreName = null,Object? showFrequentItemSuggestions = null,Object? clearGrocerySessionOnExit = null,Object? confirmBeforeGrocerySubmit = null,Object? enableSpendingIntelligence = null,Object? insightFrequency = null,Object? enableAppLock = null,Object? autoLockTimer = null,Object? requireAuthOnLaunch = null,Object? lastExportDate = freezed,Object? storageUsageBytes = freezed,Object? createdAt = freezed,Object? lastModified = freezed,Object? version = null,}) {
+  return _then(_AppSettings(
+defaultCurrency: null == defaultCurrency ? _self.defaultCurrency : defaultCurrency // ignore: cast_nullable_to_non_nullable
+as String,defaultExpenseCategory: null == defaultExpenseCategory ? _self.defaultExpenseCategory : defaultExpenseCategory // ignore: cast_nullable_to_non_nullable
+as String,enableQuickExpense: null == enableQuickExpense ? _self.enableQuickExpense : enableQuickExpense // ignore: cast_nullable_to_non_nullable
+as bool,enableGroceryOCR: null == enableGroceryOCR ? _self.enableGroceryOCR : enableGroceryOCR // ignore: cast_nullable_to_non_nullable
+as bool,saveLastStoreName: null == saveLastStoreName ? _self.saveLastStoreName : saveLastStoreName // ignore: cast_nullable_to_non_nullable
+as bool,showFrequentItemSuggestions: null == showFrequentItemSuggestions ? _self.showFrequentItemSuggestions : showFrequentItemSuggestions // ignore: cast_nullable_to_non_nullable
+as bool,clearGrocerySessionOnExit: null == clearGrocerySessionOnExit ? _self.clearGrocerySessionOnExit : clearGrocerySessionOnExit // ignore: cast_nullable_to_non_nullable
+as bool,confirmBeforeGrocerySubmit: null == confirmBeforeGrocerySubmit ? _self.confirmBeforeGrocerySubmit : confirmBeforeGrocerySubmit // ignore: cast_nullable_to_non_nullable
+as bool,enableSpendingIntelligence: null == enableSpendingIntelligence ? _self.enableSpendingIntelligence : enableSpendingIntelligence // ignore: cast_nullable_to_non_nullable
+as bool,insightFrequency: null == insightFrequency ? _self.insightFrequency : insightFrequency // ignore: cast_nullable_to_non_nullable
+as InsightFrequency,enableAppLock: null == enableAppLock ? _self.enableAppLock : enableAppLock // ignore: cast_nullable_to_non_nullable
+as bool,autoLockTimer: null == autoLockTimer ? _self.autoLockTimer : autoLockTimer // ignore: cast_nullable_to_non_nullable
+as AutoLockTimer,requireAuthOnLaunch: null == requireAuthOnLaunch ? _self.requireAuthOnLaunch : requireAuthOnLaunch // ignore: cast_nullable_to_non_nullable
+as bool,lastExportDate: freezed == lastExportDate ? _self.lastExportDate : lastExportDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,storageUsageBytes: freezed == storageUsageBytes ? _self.storageUsageBytes : storageUsageBytes // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,lastModified: freezed == lastModified ? _self.lastModified : lastModified // ignore: cast_nullable_to_non_nullable
+as DateTime?,version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+// dart format on

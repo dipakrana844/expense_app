@@ -461,7 +461,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       // Get all expenses from the repository
       final expenseRepository = ref.read(expenseRepositoryProvider);
-      final (expenses, failure) = await expenseRepository.getAllExpenses();
+      final (expenses, failure) = expenseRepository.getAllExpenses();
 
       if (failure != null || expenses == null) {
         if (context.mounted) {

@@ -6,7 +6,7 @@ part 'quick_expense_state.freezed.dart';
 ///
 /// Manages the state of the quick expense addition flow
 @freezed
-class QuickExpenseState with _$QuickExpenseState {
+abstract class QuickExpenseState with _$QuickExpenseState {
   const factory QuickExpenseState({
     /// Current amount input
     @Default('') String amount,

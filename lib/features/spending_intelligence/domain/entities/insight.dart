@@ -11,7 +11,7 @@ enum InsightSeverity {
 }
 
 @freezed
-class Insight with _$Insight {
+abstract class Insight with _$Insight {
   const factory Insight({
     required String id,
     required InsightType type,

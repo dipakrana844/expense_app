@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense_tracker/features/transfer/data/adapters/transfer_model_adapter.dart';
 import '../models/transfer_model.dart';
 
 /// Local Data Source: Hive Implementation for Transfers

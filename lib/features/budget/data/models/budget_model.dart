@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/budget_entity.dart';
 import 'package:smart_expense_tracker/core/constants/budget_constants.dart';
 
@@ -7,16 +7,15 @@ part 'budget_model.freezed.dart';
 part 'budget_model.g.dart';
 
 @freezed
-@HiveType(typeId: 15) // Unique type ID for budget model
-class BudgetModel with _$BudgetModel {
+abstract class BudgetModel with _$BudgetModel {
   const BudgetModel._();
 
   const factory BudgetModel({
-    @HiveField(0) required double amount,
-    @HiveField(1) @Default(BudgetConstants.defaultCurrency) String currency,
-    @HiveField(2) @Default(false) bool isActive,
-    @HiveField(3) DateTime? createdAt,
-    @HiveField(4) DateTime? updatedAt,
+    required double amount,
+    @Default(BudgetConstants.defaultCurrency) String currency,
+    @Default(false) bool isActive,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _BudgetModel;
 
   factory BudgetModel.fromJson(Map<String, dynamic> json) =>

@@ -6,25 +6,53 @@ part of 'quick_expense_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$quickExpenseSuccessHash() =>
-    r'd9ad24f389757890d18438573898934a2b5e8e2a';
-
-/// Provider to check if last save was successful
-/// Useful for showing success feedback
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// Provider for quick expense functionality
 ///
-/// Copied from [quickExpenseSuccess].
-@ProviderFor(quickExpenseSuccess)
-final quickExpenseSuccessProvider = AutoDisposeProvider<bool>.internal(
-  quickExpenseSuccess,
-  name: r'quickExpenseSuccessProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$quickExpenseSuccessHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+/// Manages quick expense state using clean architecture with
+/// proper separation of concerns through use cases.
 
-typedef QuickExpenseSuccessRef = AutoDisposeProviderRef<bool>;
+@ProviderFor(QuickExpenseNotifier)
+final quickExpenseProvider = QuickExpenseNotifierProvider._();
+
+/// Provider for quick expense functionality
+///
+/// Manages quick expense state using clean architecture with
+/// proper separation of concerns through use cases.
+final class QuickExpenseNotifierProvider
+    extends $NotifierProvider<QuickExpenseNotifier, QuickExpenseState> {
+  /// Provider for quick expense functionality
+  ///
+  /// Manages quick expense state using clean architecture with
+  /// proper separation of concerns through use cases.
+  QuickExpenseNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'quickExpenseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$quickExpenseNotifierHash();
+
+  @$internal
+  @override
+  QuickExpenseNotifier create() => QuickExpenseNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(QuickExpenseState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<QuickExpenseState>(value),
+    );
+  }
+}
+
 String _$quickExpenseNotifierHash() =>
     r'8277b00719af09856bb409bbfaa12b2c4a003ad2';
 
@@ -32,20 +60,71 @@ String _$quickExpenseNotifierHash() =>
 ///
 /// Manages quick expense state using clean architecture with
 /// proper separation of concerns through use cases.
-///
-/// Copied from [QuickExpenseNotifier].
-@ProviderFor(QuickExpenseNotifier)
-final quickExpenseNotifierProvider = AutoDisposeNotifierProvider<
-    QuickExpenseNotifier, QuickExpenseState>.internal(
-  QuickExpenseNotifier.new,
-  name: r'quickExpenseNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$quickExpenseNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
 
-typedef _$QuickExpenseNotifier = AutoDisposeNotifier<QuickExpenseState>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+abstract class _$QuickExpenseNotifier extends $Notifier<QuickExpenseState> {
+  QuickExpenseState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<QuickExpenseState, QuickExpenseState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<QuickExpenseState, QuickExpenseState>,
+              QuickExpenseState,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Provider to check if last save was successful
+/// Useful for showing success feedback
+
+@ProviderFor(quickExpenseSuccess)
+final quickExpenseSuccessProvider = QuickExpenseSuccessProvider._();
+
+/// Provider to check if last save was successful
+/// Useful for showing success feedback
+
+final class QuickExpenseSuccessProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Provider to check if last save was successful
+  /// Useful for showing success feedback
+  QuickExpenseSuccessProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'quickExpenseSuccessProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$quickExpenseSuccessHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return quickExpenseSuccess(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$quickExpenseSuccessHash() =>
+    r'd9ad24f389757890d18438573898934a2b5e8e2a';

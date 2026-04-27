@@ -3,76 +3,11 @@
 part of 'transfer_model.dart';
 
 // **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
-
-class TransferModelAdapter extends TypeAdapter<TransferModel> {
-  @override
-  final int typeId = 4;
-
-  @override
-  TransferModel read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return TransferModel(
-      id: fields[0] as String,
-      amount: fields[1] as double,
-      fromAccount: fields[2] as String,
-      toAccount: fields[3] as String,
-      date: fields[4] as DateTime,
-      fee: fields[5] as double,
-      note: fields[6] as String?,
-      createdAt: fields[7] as DateTime,
-      updatedAt: fields[8] as DateTime?,
-      metadata: (fields[9] as Map?)?.cast<String, dynamic>(),
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, TransferModel obj) {
-    writer
-      ..writeByte(10)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.amount)
-      ..writeByte(2)
-      ..write(obj.fromAccount)
-      ..writeByte(3)
-      ..write(obj.toAccount)
-      ..writeByte(4)
-      ..write(obj.date)
-      ..writeByte(5)
-      ..write(obj.fee)
-      ..writeByte(6)
-      ..write(obj.note)
-      ..writeByte(7)
-      ..write(obj.createdAt)
-      ..writeByte(8)
-      ..write(obj.updatedAt)
-      ..writeByte(9)
-      ..write(obj.metadata);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TransferModelAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TransferModelImpl _$$TransferModelImplFromJson(Map<String, dynamic> json) =>
-    _$TransferModelImpl(
+_TransferModel _$TransferModelFromJson(Map<String, dynamic> json) =>
+    _TransferModel(
       id: json['id'] as String,
       amount: (json['amount'] as num).toDouble(),
       fromAccount: json['fromAccount'] as String,
@@ -87,7 +22,7 @@ _$TransferModelImpl _$$TransferModelImplFromJson(Map<String, dynamic> json) =>
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$TransferModelImplToJson(_$TransferModelImpl instance) =>
+Map<String, dynamic> _$TransferModelToJson(_TransferModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'amount': instance.amount,

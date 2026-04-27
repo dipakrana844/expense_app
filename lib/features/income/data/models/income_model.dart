@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/income_entity.dart';
 
 part 'income_model.freezed.dart';
@@ -10,26 +10,25 @@ part 'income_model.g.dart';
 /// Purpose: Data transfer object for Hive persistence
 /// - Handles serialization/deserialization to Hive
 /// - Converts between domain entity and persisted data
-/// - Annotated with Hive type adapters for efficient storage
+/// - Uses manual TypeAdapter for efficient storage
 ///
 /// Design Decision: Separate model from entity to:
 /// 1. Keep domain layer free from persistence concerns
 /// 2. Allow different serialization strategies if needed
 /// 3. Enable easy migration if storage mechanism changes
 @freezed
-@HiveType(typeId: 7) // Hive type ID for income model
-class IncomeModel with _$IncomeModel {
+abstract class IncomeModel with _$IncomeModel {
   const IncomeModel._();
 
   const factory IncomeModel({
-    @HiveField(0) required String id,
-    @HiveField(1) required double amount,
-    @HiveField(2) required String source,
-    @HiveField(3) required DateTime date,
-    @HiveField(4) String? note,
-    @HiveField(5) required DateTime createdAt,
-    @HiveField(6) DateTime? updatedAt,
-    @HiveField(7) Map<String, dynamic>? metadata,
+    required String id,
+    required double amount,
+    required String source,
+    required DateTime date,
+    String? note,
+    required DateTime createdAt,
+    DateTime? updatedAt,
+    Map<String, dynamic>? metadata,
   }) = _IncomeModel;
 
   /// Convert from JSON (future-proofing for API sync)

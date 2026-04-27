@@ -1,9 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense_tracker/features/daily_spend_guard/domain/entities/daily_spend_state_entity.dart';
 
 part 'daily_spend_state.freezed.dart';
-part 'daily_spend_state.g.dart';
 
 /// Data Model: DailySpendState
 ///
@@ -18,16 +16,15 @@ part 'daily_spend_state.g.dart';
 /// 3. Support background processing requirements
 
 @freezed
-@HiveType(typeId: 5)
-class DailySpendState with _$DailySpendState {
+abstract class DailySpendState with _$DailySpendState {
   const DailySpendState._();
 
   const factory DailySpendState({
-    @HiveField(0) required double todaySpent,
-    @HiveField(1) required double dailyLimit,
-    @HiveField(2) required double remaining,
-    @HiveField(3) required SpendStatus status,
-    @HiveField(4) required DateTime lastUpdated,
+    required double todaySpent,
+    required double dailyLimit,
+    required double remaining,
+    required SpendStatus status,
+    required DateTime lastUpdated,
   }) = _DailySpendState;
 
   /// Factory constructor for initial state
@@ -51,17 +48,7 @@ class DailySpendState with _$DailySpendState {
 }
 
 /// Enum representing spending status states
-@HiveType(typeId: 6)
-enum SpendStatus {
-  @HiveField(0)
-  safe,
-
-  @HiveField(1)
-  caution,
-
-  @HiveField(2)
-  exceeded,
-}
+enum SpendStatus { safe, caution, exceeded }
 
 extension DailySpendStateMapper on DailySpendState {
   DailySpendStateEntity toEntity() {

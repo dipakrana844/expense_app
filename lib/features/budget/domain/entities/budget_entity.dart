@@ -4,7 +4,7 @@ import 'package:smart_expense_tracker/core/constants/budget_constants.dart';
 part 'budget_entity.freezed.dart';
 
 @freezed
-class BudgetEntity with _$BudgetEntity {
+abstract class BudgetEntity with _$BudgetEntity {
   const BudgetEntity._();
 
   const factory BudgetEntity({

@@ -6,7 +6,7 @@ part 'category_entity.freezed.dart';
 /// Domain entity representing a category.
 /// Uses Freezed for immutability and value equality.
 @freezed
-class CategoryEntity with _$CategoryEntity {
+abstract class CategoryEntity with _$CategoryEntity {
   const CategoryEntity._();
 
   const factory CategoryEntity({

@@ -13,7 +13,9 @@ part 'transfer_entity.freezed.dart';
 /// Design Decision: Keep entity separate from data model to maintain clean architecture
 /// boundaries and allow independent evolution of domain and data layers
 @freezed
-class TransferEntity with _$TransferEntity implements TransactionInterface {
+abstract class TransferEntity
+    with _$TransferEntity
+    implements TransactionInterface {
   const TransferEntity._();
 
   const factory TransferEntity({

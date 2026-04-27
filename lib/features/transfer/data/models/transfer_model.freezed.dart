@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,384 +9,304 @@ part of 'transfer_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-TransferModel _$TransferModelFromJson(Map<String, dynamic> json) {
-  return _TransferModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$TransferModel {
-  @HiveField(0)
-  String get id => throw _privateConstructorUsedError;
-  @HiveField(1)
-  double get amount => throw _privateConstructorUsedError;
-  @HiveField(2)
-  String get fromAccount => throw _privateConstructorUsedError;
-  @HiveField(3)
-  String get toAccount => throw _privateConstructorUsedError;
-  @HiveField(4)
-  DateTime get date => throw _privateConstructorUsedError;
-  @HiveField(5)
-  double get fee => throw _privateConstructorUsedError;
-  @HiveField(6)
-  String? get note => throw _privateConstructorUsedError;
-  @HiveField(7)
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  @HiveField(8)
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-  @HiveField(9)
-  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $TransferModelCopyWith<TransferModel> get copyWith =>
-      throw _privateConstructorUsedError;
+ String get id; double get amount; String get fromAccount; String get toAccount; DateTime get date; double get fee; String? get note; DateTime get createdAt; DateTime? get updatedAt; Map<String, dynamic>? get metadata;
+/// Create a copy of TransferModel
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TransferModelCopyWith<TransferModel> get copyWith => _$TransferModelCopyWithImpl<TransferModel>(this as TransferModel, _$identity);
+
+  /// Serializes this TransferModel to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TransferModel&&(identical(other.id, id) || other.id == id)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.fromAccount, fromAccount) || other.fromAccount == fromAccount)&&(identical(other.toAccount, toAccount) || other.toAccount == toAccount)&&(identical(other.date, date) || other.date == date)&&(identical(other.fee, fee) || other.fee == fee)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.metadata, metadata));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,amount,fromAccount,toAccount,date,fee,note,createdAt,updatedAt,const DeepCollectionEquality().hash(metadata));
+
+@override
+String toString() {
+  return 'TransferModel(id: $id, amount: $amount, fromAccount: $fromAccount, toAccount: $toAccount, date: $date, fee: $fee, note: $note, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $TransferModelCopyWith<$Res> {
-  factory $TransferModelCopyWith(
-          TransferModel value, $Res Function(TransferModel) then) =
-      _$TransferModelCopyWithImpl<$Res, TransferModel>;
-  @useResult
-  $Res call(
-      {@HiveField(0) String id,
-      @HiveField(1) double amount,
-      @HiveField(2) String fromAccount,
-      @HiveField(3) String toAccount,
-      @HiveField(4) DateTime date,
-      @HiveField(5) double fee,
-      @HiveField(6) String? note,
-      @HiveField(7) DateTime createdAt,
-      @HiveField(8) DateTime? updatedAt,
-      @HiveField(9) Map<String, dynamic>? metadata});
-}
+abstract mixin class $TransferModelCopyWith<$Res>  {
+  factory $TransferModelCopyWith(TransferModel value, $Res Function(TransferModel) _then) = _$TransferModelCopyWithImpl;
+@useResult
+$Res call({
+ String id, double amount, String fromAccount, String toAccount, DateTime date, double fee, String? note, DateTime createdAt, DateTime? updatedAt, Map<String, dynamic>? metadata
+});
 
+
+
+
+}
 /// @nodoc
-class _$TransferModelCopyWithImpl<$Res, $Val extends TransferModel>
+class _$TransferModelCopyWithImpl<$Res>
     implements $TransferModelCopyWith<$Res> {
-  _$TransferModelCopyWithImpl(this._value, this._then);
+  _$TransferModelCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final TransferModel _self;
+  final $Res Function(TransferModel) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? amount = null,
-    Object? fromAccount = null,
-    Object? toAccount = null,
-    Object? date = null,
-    Object? fee = null,
-    Object? note = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = freezed,
-    Object? metadata = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      fromAccount: null == fromAccount
-          ? _value.fromAccount
-          : fromAccount // ignore: cast_nullable_to_non_nullable
-              as String,
-      toAccount: null == toAccount
-          ? _value.toAccount
-          : toAccount // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      fee: null == fee
-          ? _value.fee
-          : fee // ignore: cast_nullable_to_non_nullable
-              as double,
-      note: freezed == note
-          ? _value.note
-          : note // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      metadata: freezed == metadata
-          ? _value.metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-    ) as $Val);
-  }
+/// Create a copy of TransferModel
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? amount = null,Object? fromAccount = null,Object? toAccount = null,Object? date = null,Object? fee = null,Object? note = freezed,Object? createdAt = null,Object? updatedAt = freezed,Object? metadata = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as double,fromAccount: null == fromAccount ? _self.fromAccount : fromAccount // ignore: cast_nullable_to_non_nullable
+as String,toAccount: null == toAccount ? _self.toAccount : toAccount // ignore: cast_nullable_to_non_nullable
+as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as DateTime,fee: null == fee ? _self.fee : fee // ignore: cast_nullable_to_non_nullable
+as double,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$TransferModelImplCopyWith<$Res>
-    implements $TransferModelCopyWith<$Res> {
-  factory _$$TransferModelImplCopyWith(
-          _$TransferModelImpl value, $Res Function(_$TransferModelImpl) then) =
-      __$$TransferModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@HiveField(0) String id,
-      @HiveField(1) double amount,
-      @HiveField(2) String fromAccount,
-      @HiveField(3) String toAccount,
-      @HiveField(4) DateTime date,
-      @HiveField(5) double fee,
-      @HiveField(6) String? note,
-      @HiveField(7) DateTime createdAt,
-      @HiveField(8) DateTime? updatedAt,
-      @HiveField(9) Map<String, dynamic>? metadata});
 }
 
-/// @nodoc
-class __$$TransferModelImplCopyWithImpl<$Res>
-    extends _$TransferModelCopyWithImpl<$Res, _$TransferModelImpl>
-    implements _$$TransferModelImplCopyWith<$Res> {
-  __$$TransferModelImplCopyWithImpl(
-      _$TransferModelImpl _value, $Res Function(_$TransferModelImpl) _then)
-      : super(_value, _then);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? amount = null,
-    Object? fromAccount = null,
-    Object? toAccount = null,
-    Object? date = null,
-    Object? fee = null,
-    Object? note = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = freezed,
-    Object? metadata = freezed,
-  }) {
-    return _then(_$TransferModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      fromAccount: null == fromAccount
-          ? _value.fromAccount
-          : fromAccount // ignore: cast_nullable_to_non_nullable
-              as String,
-      toAccount: null == toAccount
-          ? _value.toAccount
-          : toAccount // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      fee: null == fee
-          ? _value.fee
-          : fee // ignore: cast_nullable_to_non_nullable
-              as double,
-      note: freezed == note
-          ? _value.note
-          : note // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      metadata: freezed == metadata
-          ? _value._metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-    ));
-  }
+/// Adds pattern-matching-related methods to [TransferModel].
+extension TransferModelPatterns on TransferModel {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TransferModel value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TransferModel() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TransferModel value)  $default,){
+final _that = this;
+switch (_that) {
+case _TransferModel():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TransferModel value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TransferModel() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  double amount,  String fromAccount,  String toAccount,  DateTime date,  double fee,  String? note,  DateTime createdAt,  DateTime? updatedAt,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TransferModel() when $default != null:
+return $default(_that.id,_that.amount,_that.fromAccount,_that.toAccount,_that.date,_that.fee,_that.note,_that.createdAt,_that.updatedAt,_that.metadata);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  double amount,  String fromAccount,  String toAccount,  DateTime date,  double fee,  String? note,  DateTime createdAt,  DateTime? updatedAt,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
+switch (_that) {
+case _TransferModel():
+return $default(_that.id,_that.amount,_that.fromAccount,_that.toAccount,_that.date,_that.fee,_that.note,_that.createdAt,_that.updatedAt,_that.metadata);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  double amount,  String fromAccount,  String toAccount,  DateTime date,  double fee,  String? note,  DateTime createdAt,  DateTime? updatedAt,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
+switch (_that) {
+case _TransferModel() when $default != null:
+return $default(_that.id,_that.amount,_that.fromAccount,_that.toAccount,_that.date,_that.fee,_that.note,_that.createdAt,_that.updatedAt,_that.metadata);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$TransferModelImpl extends _TransferModel {
-  const _$TransferModelImpl(
-      {@HiveField(0) required this.id,
-      @HiveField(1) required this.amount,
-      @HiveField(2) required this.fromAccount,
-      @HiveField(3) required this.toAccount,
-      @HiveField(4) required this.date,
-      @HiveField(5) this.fee = 0.0,
-      @HiveField(6) this.note,
-      @HiveField(7) required this.createdAt,
-      @HiveField(8) this.updatedAt,
-      @HiveField(9) final Map<String, dynamic>? metadata})
-      : _metadata = metadata,
-        super._();
 
-  factory _$TransferModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TransferModelImplFromJson(json);
+class _TransferModel extends TransferModel {
+  const _TransferModel({required this.id, required this.amount, required this.fromAccount, required this.toAccount, required this.date, this.fee = 0.0, this.note, required this.createdAt, this.updatedAt, final  Map<String, dynamic>? metadata}): _metadata = metadata,super._();
+  factory _TransferModel.fromJson(Map<String, dynamic> json) => _$TransferModelFromJson(json);
 
-  @override
-  @HiveField(0)
-  final String id;
-  @override
-  @HiveField(1)
-  final double amount;
-  @override
-  @HiveField(2)
-  final String fromAccount;
-  @override
-  @HiveField(3)
-  final String toAccount;
-  @override
-  @HiveField(4)
-  final DateTime date;
-  @override
-  @JsonKey()
-  @HiveField(5)
-  final double fee;
-  @override
-  @HiveField(6)
-  final String? note;
-  @override
-  @HiveField(7)
-  final DateTime createdAt;
-  @override
-  @HiveField(8)
-  final DateTime? updatedAt;
-  final Map<String, dynamic>? _metadata;
-  @override
-  @HiveField(9)
-  Map<String, dynamic>? get metadata {
-    final value = _metadata;
-    if (value == null) return null;
-    if (_metadata is EqualUnmodifiableMapView) return _metadata;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
-
-  @override
-  String toString() {
-    return 'TransferModel(id: $id, amount: $amount, fromAccount: $fromAccount, toAccount: $toAccount, date: $date, fee: $fee, note: $note, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TransferModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.amount, amount) || other.amount == amount) &&
-            (identical(other.fromAccount, fromAccount) ||
-                other.fromAccount == fromAccount) &&
-            (identical(other.toAccount, toAccount) ||
-                other.toAccount == toAccount) &&
-            (identical(other.date, date) || other.date == date) &&
-            (identical(other.fee, fee) || other.fee == fee) &&
-            (identical(other.note, note) || other.note == note) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
-            const DeepCollectionEquality().equals(other._metadata, _metadata));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      amount,
-      fromAccount,
-      toAccount,
-      date,
-      fee,
-      note,
-      createdAt,
-      updatedAt,
-      const DeepCollectionEquality().hash(_metadata));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$TransferModelImplCopyWith<_$TransferModelImpl> get copyWith =>
-      __$$TransferModelImplCopyWithImpl<_$TransferModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TransferModelImplToJson(
-      this,
-    );
-  }
+@override final  String id;
+@override final  double amount;
+@override final  String fromAccount;
+@override final  String toAccount;
+@override final  DateTime date;
+@override@JsonKey() final  double fee;
+@override final  String? note;
+@override final  DateTime createdAt;
+@override final  DateTime? updatedAt;
+ final  Map<String, dynamic>? _metadata;
+@override Map<String, dynamic>? get metadata {
+  final value = _metadata;
+  if (value == null) return null;
+  if (_metadata is EqualUnmodifiableMapView) return _metadata;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
 }
 
-abstract class _TransferModel extends TransferModel {
-  const factory _TransferModel(
-          {@HiveField(0) required final String id,
-          @HiveField(1) required final double amount,
-          @HiveField(2) required final String fromAccount,
-          @HiveField(3) required final String toAccount,
-          @HiveField(4) required final DateTime date,
-          @HiveField(5) final double fee,
-          @HiveField(6) final String? note,
-          @HiveField(7) required final DateTime createdAt,
-          @HiveField(8) final DateTime? updatedAt,
-          @HiveField(9) final Map<String, dynamic>? metadata}) =
-      _$TransferModelImpl;
-  const _TransferModel._() : super._();
 
-  factory _TransferModel.fromJson(Map<String, dynamic> json) =
-      _$TransferModelImpl.fromJson;
+/// Create a copy of TransferModel
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TransferModelCopyWith<_TransferModel> get copyWith => __$TransferModelCopyWithImpl<_TransferModel>(this, _$identity);
 
-  @override
-  @HiveField(0)
-  String get id;
-  @override
-  @HiveField(1)
-  double get amount;
-  @override
-  @HiveField(2)
-  String get fromAccount;
-  @override
-  @HiveField(3)
-  String get toAccount;
-  @override
-  @HiveField(4)
-  DateTime get date;
-  @override
-  @HiveField(5)
-  double get fee;
-  @override
-  @HiveField(6)
-  String? get note;
-  @override
-  @HiveField(7)
-  DateTime get createdAt;
-  @override
-  @HiveField(8)
-  DateTime? get updatedAt;
-  @override
-  @HiveField(9)
-  Map<String, dynamic>? get metadata;
-  @override
-  @JsonKey(ignore: true)
-  _$$TransferModelImplCopyWith<_$TransferModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+Map<String, dynamic> toJson() {
+  return _$TransferModelToJson(this, );
 }
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransferModel&&(identical(other.id, id) || other.id == id)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.fromAccount, fromAccount) || other.fromAccount == fromAccount)&&(identical(other.toAccount, toAccount) || other.toAccount == toAccount)&&(identical(other.date, date) || other.date == date)&&(identical(other.fee, fee) || other.fee == fee)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,amount,fromAccount,toAccount,date,fee,note,createdAt,updatedAt,const DeepCollectionEquality().hash(_metadata));
+
+@override
+String toString() {
+  return 'TransferModel(id: $id, amount: $amount, fromAccount: $fromAccount, toAccount: $toAccount, date: $date, fee: $fee, note: $note, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TransferModelCopyWith<$Res> implements $TransferModelCopyWith<$Res> {
+  factory _$TransferModelCopyWith(_TransferModel value, $Res Function(_TransferModel) _then) = __$TransferModelCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, double amount, String fromAccount, String toAccount, DateTime date, double fee, String? note, DateTime createdAt, DateTime? updatedAt, Map<String, dynamic>? metadata
+});
+
+
+
+
+}
+/// @nodoc
+class __$TransferModelCopyWithImpl<$Res>
+    implements _$TransferModelCopyWith<$Res> {
+  __$TransferModelCopyWithImpl(this._self, this._then);
+
+  final _TransferModel _self;
+  final $Res Function(_TransferModel) _then;
+
+/// Create a copy of TransferModel
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? amount = null,Object? fromAccount = null,Object? toAccount = null,Object? date = null,Object? fee = null,Object? note = freezed,Object? createdAt = null,Object? updatedAt = freezed,Object? metadata = freezed,}) {
+  return _then(_TransferModel(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as double,fromAccount: null == fromAccount ? _self.fromAccount : fromAccount // ignore: cast_nullable_to_non_nullable
+as String,toAccount: null == toAccount ? _self.toAccount : toAccount // ignore: cast_nullable_to_non_nullable
+as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as DateTime,fee: null == fee ? _self.fee : fee // ignore: cast_nullable_to_non_nullable
+as double,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,metadata: freezed == metadata ? _self._metadata : metadata // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
+  ));
+}
+
+
+}
+
+// dart format on

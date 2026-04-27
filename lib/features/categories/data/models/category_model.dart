@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/enums/category_type.dart';
 
@@ -9,20 +9,18 @@ part 'category_model.g.dart';
 /// Data model for category persistence.
 /// Uses Hive for local storage with type ID 14.
 @freezed
-@HiveType(typeId: 14)
-class CategoryModel with _$CategoryModel {
+abstract class CategoryModel with _$CategoryModel {
   const CategoryModel._();
 
   const factory CategoryModel({
-    @HiveField(0) required String id,
-    @HiveField(1) required String name,
-    @HiveField(2)
+    required String id,
+    required String name,
     required String type, // Stored as string for Hive compatibility
-    @HiveField(3) required int iconCodePoint,
-    @HiveField(4) required int colorValue,
-    @HiveField(5) required DateTime createdAt,
-    @HiveField(6) DateTime? updatedAt,
-    @HiveField(7) @Default(false) bool isDeleted, // For soft delete
+    required int iconCodePoint,
+    required int colorValue,
+    required DateTime createdAt,
+    DateTime? updatedAt,
+    @Default(false) bool isDeleted, // For soft delete
   }) = _CategoryModel;
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>

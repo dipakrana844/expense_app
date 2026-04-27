@@ -4,17 +4,18 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/bootstrap/app_bootstrap.dart';
 
-class LoggerObserver extends ProviderObserver {
+base class LoggerObserver extends ProviderObserver {
   const LoggerObserver();
 
   @override
   void didUpdateProvider(
-    ProviderBase<Object?> provider,
+    ProviderObserverContext context,
     Object? previousValue,
     Object? newValue,
-    ProviderContainer container,
   ) {
-    debugPrint('State change in ${provider.name ?? provider.runtimeType}');
+    debugPrint(
+      'State change in ${context.provider.name ?? context.provider.runtimeType}',
+    );
   }
 }
 

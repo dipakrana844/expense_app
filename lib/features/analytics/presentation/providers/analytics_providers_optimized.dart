@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/income/presentation/providers/income_providers.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
@@ -192,7 +194,7 @@ final dailySnapshotProvider = Provider<DailySnapshotEntity>((ref) {
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.dailySnapshot,
         loading: () => DailySnapshotEntity.empty(),
-        error: (_, __) => DailySnapshotEntity.empty(),
+        error: (_, _) => DailySnapshotEntity.empty(),
       ),
     ),
   );
@@ -208,7 +210,7 @@ final smartWarningsProvider = Provider<List<Insight>>((ref) {
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.smartWarnings,
         loading: () => [],
-        error: (_, __) => [],
+        error: (_, _) => [],
       ),
     ),
   );
@@ -224,7 +226,7 @@ final trendExplanationProvider = Provider<String>((ref) {
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.trendExplanation,
         loading: () => 'Loading analytics...',
-        error: (_, __) => 'Error loading analytics',
+        error: (_, _) => 'Error loading analytics',
       ),
     ),
   );
@@ -241,7 +243,7 @@ final categoryActionInsightsProvider =
           (asyncValue) => asyncValue.when(
             data: (analytics) => analytics.categoryInsights,
             loading: () => {},
-            error: (_, __) => {},
+            error: (_, _) => {},
           ),
         ),
       );
@@ -257,7 +259,7 @@ final financialAnalyticsProvider = Provider<FinancialAnalyticsEntity>((ref) {
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.financialAnalytics,
         loading: () => FinancialAnalyticsEntity.empty(),
-        error: (_, __) => FinancialAnalyticsEntity.empty(),
+        error: (_, _) => FinancialAnalyticsEntity.empty(),
       ),
     ),
   );
@@ -275,7 +277,7 @@ final incomeExpenseTrendProvider = Provider<Map<String, Map<String, double>>>((
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.incomeExpenseTrend,
         loading: () => {},
-        error: (_, __) => {},
+        error: (_, _) => {},
       ),
     ),
   );
@@ -291,7 +293,7 @@ final monthlyAnalyticsProvider = Provider<MonthlyAnalyticsEntity>((ref) {
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.monthlyAnalytics,
         loading: () => MonthlyAnalyticsEntity.empty(),
-        error: (_, __) => MonthlyAnalyticsEntity.empty(),
+        error: (_, _) => MonthlyAnalyticsEntity.empty(),
       ),
     ),
   );
@@ -307,7 +309,7 @@ final monthlyTrendProvider = Provider<Map<String, double>>((ref) {
       (asyncValue) => asyncValue.when(
         data: (analytics) => analytics.monthlyTrend,
         loading: () => {},
-        error: (_, __) => {},
+        error: (_, _) => {},
       ),
     ),
   );

@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,278 +9,284 @@ part of 'category_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
 /// @nodoc
 mixin _$CategoryEntity {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  CategoryType get type => throw _privateConstructorUsedError;
-  int get iconCodePoint => throw _privateConstructorUsedError;
-  int get colorValue => throw _privateConstructorUsedError;
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-  bool get isDeleted => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
-  $CategoryEntityCopyWith<CategoryEntity> get copyWith =>
-      throw _privateConstructorUsedError;
+ String get id; String get name; CategoryType get type; int get iconCodePoint; int get colorValue; DateTime get createdAt; DateTime? get updatedAt; bool get isDeleted;
+/// Create a copy of CategoryEntity
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CategoryEntityCopyWith<CategoryEntity> get copyWith => _$CategoryEntityCopyWithImpl<CategoryEntity>(this as CategoryEntity, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.iconCodePoint, iconCodePoint) || other.iconCodePoint == iconCodePoint)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,type,iconCodePoint,colorValue,createdAt,updatedAt,isDeleted);
+
+@override
+String toString() {
+  return 'CategoryEntity(id: $id, name: $name, type: $type, iconCodePoint: $iconCodePoint, colorValue: $colorValue, createdAt: $createdAt, updatedAt: $updatedAt, isDeleted: $isDeleted)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $CategoryEntityCopyWith<$Res> {
-  factory $CategoryEntityCopyWith(
-          CategoryEntity value, $Res Function(CategoryEntity) then) =
-      _$CategoryEntityCopyWithImpl<$Res, CategoryEntity>;
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      CategoryType type,
-      int iconCodePoint,
-      int colorValue,
-      DateTime createdAt,
-      DateTime? updatedAt,
-      bool isDeleted});
-}
+abstract mixin class $CategoryEntityCopyWith<$Res>  {
+  factory $CategoryEntityCopyWith(CategoryEntity value, $Res Function(CategoryEntity) _then) = _$CategoryEntityCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, CategoryType type, int iconCodePoint, int colorValue, DateTime createdAt, DateTime? updatedAt, bool isDeleted
+});
 
+
+
+
+}
 /// @nodoc
-class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
+class _$CategoryEntityCopyWithImpl<$Res>
     implements $CategoryEntityCopyWith<$Res> {
-  _$CategoryEntityCopyWithImpl(this._value, this._then);
+  _$CategoryEntityCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final CategoryEntity _self;
+  final $Res Function(CategoryEntity) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? type = null,
-    Object? iconCodePoint = null,
-    Object? colorValue = null,
-    Object? createdAt = null,
-    Object? updatedAt = freezed,
-    Object? isDeleted = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as CategoryType,
-      iconCodePoint: null == iconCodePoint
-          ? _value.iconCodePoint
-          : iconCodePoint // ignore: cast_nullable_to_non_nullable
-              as int,
-      colorValue: null == colorValue
-          ? _value.colorValue
-          : colorValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isDeleted: null == isDeleted
-          ? _value.isDeleted
-          : isDeleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
-  }
+/// Create a copy of CategoryEntity
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? iconCodePoint = null,Object? colorValue = null,Object? createdAt = null,Object? updatedAt = freezed,Object? isDeleted = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as CategoryType,iconCodePoint: null == iconCodePoint ? _self.iconCodePoint : iconCodePoint // ignore: cast_nullable_to_non_nullable
+as int,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,isDeleted: null == isDeleted ? _self.isDeleted : isDeleted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [CategoryEntity].
+extension CategoryEntityPatterns on CategoryEntity {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CategoryEntity value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CategoryEntity() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CategoryEntity value)  $default,){
+final _that = this;
+switch (_that) {
+case _CategoryEntity():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CategoryEntity value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CategoryEntity() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  CategoryType type,  int iconCodePoint,  int colorValue,  DateTime createdAt,  DateTime? updatedAt,  bool isDeleted)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CategoryEntity() when $default != null:
+return $default(_that.id,_that.name,_that.type,_that.iconCodePoint,_that.colorValue,_that.createdAt,_that.updatedAt,_that.isDeleted);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  CategoryType type,  int iconCodePoint,  int colorValue,  DateTime createdAt,  DateTime? updatedAt,  bool isDeleted)  $default,) {final _that = this;
+switch (_that) {
+case _CategoryEntity():
+return $default(_that.id,_that.name,_that.type,_that.iconCodePoint,_that.colorValue,_that.createdAt,_that.updatedAt,_that.isDeleted);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  CategoryType type,  int iconCodePoint,  int colorValue,  DateTime createdAt,  DateTime? updatedAt,  bool isDeleted)?  $default,) {final _that = this;
+switch (_that) {
+case _CategoryEntity() when $default != null:
+return $default(_that.id,_that.name,_that.type,_that.iconCodePoint,_that.colorValue,_that.createdAt,_that.updatedAt,_that.isDeleted);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$CategoryEntityImplCopyWith<$Res>
-    implements $CategoryEntityCopyWith<$Res> {
-  factory _$$CategoryEntityImplCopyWith(_$CategoryEntityImpl value,
-          $Res Function(_$CategoryEntityImpl) then) =
-      __$$CategoryEntityImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      CategoryType type,
-      int iconCodePoint,
-      int colorValue,
-      DateTime createdAt,
-      DateTime? updatedAt,
-      bool isDeleted});
+
+
+class _CategoryEntity extends CategoryEntity {
+  const _CategoryEntity({required this.id, required this.name, required this.type, required this.iconCodePoint, required this.colorValue, required this.createdAt, this.updatedAt, this.isDeleted = false}): super._();
+  
+
+@override final  String id;
+@override final  String name;
+@override final  CategoryType type;
+@override final  int iconCodePoint;
+@override final  int colorValue;
+@override final  DateTime createdAt;
+@override final  DateTime? updatedAt;
+@override@JsonKey() final  bool isDeleted;
+
+/// Create a copy of CategoryEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CategoryEntityCopyWith<_CategoryEntity> get copyWith => __$CategoryEntityCopyWithImpl<_CategoryEntity>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.iconCodePoint, iconCodePoint) || other.iconCodePoint == iconCodePoint)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,type,iconCodePoint,colorValue,createdAt,updatedAt,isDeleted);
+
+@override
+String toString() {
+  return 'CategoryEntity(id: $id, name: $name, type: $type, iconCodePoint: $iconCodePoint, colorValue: $colorValue, createdAt: $createdAt, updatedAt: $updatedAt, isDeleted: $isDeleted)';
+}
+
+
 }
 
 /// @nodoc
-class __$$CategoryEntityImplCopyWithImpl<$Res>
-    extends _$CategoryEntityCopyWithImpl<$Res, _$CategoryEntityImpl>
-    implements _$$CategoryEntityImplCopyWith<$Res> {
-  __$$CategoryEntityImplCopyWithImpl(
-      _$CategoryEntityImpl _value, $Res Function(_$CategoryEntityImpl) _then)
-      : super(_value, _then);
+abstract mixin class _$CategoryEntityCopyWith<$Res> implements $CategoryEntityCopyWith<$Res> {
+  factory _$CategoryEntityCopyWith(_CategoryEntity value, $Res Function(_CategoryEntity) _then) = __$CategoryEntityCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, CategoryType type, int iconCodePoint, int colorValue, DateTime createdAt, DateTime? updatedAt, bool isDeleted
+});
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? type = null,
-    Object? iconCodePoint = null,
-    Object? colorValue = null,
-    Object? createdAt = null,
-    Object? updatedAt = freezed,
-    Object? isDeleted = null,
-  }) {
-    return _then(_$CategoryEntityImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as CategoryType,
-      iconCodePoint: null == iconCodePoint
-          ? _value.iconCodePoint
-          : iconCodePoint // ignore: cast_nullable_to_non_nullable
-              as int,
-      colorValue: null == colorValue
-          ? _value.colorValue
-          : colorValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isDeleted: null == isDeleted
-          ? _value.isDeleted
-          : isDeleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
+
+
+
 }
-
 /// @nodoc
+class __$CategoryEntityCopyWithImpl<$Res>
+    implements _$CategoryEntityCopyWith<$Res> {
+  __$CategoryEntityCopyWithImpl(this._self, this._then);
 
-class _$CategoryEntityImpl extends _CategoryEntity {
-  const _$CategoryEntityImpl(
-      {required this.id,
-      required this.name,
-      required this.type,
-      required this.iconCodePoint,
-      required this.colorValue,
-      required this.createdAt,
-      this.updatedAt,
-      this.isDeleted = false})
-      : super._();
+  final _CategoryEntity _self;
+  final $Res Function(_CategoryEntity) _then;
 
-  @override
-  final String id;
-  @override
-  final String name;
-  @override
-  final CategoryType type;
-  @override
-  final int iconCodePoint;
-  @override
-  final int colorValue;
-  @override
-  final DateTime createdAt;
-  @override
-  final DateTime? updatedAt;
-  @override
-  @JsonKey()
-  final bool isDeleted;
-
-  @override
-  String toString() {
-    return 'CategoryEntity(id: $id, name: $name, type: $type, iconCodePoint: $iconCodePoint, colorValue: $colorValue, createdAt: $createdAt, updatedAt: $updatedAt, isDeleted: $isDeleted)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$CategoryEntityImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.iconCodePoint, iconCodePoint) ||
-                other.iconCodePoint == iconCodePoint) &&
-            (identical(other.colorValue, colorValue) ||
-                other.colorValue == colorValue) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
-            (identical(other.isDeleted, isDeleted) ||
-                other.isDeleted == isDeleted));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, id, name, type, iconCodePoint,
-      colorValue, createdAt, updatedAt, isDeleted);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$CategoryEntityImplCopyWith<_$CategoryEntityImpl> get copyWith =>
-      __$$CategoryEntityImplCopyWithImpl<_$CategoryEntityImpl>(
-          this, _$identity);
+/// Create a copy of CategoryEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? iconCodePoint = null,Object? colorValue = null,Object? createdAt = null,Object? updatedAt = freezed,Object? isDeleted = null,}) {
+  return _then(_CategoryEntity(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as CategoryType,iconCodePoint: null == iconCodePoint ? _self.iconCodePoint : iconCodePoint // ignore: cast_nullable_to_non_nullable
+as int,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,isDeleted: null == isDeleted ? _self.isDeleted : isDeleted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
 }
 
-abstract class _CategoryEntity extends CategoryEntity {
-  const factory _CategoryEntity(
-      {required final String id,
-      required final String name,
-      required final CategoryType type,
-      required final int iconCodePoint,
-      required final int colorValue,
-      required final DateTime createdAt,
-      final DateTime? updatedAt,
-      final bool isDeleted}) = _$CategoryEntityImpl;
-  const _CategoryEntity._() : super._();
 
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  CategoryType get type;
-  @override
-  int get iconCodePoint;
-  @override
-  int get colorValue;
-  @override
-  DateTime get createdAt;
-  @override
-  DateTime? get updatedAt;
-  @override
-  bool get isDeleted;
-  @override
-  @JsonKey(ignore: true)
-  _$$CategoryEntityImplCopyWith<_$CategoryEntityImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
+
+// dart format on
