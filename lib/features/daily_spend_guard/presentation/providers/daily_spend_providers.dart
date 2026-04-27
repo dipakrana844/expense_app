@@ -46,39 +46,25 @@ final updateDailySpendUseCaseProvider = Provider<UpdateDailySpendUseCase>((
 });
 
 final dailySpendStateProvider =
-    StateNotifierProvider<
-      DailySpendNotifier,
-      AsyncValue<DailySpendStateEntity>
-    >((ref) {
-      final repository = ref.watch(dailySpendRepositoryProvider);
-      final updateUseCase = ref.watch(updateDailySpendUseCaseProvider);
-      final calculateUseCase = ref.watch(calculateDailyLimitUseCaseProvider);
+    AsyncNotifierProvider<DailySpendNotifier, DailySpendStateEntity>(
+      DailySpendNotifier.new,
+    );
 
-      return DailySpendNotifier(
-        repository: repository,
-        updateUseCase: updateUseCase,
-        calculateUseCase: calculateUseCase,
-      );
-    });
+class DailySpendNotifier extends AsyncNotifier<DailySpendStateEntity> {
+  late final DailySpendRepository _repository;
+  late final UpdateDailySpendUseCase _updateUseCase;
+  late final CalculateDailyLimitUseCase _calculateUseCase;
 
-class DailySpendNotifier
-    extends StateNotifier<AsyncValue<DailySpendStateEntity>> {
-  final DailySpendRepository _repository;
-  final UpdateDailySpendUseCase _updateUseCase;
-  final CalculateDailyLimitUseCase _calculateUseCase;
+  @override
+  Future<DailySpendStateEntity> build() async {
+    _repository = ref.watch(dailySpendRepositoryProvider);
+    _updateUseCase = ref.watch(updateDailySpendUseCaseProvider);
+    _calculateUseCase = ref.watch(calculateDailyLimitUseCaseProvider);
 
-  DailySpendNotifier({
-    required DailySpendRepository repository,
-    required UpdateDailySpendUseCase updateUseCase,
-    required CalculateDailyLimitUseCase calculateUseCase,
-  }) : _repository = repository,
-       _updateUseCase = updateUseCase,
-       _calculateUseCase = calculateUseCase,
-       super(const AsyncValue.loading()) {
-    _initialize();
+    return await _initialize();
   }
 
-  Future<void> _initialize() async {
+  Future<DailySpendStateEntity> _initialize() async {
     try {
       await _repository.init();
 
@@ -89,36 +75,36 @@ class DailySpendNotifier
         currentState = await _updateUseCase.recalculateState(dailyLimit);
       }
 
-      state = AsyncValue.data(currentState);
+      return currentState;
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      throw Exception('Failed to initialize: $e');
     }
   }
 
   Future<void> addSpending(double amount) async {
     try {
       final currentState = await _updateUseCase.addSpending(amount);
-      state = AsyncValue.data(currentState);
+      state = AsyncData(currentState);
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AsyncError(e, stackTrace);
     }
   }
 
   Future<void> removeSpending(double amount) async {
     try {
       final currentState = await _updateUseCase.removeSpending(amount);
-      state = AsyncValue.data(currentState);
+      state = AsyncData(currentState);
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AsyncError(e, stackTrace);
     }
   }
 
   Future<void> setSpending(double amount) async {
     try {
       final currentState = await _updateUseCase.setSpending(amount);
-      state = AsyncValue.data(currentState);
+      state = AsyncData(currentState);
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AsyncError(e, stackTrace);
     }
   }
 
@@ -126,27 +112,27 @@ class DailySpendNotifier
     try {
       final newDailyLimit = await _calculateUseCase.calculateDailyLimit();
       final currentState = await _updateUseCase.recalculateState(newDailyLimit);
-      state = AsyncValue.data(currentState);
+      state = AsyncData(currentState);
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AsyncError(e, stackTrace);
     }
   }
 
   Future<void> resetDailyState() async {
     try {
       await _repository.resetDailyState();
-      await _initialize();
+      state = await AsyncValue.guard(() => _initialize());
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AsyncError(e, stackTrace);
     }
   }
 
   Future<void> refresh() async {
     try {
       final currentState = _repository.getCurrentState();
-      state = AsyncValue.data(currentState);
+      state = AsyncData(currentState);
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AsyncError(e, stackTrace);
     }
   }
 }

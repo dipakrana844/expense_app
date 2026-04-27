@@ -89,7 +89,10 @@ void main() {
     test('Settings provider updates correctly', () async {
       // Initial state
       final initialStateAsync = container.read(appSettingsNotifierProvider);
-      final initialState = initialStateAsync.valueOrNull ?? const AppSettings();
+      final initialState = switch (initialStateAsync) {
+        AsyncData(:final value) => value,
+        _ => const AppSettings(),
+      };
       expect(initialState.defaultCurrency, '₹');
       expect(initialState.enableQuickExpense, true);
 
@@ -102,7 +105,10 @@ void main() {
 
       // Check updated state
       final updatedStateAsync = container.read(appSettingsNotifierProvider);
-      final updatedState = updatedStateAsync.valueOrNull ?? const AppSettings();
+      final updatedState = switch (updatedStateAsync) {
+        AsyncData(:final value) => value,
+        _ => const AppSettings(),
+      };
       expect(updatedState.defaultCurrency, '\$');
       expect(updatedState.enableQuickExpense, false);
     });

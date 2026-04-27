@@ -24,7 +24,10 @@ class GroceryNotifier extends _$GroceryNotifier {
   GrocerySessionState build() {
     // Read global settings instead of local preferences
     final settingsAsync = ref.watch(appSettingsNotifierProvider);
-    final settings = settingsAsync.valueOrNull ?? const AppSettings();
+    final settings = switch (settingsAsync) {
+      AsyncData(:final value) => value,
+      _ => const AppSettings(),
+    };
 
     // Get grocery preferences for data, but use global settings for behavior
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
@@ -40,7 +43,10 @@ class GroceryNotifier extends _$GroceryNotifier {
 
     // Save to preferences if enabled in global settings
     final settingsAsync = ref.read(appSettingsNotifierProvider);
-    final settings = settingsAsync.valueOrNull ?? const AppSettings();
+    final settings = switch (settingsAsync) {
+      AsyncData(:final value) => value,
+      _ => const AppSettings(),
+    };
     if (settings.saveLastStoreName) {
       final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
       prefsDataSource.updateLastStoreName(name);
@@ -64,7 +70,10 @@ class GroceryNotifier extends _$GroceryNotifier {
 
     // Track frequent items if enabled in global settings
     final settingsAsync = ref.read(appSettingsNotifierProvider);
-    final settings = settingsAsync.valueOrNull ?? const AppSettings();
+    final settings = switch (settingsAsync) {
+      AsyncData(:final value) => value,
+      _ => const AppSettings(),
+    };
     if (settings.showFrequentItemSuggestions) {
       final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);
       prefsDataSource.addItemToFrequent(name);
@@ -167,7 +176,10 @@ class GroceryNotifier extends _$GroceryNotifier {
   /// Get suggested items based on global settings
   List<String> getSuggestedItems() {
     final settingsAsync = ref.read(appSettingsNotifierProvider);
-    final settings = settingsAsync.valueOrNull ?? const AppSettings();
+    final settings = switch (settingsAsync) {
+      AsyncData(:final value) => value,
+      _ => const AppSettings(),
+    };
     if (!settings.showFrequentItemSuggestions) return [];
 
     final prefsDataSource = ref.read(groceryPreferencesDataSourceProvider);

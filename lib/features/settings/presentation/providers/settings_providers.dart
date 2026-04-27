@@ -30,8 +30,8 @@ final resetSettingsUseCaseProvider = Provider<ResetSettingsUseCase>((ref) {
 /// Uses AsyncNotifier for proper async state management (Riverpod 3.x)
 final appSettingsNotifierProvider =
     AsyncNotifierProvider<AppSettingsNotifier, AppSettings>(
-  AppSettingsNotifier.new,
-);
+      AppSettingsNotifier.new,
+    );
 
 class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
   @override
@@ -45,18 +45,18 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     final getSettingsUseCase = ref.read(getSettingsUseCaseProvider);
     final (domain.AppSettingsEntity? entity, Failure? failure) =
         await getSettingsUseCase.call(NoParams());
-    
+
     if (failure != null) {
       debugPrint('Failed to load settings: $failure');
       // Return default settings on error
       return const AppSettings();
     }
-    
+
     if (entity != null) {
       // Convert entity to model and return
       return AppSettings.fromEntity(entity);
     }
-    
+
     // Return default settings if no entity returned
     return const AppSettings();
   }
@@ -78,7 +78,10 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     bool? requireAuthOnLaunch,
   }) async {
     // Get current settings
-    final currentSettings = state.valueOrNull;
+    final currentSettings = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (currentSettings == null) {
       debugPrint('Cannot update settings: no current settings');
       return;
@@ -117,7 +120,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     final (_, Failure? failure) = await updateSettingsUseCase.call(
       updatedEntity,
     );
-    
+
     if (failure != null) {
       debugPrint('Failed to update settings: $failure');
       return;
@@ -132,12 +135,12 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
   Future<void> resetToDefaults() async {
     final resetSettingsUseCase = ref.read(resetSettingsUseCaseProvider);
     final (_, Failure? failure) = await resetSettingsUseCase.call(NoParams());
-    
+
     if (failure != null) {
       debugPrint('Failed to reset settings: $failure');
       return;
     }
-    
+
     // Reload settings after reset
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => _loadSettings());
@@ -145,7 +148,10 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
   /// Update storage usage information
   Future<void> updateStorageUsage(int bytes) async {
-    final currentSettings = state.valueOrNull;
+    final currentSettings = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (currentSettings == null) {
       debugPrint('Cannot update storage usage: no current settings');
       return;
@@ -153,24 +159,27 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
     final currentEntity = currentSettings.toEntity();
     final updatedEntity = currentEntity.copyWith(storageUsageBytes: bytes);
-    
+
     final updateSettingsUseCase = ref.read(updateSettingsUseCaseProvider);
     final (_, Failure? failure) = await updateSettingsUseCase.call(
       updatedEntity,
     );
-    
+
     if (failure != null) {
       debugPrint('Failed to update storage usage: $failure');
       return;
     }
-    
+
     final updatedModel = AppSettings.fromEntity(updatedEntity);
     state = AsyncValue.data(updatedModel);
   }
 
   /// Recalculate and update storage usage
   Future<void> recalculateStorageUsage() async {
-    final currentSettings = state.valueOrNull;
+    final currentSettings = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (currentSettings == null) {
       debugPrint('Cannot recalculate storage usage: no current settings');
       return;
@@ -179,14 +188,14 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     try {
       // Get repository to calculate storage
       final repository = ref.read(settingsRepositoryProvider);
-      final (int? bytes, Failure? failure) = 
-          await repository.calculateActualStorageUsage();
-      
+      final (int? bytes, Failure? failure) = await repository
+          .calculateActualStorageUsage();
+
       if (failure != null || bytes == null) {
         debugPrint('Failed to calculate storage usage: $failure');
         return;
       }
-      
+
       await updateStorageUsage(bytes);
     } catch (e) {
       debugPrint('Error recalculating storage usage: $e');
@@ -195,16 +204,19 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
   /// Get estimated actual storage usage
   Future<int> getEstimatedStorageUsage() async {
-    final currentSettings = state.valueOrNull;
+    final currentSettings = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (currentSettings == null) {
       return 0;
     }
 
     try {
       final repository = ref.read(settingsRepositoryProvider);
-      final (int? bytes, Failure? failure) = 
-          await repository.calculateActualStorageUsage();
-      
+      final (int? bytes, Failure? failure) = await repository
+          .calculateActualStorageUsage();
+
       return bytes ?? 0;
     } catch (e) {
       debugPrint('Error getting estimated storage usage: $e');
@@ -214,7 +226,10 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
   /// Update last export date
   Future<void> updateLastExportDate(DateTime date) async {
-    final currentSettings = state.valueOrNull;
+    final currentSettings = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (currentSettings == null) {
       debugPrint('Cannot update last export date: no current settings');
       return;
@@ -222,17 +237,17 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
     final currentEntity = currentSettings.toEntity();
     final updatedEntity = currentEntity.copyWith(lastExportDate: date);
-    
+
     final updateSettingsUseCase = ref.read(updateSettingsUseCaseProvider);
     final (_, Failure? failure) = await updateSettingsUseCase.call(
       updatedEntity,
     );
-    
+
     if (failure != null) {
       debugPrint('Failed to update last export date: $failure');
       return;
     }
-    
+
     final updatedModel = AppSettings.fromEntity(updatedEntity);
     state = AsyncValue.data(updatedModel);
   }
@@ -249,67 +264,127 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
 /// Expense Preferences Selectors
 final defaultCurrencyProvider = Provider<String>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.defaultCurrency ?? '₹';
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.defaultCurrency,
+    _ => '₹',
+  };
 });
 
 final defaultExpenseCategoryProvider = Provider<String>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.defaultExpenseCategory ?? 'Others';
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.defaultExpenseCategory,
+    _ => 'Others',
+  };
 });
 
 final enableQuickExpenseProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.enableQuickExpense ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.enableQuickExpense,
+    _ => true,
+  };
 });
 
 final enableGroceryOCRProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.enableGroceryOCR ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.enableGroceryOCR,
+    _ => true,
+  };
 });
 
 /// Grocery Settings Selectors
 final saveLastStoreNameProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.saveLastStoreName ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.saveLastStoreName,
+    _ => true,
+  };
 });
 
 final showFrequentItemSuggestionsProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.showFrequentItemSuggestions ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.showFrequentItemSuggestions,
+    _ => true,
+  };
 });
 
 final clearGrocerySessionOnExitProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.clearGrocerySessionOnExit ?? false;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.clearGrocerySessionOnExit,
+    _ => false,
+  };
 });
 
 final confirmBeforeGrocerySubmitProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.confirmBeforeGrocerySubmit ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.confirmBeforeGrocerySubmit,
+    _ => true,
+  };
 });
 
 /// Smart Insights Selectors
 final enableSpendingIntelligenceProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.enableSpendingIntelligence ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.enableSpendingIntelligence,
+    _ => true,
+  };
 });
 
 final insightFrequencyProvider = Provider<domain.InsightFrequency>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.insightFrequency ?? domain.InsightFrequency.weekly;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.insightFrequency,
+    _ => domain.InsightFrequency.weekly,
+  };
 });
 
 /// Security Settings Selectors
 final enableAppLockProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.enableAppLock ?? false;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.enableAppLock,
+    _ => false,
+  };
 });
 
 final autoLockTimerProvider = Provider<domain.AutoLockTimer>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.autoLockTimer ?? domain.AutoLockTimer.thirtySeconds;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.autoLockTimer,
+    _ => domain.AutoLockTimer.thirtySeconds,
+  };
 });
 
 final requireAuthOnLaunchProvider = Provider<bool>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.requireAuthOnLaunch ?? true;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.requireAuthOnLaunch,
+    _ => true,
+  };
 });
 
 /// Data & Storage Selectors
 final lastExportDateProvider = Provider<DateTime?>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.lastExportDate;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.lastExportDate,
+    _ => null,
+  };
 });
 
 final storageUsageBytesProvider = Provider<int?>((ref) {
-  return ref.watch(appSettingsNotifierProvider).valueOrNull?.storageUsageBytes;
+  final settings = ref.watch(appSettingsNotifierProvider);
+  return switch (settings) {
+    AsyncData(:final value) => value.storageUsageBytes,
+    _ => null,
+  };
 });
 
 /// UI State Providers
