@@ -44,7 +44,7 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
     super.initState();
     // Reset state when sheet opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(quickExpenseNotifierProvider.notifier).reset();
+      ref.read(quickExpenseProvider.notifier).reset();
       // Auto-focus amount field
       _amountFocusNode.requestFocus();
     });
@@ -60,8 +60,8 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(quickExpenseNotifierProvider);
-    final notifier = ref.read(quickExpenseNotifierProvider.notifier);
+    final state = ref.watch(quickExpenseProvider);
+    final notifier = ref.read(quickExpenseProvider.notifier);
 
     return AnimatedPadding(
       duration: const Duration(milliseconds: 150),
@@ -279,7 +279,7 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
     setState(() => _isSubmitting = true);
 
     try {
-      final notifier = ref.read(quickExpenseNotifierProvider.notifier);
+      final notifier = ref.read(quickExpenseProvider.notifier);
       final success = await notifier.saveExpense();
 
       if (success && mounted) {

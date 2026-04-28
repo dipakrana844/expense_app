@@ -20,8 +20,8 @@ class OCRScanScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(groceryOCRNotifierProvider);
-    final notifier = ref.read(groceryOCRNotifierProvider.notifier);
+    final state = ref.watch(groceryOCRProvider);
+    final notifier = ref.read(groceryOCRProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -266,7 +266,7 @@ class OCRScanScreen extends ConsumerWidget {
                         icon: const Icon(Icons.close, size: 20),
                         onPressed: () {
                           ref
-                              .read(groceryOCRNotifierProvider.notifier)
+                              .read(groceryOCRProvider.notifier)
                               .removeItem(item.id);
                         },
                       ),
@@ -284,8 +284,7 @@ class OCRScanScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton.icon(
-                onPressed: () =>
-                    ref.read(groceryOCRNotifierProvider.notifier).clear(),
+                onPressed: () => ref.read(groceryOCRProvider.notifier).clear(),
                 icon: const Icon(Icons.refresh),
                 label: const Text('Scan Again'),
               ),
@@ -306,8 +305,8 @@ class OCRScanScreen extends ConsumerWidget {
     WidgetRef ref,
     List<GroceryItem> items,
   ) {
-    ref.read(groceryNotifierProvider.notifier).addItems(items);
-    ref.read(groceryOCRNotifierProvider.notifier).clear();
+    ref.read(groceryProvider.notifier).addItems(items);
+    ref.read(groceryOCRProvider.notifier).clear();
     context.pop();
   }
 
@@ -348,7 +347,7 @@ class OCRScanScreen extends ConsumerWidget {
 
               if (name.isNotEmpty && price > 0) {
                 ref
-                    .read(groceryOCRNotifierProvider.notifier)
+                    .read(groceryOCRProvider.notifier)
                     .updateItem(item.copyWith(name: name, price: price));
               }
               Navigator.pop(context);

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:smart_expense_tracker/features/settings/presentation/providers/settings_providers.dart';
 import 'package:smart_expense_tracker/features/settings/data/models/app_settings.dart';
@@ -9,8 +8,6 @@ import 'package:smart_expense_tracker/features/grocery/domain/services/grocery_s
 import 'package:smart_expense_tracker/features/grocery/data/local/grocery_preferences_local_data_source.dart';
 import 'grocery_state.dart';
 
-part 'grocery_notifier.g.dart';
-
 /// Provider for Grocery Preferences Data Source
 final groceryPreferencesDataSourceProvider = Provider((ref) {
   final dataSource = GroceryPreferencesLocalDataSource();
@@ -18,8 +15,13 @@ final groceryPreferencesDataSourceProvider = Provider((ref) {
   return dataSource;
 });
 
-@riverpod
-class GroceryNotifier extends _$GroceryNotifier {
+/// Provider for GroceryService
+final groceryServiceProvider = Provider<GroceryService>((ref) {
+  return GroceryService(ref);
+});
+
+/// Grocery Notifier - manages grocery session state
+class GroceryNotifier extends Notifier<GrocerySessionState> {
   @override
   GrocerySessionState build() {
     // Read global settings instead of local preferences
@@ -193,3 +195,7 @@ class GroceryNotifier extends _$GroceryNotifier {
     );
   }
 }
+
+/// Provider for GroceryNotifier
+final groceryNotifierProvider =
+    NotifierProvider<GroceryNotifier, GrocerySessionState>(GroceryNotifier.new);

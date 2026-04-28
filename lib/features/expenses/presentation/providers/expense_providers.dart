@@ -38,14 +38,15 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 });
 
 /// State Notifier for Expenses
-class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
-  final ExpenseRepository _repository;
-  final Ref _ref;
+class ExpensesNotifier extends Notifier<AsyncValue<List<ExpenseEntity>>> {
+  late final ExpenseRepository _repository;
   StreamSubscription? _subscription;
 
-  ExpensesNotifier(this._repository, this._ref)
-    : super(const AsyncValue.loading()) {
+  @override
+  AsyncValue<List<ExpenseEntity>> build() {
+    _repository = ref.watch(expenseRepositoryProvider);
     _listenToExpenses();
+    return const AsyncValue.loading();
   }
 
   void _listenToExpenses() {
@@ -61,12 +62,6 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
     if (error == null && expenses != null) {
       state = AsyncValue.data(expenses);
     }
-  }
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
   }
 
   Future<void> addExpense({
@@ -101,7 +96,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
     // Update storage usage after adding expense
     try {
-      final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
+      final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
       await settingsNotifier.recalculateStorageUsage();
     } catch (e) {
       // Silently fail if settings not available
@@ -110,7 +105,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
     // Refresh transaction providers to update the UI
     try {
-      _ref.read(transactionActionsProvider.notifier).refresh();
+      ref.read(transactionActionsProvider.notifier).refresh();
     } catch (e) {
       debugPrint(
         'Failed to refresh transaction providers after adding expense: $e',
@@ -135,7 +130,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
     // Update storage usage after updating expense
     try {
-      final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
+      final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
       await settingsNotifier.recalculateStorageUsage();
     } catch (e) {
       // Silently fail if settings not available
@@ -144,7 +139,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
     // Refresh transaction providers to update the UI
     try {
-      _ref.read(transactionActionsProvider.notifier).refresh();
+      ref.read(transactionActionsProvider.notifier).refresh();
     } catch (e) {
       debugPrint(
         'Failed to refresh transaction providers after updating expense: $e',
@@ -157,7 +152,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
     // Update storage usage after deleting expense
     try {
-      final settingsNotifier = _ref.read(appSettingsNotifierProvider.notifier);
+      final settingsNotifier = ref.read(appSettingsNotifierProvider.notifier);
       await settingsNotifier.recalculateStorageUsage();
     } catch (e) {
       // Silently fail if settings not available
@@ -166,7 +161,7 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
     // Refresh transaction providers to update the UI
     try {
-      _ref.read(transactionActionsProvider.notifier).refresh();
+      ref.read(transactionActionsProvider.notifier).refresh();
     } catch (e) {
       debugPrint(
         'Failed to refresh transaction providers after deleting expense: $e',
@@ -250,16 +245,31 @@ class ExpensesNotifier extends StateNotifier<AsyncValue<List<ExpenseEntity>>> {
 
 /// Base Expenses Provider
 final expensesProvider =
-    StateNotifierProvider<ExpensesNotifier, AsyncValue<List<ExpenseEntity>>>((
-      ref,
-    ) {
-      final repository = ref.watch(expenseRepositoryProvider);
-      return ExpensesNotifier(repository, ref);
-    });
+    NotifierProvider<ExpensesNotifier, AsyncValue<List<ExpenseEntity>>>(
+      ExpensesNotifier.new,
+    );
 
-/// Search & Filter State
-final searchQueryProvider = StateProvider<String>((ref) => '');
-final dateFilterProvider = StateProvider<DateTimeRange?>((ref) => null);
+/// Search & Filter State Notifiers
+class SearchQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void update(String query) => state = query;
+}
+
+class DateFilterNotifier extends Notifier<DateTimeRange?> {
+  @override
+  DateTimeRange? build() => null;
+
+  void update(DateTimeRange? range) => state = range;
+}
+
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(
+  SearchQueryNotifier.new,
+);
+final dateFilterProvider = NotifierProvider<DateFilterNotifier, DateTimeRange?>(
+  DateFilterNotifier.new,
+);
 
 /// Filtered List Provider
 final filteredExpensesProvider = Provider<List<ExpenseEntity>>((ref) {

@@ -83,14 +83,15 @@ final incomesProvider = FutureProvider<List<IncomeEntity>>((ref) async {
 /// - Updates automatically when incomes change
 final monthlyIncomeProvider = FutureProvider<double>((ref) async {
   final incomesAsync = ref.watch(incomesProvider);
-  
+
   return incomesAsync.when(
     data: (incomes) {
       final now = DateTime.now();
-      final monthlyIncomes = incomes.where((income) => 
-          income.date.year == now.year && 
-          income.date.month == now.month);
-      
+      final monthlyIncomes = incomes.where(
+        (income) =>
+            income.date.year == now.year && income.date.month == now.month,
+      );
+
       double total = 0.0;
       for (final income in monthlyIncomes) {
         total += income.amount;
@@ -109,7 +110,7 @@ final monthlyIncomeProvider = FutureProvider<double>((ref) async {
 /// - Useful for dropdowns and filtering
 final incomeSourcesProvider = FutureProvider<List<String>>((ref) async {
   final incomesAsync = ref.watch(incomesProvider);
-  
+
   return incomesAsync.when(
     data: (incomes) {
       final sources = <String>{};
@@ -140,65 +141,79 @@ final recentIncomesProvider = FutureProvider<List<IncomeEntity>>((ref) async {
 /// Purpose: Provides significant income records (above threshold)
 /// - Shows incomes above specified minimum amount
 /// - Useful for highlighting major income events
-final significantIncomesProvider = FutureProvider.family<List<IncomeEntity>, double>((ref, minAmount) async {
-  final useCase = ref.watch(getIncomesUseCaseProvider);
-  return await useCase.getSignificantIncomes(minAmount);
-});
+final significantIncomesProvider =
+    FutureProvider.family<List<IncomeEntity>, double>((ref, minAmount) async {
+      final useCase = ref.watch(getIncomesUseCaseProvider);
+      return await useCase.getSignificantIncomes(minAmount);
+    });
 
 /// Provider: incomeBySourceProvider
 ///
 /// Purpose: Provides incomes filtered by specific source
 /// - Useful for source-based analysis
-final incomeBySourceProvider = FutureProvider.family<List<IncomeEntity>, String>((ref, source) async {
-  final useCase = ref.watch(getIncomesUseCaseProvider);
-  return await useCase.getIncomesBySource(source);
-});
+final incomeBySourceProvider =
+    FutureProvider.family<List<IncomeEntity>, String>((ref, source) async {
+      final useCase = ref.watch(getIncomesUseCaseProvider);
+      return await useCase.getIncomesBySource(source);
+    });
 
 /// Provider: incomeByMonthProvider
 ///
 /// Purpose: Provides incomes for specific month
 /// - Useful for monthly reporting and analytics
-final incomeByMonthProvider = FutureProvider.family<List<IncomeEntity>, DateTime>((ref, month) async {
-  final useCase = ref.watch(getIncomesUseCaseProvider);
-  return await useCase.getIncomesByMonth(month.year, month.month);
-});
+final incomeByMonthProvider =
+    FutureProvider.family<List<IncomeEntity>, DateTime>((ref, month) async {
+      final useCase = ref.watch(getIncomesUseCaseProvider);
+      return await useCase.getIncomesByMonth(month.year, month.month);
+    });
 
 /// Provider: totalIncomeByMonthProvider
 ///
 /// Purpose: Provides total income for specific month
 /// - Optimized calculation without loading all entities
-final totalIncomeByMonthProvider = FutureProvider.family<double, DateTime>((ref, month) async {
+final totalIncomeByMonthProvider = FutureProvider.family<double, DateTime>((
+  ref,
+  month,
+) async {
   final useCase = ref.watch(getIncomesUseCaseProvider);
   return await useCase.getTotalIncomeByMonth(month.year, month.month);
 });
 
 /// Notifier for managing income form state
 /// Handles form validation and submission logic
-class IncomeFormNotifier extends StateNotifier<IncomeFormState> {
-  final AddIncomeUseCase _addUseCase;
-  final UpdateIncomeUseCase _updateUseCase;
-  final Ref _ref;
+class IncomeFormNotifier extends FamilyNotifier<IncomeFormState, IncomeEntity?> {
+  late final AddIncomeUseCase _addUseCase;
+  late final UpdateIncomeUseCase _updateUseCase;
 
-  IncomeFormNotifier({
-    required AddIncomeUseCase addUseCase,
-    required UpdateIncomeUseCase updateUseCase,
-    required Ref ref,
-    IncomeEntity? initialIncome,
-  })  : _addUseCase = addUseCase,
-        _updateUseCase = updateUseCase,
-        _ref = ref,
-        super(
-          IncomeFormState(
-            id: initialIncome?.id,
-            amount: initialIncome?.amount.toString() ?? '',
-            source: initialIncome?.source ?? '',
-            note: initialIncome?.note ?? '',
-            date: initialIncome?.date ?? DateTime.now(),
-            isEditing: initialIncome != null,
-            isLoading: false,
-            error: null,
-          ),
-        );
+  @override
+  IncomeFormState build(IncomeEntity? initialIncome) {
+    _addUseCase = ref.watch(addIncomeUseCaseProvider);
+    _updateUseCase = ref.watch(updateIncomeUseCaseProvider);
+
+    if (initialIncome != null) {
+      return IncomeFormState(
+        id: initialIncome.id,
+        amount: initialIncome.amount.toString(),
+        source: initialIncome.source,
+        note: initialIncome.note ?? '',
+        date: initialIncome.date,
+        isEditing: true,
+        isLoading: false,
+        error: null,
+      );
+    }
+
+    return const IncomeFormState(
+      id: null,
+      amount: '',
+      source: '',
+      note: '',
+      date: null,
+      isEditing: false,
+      isLoading: false,
+      error: null,
+    );
+  }
 
   void setAmount(String amount) {
     state = state.copyWith(amount: amount, error: null);
@@ -260,20 +275,19 @@ class IncomeFormNotifier extends StateNotifier<IncomeFormState> {
 
       // Refresh the incomes provider
       _ref.invalidate(incomesProvider);
-      
+
       // Also refresh transaction providers to update the UI
       try {
         _ref.read(transactionActionsProvider.notifier).refresh();
       } catch (e) {
-        debugPrint('Failed to refresh transaction providers after income operation: $e');
+        debugPrint(
+          'Failed to refresh transaction providers after income operation: $e',
+        );
       }
-      
+
       state = state.copyWith(isLoading: false, error: null);
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
@@ -284,12 +298,12 @@ class IncomeFormState {
   final String amount;
   final String source;
   final String note;
-  final DateTime date;
+  final DateTime? date;
   final bool isEditing;
   final bool isLoading;
   final String? error;
 
-  IncomeFormState({
+  const IncomeFormState({
     this.id,
     required this.amount,
     required this.source,
@@ -324,13 +338,7 @@ class IncomeFormState {
 }
 
 /// Provider for income form notifier
-final incomeFormProvider = StateNotifierProvider.family<IncomeFormNotifier, IncomeFormState, IncomeEntity?>(
-  (ref, initialIncome) {
-    return IncomeFormNotifier(
-      addUseCase: ref.watch(addIncomeUseCaseProvider),
-      updateUseCase: ref.watch(updateIncomeUseCaseProvider),
-      ref: ref,
-      initialIncome: initialIncome,
+final incomeFormProvider =
+    NotifierProvider.family<IncomeFormNotifier, IncomeFormState, IncomeEntity?>(
+      IncomeFormNotifier.new,
     );
-  },
-);

@@ -135,6 +135,6 @@ class QuickExpenseNotifier extends _$QuickExpenseNotifier {
 /// Useful for showing success feedback
 @riverpod
 bool quickExpenseSuccess(Ref ref) {
-  final state = ref.watch(quickExpenseNotifierProvider);
+  final state = ref.watch(quickExpenseProvider);
   return state.isSuccess;
 }
