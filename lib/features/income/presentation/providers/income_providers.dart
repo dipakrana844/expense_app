@@ -181,17 +181,15 @@ final totalIncomeByMonthProvider = FutureProvider.family<double, DateTime>((
 
 /// Notifier for managing income form state
 /// Handles form validation and submission logic
-class IncomeFormNotifier extends FamilyNotifier<IncomeFormState, IncomeEntity?> {
+class IncomeFormNotifier extends Notifier<IncomeFormState> {
   late final AddIncomeUseCase _addUseCase;
   late final UpdateIncomeUseCase _updateUseCase;
+  IncomeEntity? _initialIncome;
 
-  @override
-  IncomeFormState build(IncomeEntity? initialIncome) {
-    _addUseCase = ref.watch(addIncomeUseCaseProvider);
-    _updateUseCase = ref.watch(updateIncomeUseCaseProvider);
-
+  void setInitialIncome(IncomeEntity? initialIncome) {
+    _initialIncome = initialIncome;
     if (initialIncome != null) {
-      return IncomeFormState(
+      state = IncomeFormState(
         id: initialIncome.id,
         amount: initialIncome.amount.toString(),
         source: initialIncome.source,
@@ -201,7 +199,24 @@ class IncomeFormNotifier extends FamilyNotifier<IncomeFormState, IncomeEntity?> 
         isLoading: false,
         error: null,
       );
+    } else {
+      state = const IncomeFormState(
+        id: null,
+        amount: '',
+        source: '',
+        note: '',
+        date: null,
+        isEditing: false,
+        isLoading: false,
+        error: null,
+      );
     }
+  }
+
+  @override
+  IncomeFormState build() {
+    _addUseCase = ref.watch(addIncomeUseCaseProvider);
+    _updateUseCase = ref.watch(updateIncomeUseCaseProvider);
 
     return const IncomeFormState(
       id: null,
@@ -274,11 +289,11 @@ class IncomeFormNotifier extends FamilyNotifier<IncomeFormState, IncomeEntity?> 
       }
 
       // Refresh the incomes provider
-      _ref.invalidate(incomesProvider);
+      ref.invalidate(incomesProvider);
 
       // Also refresh transaction providers to update the UI
       try {
-        _ref.read(transactionActionsProvider.notifier).refresh();
+        ref.read(transactionActionsProvider.notifier).refresh();
       } catch (e) {
         debugPrint(
           'Failed to refresh transaction providers after income operation: $e',
@@ -339,6 +354,6 @@ class IncomeFormState {
 
 /// Provider for income form notifier
 final incomeFormProvider =
-    NotifierProvider.family<IncomeFormNotifier, IncomeFormState, IncomeEntity?>(
+    NotifierProvider<IncomeFormNotifier, IncomeFormState>(
       IncomeFormNotifier.new,
     );

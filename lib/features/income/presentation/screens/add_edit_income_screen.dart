@@ -16,9 +16,14 @@ class AddEditIncomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formState = ref.watch(incomeFormProvider(income));
-    final formNotifier = ref.read(incomeFormProvider(income).notifier);
+    final formState = ref.watch(incomeFormProvider);
+    final formNotifier = ref.read(incomeFormProvider.notifier);
     final theme = Theme.of(context);
+
+    // Initialize the form with income data if editing
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      formNotifier.setInitialIncome(income);
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -106,11 +111,9 @@ class AddEditIncomeScreen extends ConsumerWidget {
           decoration: InputDecoration(
             prefixText: '\$ ',
             hintText: '0.00',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            errorText: state.amount.isNotEmpty &&
-                    double.tryParse(state.amount) == null
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            errorText:
+                state.amount.isNotEmpty && double.tryParse(state.amount) == null
                 ? 'Please enter a valid amount'
                 : null,
           ),
@@ -153,17 +156,17 @@ class AddEditIncomeScreen extends ConsumerWidget {
             }
           },
           items: predefinedSources
-              .map((source) => DropdownMenuItem(
-                    value: source,
-                    child: Text(source),
-                  ))
+              .map(
+                (source) =>
+                    DropdownMenuItem(value: source, child: Text(source)),
+              )
               .toList(),
           decoration: InputDecoration(
             hintText: 'Select income source',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            errorText: state.source.trim().isEmpty ? 'Please select an income source' : null,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            errorText: state.source.trim().isEmpty
+                ? 'Please select an income source'
+                : null,
           ),
         ),
       ],
@@ -188,20 +191,23 @@ class AddEditIncomeScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         InkWell(
-          onTap: () => _selectDate(context, notifier, state.date),
+          onTap: () =>
+              _selectDate(context, notifier, state.date ?? DateTime.now()),
           child: InputDecorator(
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  state.date.toString().split(' ')[0],
+                  state.date?.toString().split(' ')[0] ?? 'Select date',
                   style: theme.textTheme.bodyLarge,
                 ),
                 Icon(
@@ -239,9 +245,7 @@ class AddEditIncomeScreen extends ConsumerWidget {
           maxLines: 3,
           decoration: InputDecoration(
             hintText: 'Add any details about this income...',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             alignLabelWithHint: true,
           ),
         ),
@@ -300,10 +304,7 @@ class AddEditIncomeScreen extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline,
-            color: theme.colorScheme.onErrorContainer,
-          ),
+          Icon(Icons.error_outline, color: theme.colorScheme.onErrorContainer),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -330,7 +331,7 @@ class AddEditIncomeScreen extends ConsumerWidget {
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
 
-    if (picked != null && picked != currentDate) {
+    if (picked != null) {
       notifier.setDate(picked);
     }
   }

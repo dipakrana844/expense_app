@@ -71,7 +71,10 @@ class _GrocerySessionPageState extends ConsumerState<GrocerySessionPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(groceryNotifierProvider);
     final settingsAsync = ref.watch(appSettingsNotifierProvider);
-    final settings = settingsAsync.valueOrNull ?? const AppSettings();
+    final settings = switch (settingsAsync) {
+      AsyncData(:final value) => value,
+      _ => const AppSettings(),
+    };
 
     return Scaffold(
       appBar: AppBar(

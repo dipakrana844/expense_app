@@ -305,7 +305,7 @@ class OCRScanScreen extends ConsumerWidget {
     WidgetRef ref,
     List<GroceryItem> items,
   ) {
-    ref.read(groceryProvider.notifier).addItems(items);
+    ref.read(groceryNotifierProvider.notifier).addItems(items);
     ref.read(groceryOCRProvider.notifier).clear();
     context.pop();
   }
