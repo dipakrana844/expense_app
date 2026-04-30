@@ -21,27 +21,37 @@ class AnalyticsScreen extends ConsumerWidget {
     return analyticsAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('Analytics')),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Analytics')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64),
-              const SizedBox(height: 16),
-              Text('Error loading analytics: $error'),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  ref.read(analytics_providers.analyticsDataProvider.notifier).refresh();
-                },
-                child: const Text('Retry'),
-              ),
-            ],
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading analytics: $error',
+                  textAlign: TextAlign.center,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(
+                          analytics_providers.analyticsDataProvider.notifier,
+                        )
+                        .refresh();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -82,7 +92,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 // Time Range Selector
                 const AnalyticsTimeRangeSelector(),
                 const SizedBox(height: 24),
-                
+
                 // Daily Spend Guard Card - Always visible at top
                 const DailySpendCard(showFullDetails: false),
                 const SizedBox(height: 24),
@@ -93,9 +103,14 @@ class AnalyticsScreen extends ConsumerWidget {
 
                 // 2. Smart Warnings
                 if (analytics.smartWarnings.isNotEmpty) ...[
-                  Text('Actionable Insights', style: theme.textTheme.titleMedium),
+                  Text(
+                    'Actionable Insights',
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 12),
-                  ...analytics.smartWarnings.map((insight) => _buildInsightCard(context, insight)),
+                  ...analytics.smartWarnings.map(
+                    (insight) => _buildInsightCard(context, insight),
+                  ),
                   const SizedBox(height: 24),
                 ],
 
@@ -106,7 +121,12 @@ class AnalyticsScreen extends ConsumerWidget {
                 // 4. Monthly Trend
                 Text('6-Month Trend', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
-                _buildTrendSection(context, analytics.monthlyTrend, analytics.trendExplanation, theme),
+                _buildTrendSection(
+                  context,
+                  analytics.monthlyTrend,
+                  analytics.trendExplanation,
+                  theme,
+                ),
                 const SizedBox(height: 32),
 
                 // 5. Pie Chart
@@ -127,7 +147,9 @@ class AnalyticsScreen extends ConsumerWidget {
                 // 6. Detailed Breakdown with Insights
                 Text('Category Breakdown', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
-                ...analytics.monthlyAnalytics.categoryBreakdown.entries.map((entry) {
+                ...analytics.monthlyAnalytics.categoryBreakdown.entries.map((
+                  entry,
+                ) {
                   final insight = analytics.categoryInsights[entry.key];
                   return _buildCategoryTile(
                     context,
@@ -144,7 +166,11 @@ class AnalyticsScreen extends ConsumerWidget {
                 Center(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      ref.read(analytics_providers.analyticsDataProvider.notifier).refresh();
+                      ref
+                          .read(
+                            analytics_providers.analyticsDataProvider.notifier,
+                          )
+                          .refresh();
                     },
                     icon: const Icon(Icons.refresh),
                     label: const Text('Refresh Analytics'),

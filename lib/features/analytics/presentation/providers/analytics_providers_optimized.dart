@@ -2,19 +2,20 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_riverpod/misc.dart';
+import 'package:smart_expense_tracker/core/services/balance_service.dart';
 import 'package:smart_expense_tracker/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:smart_expense_tracker/features/income/presentation/providers/income_providers.dart';
 import 'package:smart_expense_tracker/features/spending_intelligence/domain/entities/insight.dart';
 import 'package:smart_expense_tracker/features/analytics/domain/entities/analytics_entity.dart';
 import 'package:smart_expense_tracker/features/analytics/domain/usecases/get_financial_analytics_usecase.dart';
 import 'package:smart_expense_tracker/features/analytics/domain/repositories/analytics_repository.dart';
+import 'package:smart_expense_tracker/features/analytics/data/repositories/analytics_repository_impl.dart';
 
 /// Provider: Analytics Repository
 ///
-/// Purpose: Provides the analytics repository
+/// Purpose: Provides the analytics repository implementation
 final analyticsRepositoryProvider = Provider<AnalyticsRepository>((ref) {
-  // This would be injected from the infrastructure layer
-  throw UnimplementedError('Analytics repository not implemented');
+  return AnalyticsRepositoryImpl(balanceService: BalanceService());
 });
 
 /// Provider: Get Financial Analytics Use Case

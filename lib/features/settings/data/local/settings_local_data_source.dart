@@ -41,7 +41,20 @@ class SettingsLocalDataSource {
       _isInitialized = true;
     } catch (e) {
       debugPrint('Failed to initialize Settings Hive box: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(_boxName)) {
+          await Hive.box<AppSettings>(_boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(_boxName);
+        _settingsBox = await Hive.openBox<AppSettings>(_boxName);
+        _isInitialized = true;
+        debugPrint('Settings Hive box recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint('Failed to recover Settings Hive box: $recoveryError');
+        rethrow;
+      }
     }
   }
 

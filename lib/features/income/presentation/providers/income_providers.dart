@@ -184,10 +184,8 @@ final totalIncomeByMonthProvider = FutureProvider.family<double, DateTime>((
 class IncomeFormNotifier extends Notifier<IncomeFormState> {
   late final AddIncomeUseCase _addUseCase;
   late final UpdateIncomeUseCase _updateUseCase;
-  IncomeEntity? _initialIncome;
 
   void setInitialIncome(IncomeEntity? initialIncome) {
-    _initialIncome = initialIncome;
     if (initialIncome != null) {
       state = IncomeFormState(
         id: initialIncome.id,
