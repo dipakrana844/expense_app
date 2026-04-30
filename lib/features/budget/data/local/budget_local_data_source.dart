@@ -33,7 +33,22 @@ class BudgetLocalDataSource {
       debugPrint('BudgetLocalDataSource: Initialized successfully');
     } catch (e) {
       debugPrint('BudgetLocalDataSource: Failed to initialize Hive box: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(AppConstants.budgetBoxName)) {
+          await Hive.box(AppConstants.budgetBoxName).close();
+        }
+        await Hive.deleteBoxFromDisk(AppConstants.budgetBoxName);
+        _budgetBox = await Hive.openBox(AppConstants.budgetBoxName);
+        _isInitialized = true;
+        debugPrint('BudgetLocalDataSource: Recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint(
+          'BudgetLocalDataSource: Failed to recover Hive box: $recoveryError',
+        );
+        rethrow;
+      }
     }
   }
 

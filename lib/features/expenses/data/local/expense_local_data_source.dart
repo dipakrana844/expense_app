@@ -58,10 +58,35 @@ class ExpenseLocalDataSource {
       _isInitialized = true;
     } catch (e) {
       debugPrint('Failed to initialize Hive: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(AppConstants.expensesBoxName)) {
+          await Hive.box<ExpenseModel>(AppConstants.expensesBoxName).close();
+        }
+        await Hive.deleteBoxFromDisk(AppConstants.expensesBoxName);
+        _expenseBox = await Hive.openBox<ExpenseModel>(
+          AppConstants.expensesBoxName,
+        );
+
+        if (Hive.isBoxOpen(AppConstants.scheduledExpensesBoxName)) {
+          await Hive.box<ScheduledExpenseModel>(
+            AppConstants.scheduledExpensesBoxName,
+          ).close();
+        }
+        await Hive.deleteBoxFromDisk(AppConstants.scheduledExpensesBoxName);
+        _scheduledBox = await Hive.openBox<ScheduledExpenseModel>(
+          AppConstants.scheduledExpensesBoxName,
+        );
+
+        _isInitialized = true;
+        debugPrint('Hive boxes recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint('Failed to recover Hive boxes: $recoveryError');
+        rethrow;
+      }
     }
   }
-
 
   /// Create a new expense
   ///

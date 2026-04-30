@@ -43,7 +43,21 @@ class CategoryLocalDataSource {
       debugPrint('CategoryLocalDataSource initialized successfully');
     } catch (e) {
       debugPrint('Failed to initialize Categories Hive box: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(boxName)) {
+          await Hive.box<CategoryModel>(boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(boxName);
+        _categoryBox = await Hive.openBox<CategoryModel>(boxName);
+        _buildIndexes();
+        _isInitialized = true;
+        debugPrint('Categories Hive box recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint('Failed to recover Categories Hive box: $recoveryError');
+        rethrow;
+      }
     }
   }
 

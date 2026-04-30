@@ -46,6 +46,20 @@ class DailySpendLocalDataSource {
 
       _dailySpendBox = await Hive.openBox<DailySpendState>(_dailySpendBoxName);
       _isInitialized = true;
+    } catch (e) {
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(_dailySpendBoxName)) {
+          await Hive.box<DailySpendState>(_dailySpendBoxName).close();
+        }
+        await Hive.deleteBoxFromDisk(_dailySpendBoxName);
+        _dailySpendBox = await Hive.openBox<DailySpendState>(
+          _dailySpendBoxName,
+        );
+        _isInitialized = true;
+      } catch (_) {
+        rethrow;
+      }
     } finally {
       _initializationFuture = null;
     }

@@ -29,13 +29,27 @@ class TransferLocalDataSource {
       _transferBox = await Hive.openBox<TransferModel>(boxName);
       _isInitialized = true;
     } catch (e) {
-      throw Exception('Failed to initialize transfer data source: $e');
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(boxName)) {
+          await Hive.box<TransferModel>(boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(boxName);
+        _transferBox = await Hive.openBox<TransferModel>(boxName);
+        _isInitialized = true;
+      } catch (recoveryError) {
+        throw Exception(
+          'Failed to initialize transfer data source: $recoveryError',
+        );
+      }
     }
   }
 
   void _ensureInitialized() {
     if (!_isInitialized) {
-      throw Exception('TransferLocalDataSource not initialized. Call init() first.');
+      throw Exception(
+        'TransferLocalDataSource not initialized. Call init() first.',
+      );
     }
   }
 
@@ -91,7 +105,9 @@ class TransferLocalDataSource {
 
   /// Get transfers for specific date range
   Future<List<TransferModel>> getTransfersByDateRange(
-      DateTime start, DateTime end) async {
+    DateTime start,
+    DateTime end,
+  ) async {
     _ensureInitialized();
     return _transferBox.values.where((transfer) {
       return !transfer.date.isBefore(start) && !transfer.date.isAfter(end);

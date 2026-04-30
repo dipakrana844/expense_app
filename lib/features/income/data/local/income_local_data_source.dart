@@ -39,7 +39,20 @@ class IncomeLocalDataSource {
       _isInitialized = true;
     } catch (e) {
       debugPrint('Failed to initialize Income Hive box: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(_boxName)) {
+          await Hive.box<IncomeModel>(_boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(_boxName);
+        _incomeBox = await Hive.openBox<IncomeModel>(_boxName);
+        _isInitialized = true;
+        debugPrint('Income Hive box recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint('Failed to recover Income Hive box: $recoveryError');
+        rethrow;
+      }
     }
   }
 
@@ -55,7 +68,9 @@ class IncomeLocalDataSource {
   /// Internal helper to ensure initialization
   void _ensureInitialized() {
     if (!_isInitialized) {
-      throw Exception('Income local data source not initialized. Call init() first.');
+      throw Exception(
+        'Income local data source not initialized. Call init() first.',
+      );
     }
   }
 
@@ -64,7 +79,7 @@ class IncomeLocalDataSource {
   Future<List<IncomeEntity>> getAllIncomes() async {
     final incomeModels = _incomeBox.values.toList()
       ..sort((a, b) => b.date.compareTo(a.date)); // Newest first
-    
+
     return incomeModels.map((model) => model.toEntity()).toList();
   }
 
@@ -119,7 +134,10 @@ class IncomeLocalDataSource {
 
   /// Get incomes for specific date range
   /// Useful for custom reporting periods
-  Future<List<IncomeEntity>> getIncomesByDateRange(DateTime start, DateTime end) async {
+  Future<List<IncomeEntity>> getIncomesByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     final allIncomes = await getAllIncomes();
     return allIncomes.where((income) {
       return !income.date.isBefore(start) && !income.date.isAfter(end);

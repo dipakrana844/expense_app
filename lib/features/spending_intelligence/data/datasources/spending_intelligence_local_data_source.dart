@@ -26,7 +26,22 @@ class SpendingIntelligenceLocalDataSource {
       _isInitialized = true;
     } catch (e) {
       debugPrint('Failed to initialize Insights Hive box: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(AppConstants.insightsBoxName)) {
+          await Hive.box<InsightModel>(AppConstants.insightsBoxName).close();
+        }
+        await Hive.deleteBoxFromDisk(AppConstants.insightsBoxName);
+        _insightsBox = await Hive.openBox<InsightModel>(
+          AppConstants.insightsBoxName,
+        );
+        _isInitialized = true;
+        debugPrint('Insights Hive box recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint('Failed to recover Insights Hive box: $recoveryError');
+        rethrow;
+      }
     }
   }
 

@@ -32,7 +32,22 @@ class GroceryPreferencesLocalDataSource {
       _isInitialized = true;
     } catch (e) {
       debugPrint('Failed to initialize Grocery Preferences Hive box: $e');
-      rethrow;
+
+      // Recover from corrupted box data by deleting and recreating
+      try {
+        if (Hive.isBoxOpen(_boxName)) {
+          await Hive.box<GroceryPreferences>(_boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(_boxName);
+        _preferencesBox = await Hive.openBox<GroceryPreferences>(_boxName);
+        _isInitialized = true;
+        debugPrint('Grocery Preferences Hive box recovered after corruption');
+      } catch (recoveryError) {
+        debugPrint(
+          'Failed to recover Grocery Preferences Hive box: $recoveryError',
+        );
+        rethrow;
+      }
     }
   }
 
@@ -73,26 +88,23 @@ class GroceryPreferencesLocalDataSource {
     if (!current.showSuggestions) return;
 
     final currentItems = List<String>.from(current.frequentItems);
-    
+
     // Remove if already exists to move to front
     currentItems.remove(itemName);
-    
+
     // Add to front
     currentItems.insert(0, itemName);
-    
+
     // Trim to max size
     if (currentItems.length > current.maxFrequentItems) {
-      currentItems.removeRange(
-        current.maxFrequentItems, 
-        currentItems.length
-      );
+      currentItems.removeRange(current.maxFrequentItems, currentItems.length);
     }
 
     final updated = current.copyWith(
       frequentItems: currentItems,
       lastUpdated: DateTime.now(),
     );
-    
+
     await savePreferences(updated);
   }
 
@@ -130,7 +142,7 @@ class GroceryPreferencesLocalDataSource {
   void _ensureInitialized() {
     if (!_isInitialized) {
       throw Exception(
-        'Grocery preferences data source not initialized. Call init() first.'
+        'Grocery preferences data source not initialized. Call init() first.',
       );
     }
   }
